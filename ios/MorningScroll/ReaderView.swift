@@ -146,11 +146,15 @@ struct ReaderView: View {
                 }
                 .scrollIndicators(.hidden)
                 .scrollTargetBehavior(OneAtATime(snap: snap))
-                .onAppear { snap.count = list.count }
-                .onChange(of: list.count) { _, n in snap.count = n }
+                .onAppear { snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
+                .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstQuestionIndex(list) }
             }
         }
         .ignoresSafeArea()
+    }
+
+    private func firstQuestionIndex(_ list: [Item]) -> Int {
+        list.firstIndex { if case .question = $0 { return true } else { return false } } ?? Int.max
     }
 
     @ViewBuilder private func itemView(_ item: Item) -> some View {
@@ -298,6 +302,7 @@ final class SnapLayout {
     var frames: [Int: CGRect] = [:]
     var offset: CGFloat = 0
     var count = 0
+    var firstFree = Int.max   // from here on (questions and answers) scrolling is free
 
     /// The item under content position y (items touch, so this is almost always exact).
     func index(at y: CGFloat) -> Int {
@@ -326,6 +331,13 @@ struct OneAtATime: ScrollTargetBehavior {
         let maxOffset = max(0, context.contentSize.height - h)
         let current = snap.index(at: now + h / 2)
         var y = natural
+
+        // Questions and answers are long, so they scroll normally. One flick from the last verse lands on them.
+        if current >= snap.firstFree { return }
+        if natural > now, current == snap.firstFree - 1, let f = snap.frames[snap.firstFree] {
+            target.rect.origin.y = min(max(f.minY - 100, 0), maxOffset)
+            return
+        }
 
         if abs(natural - now) < 6 {
             y = snap.offset(for: current, height: h) ?? natural
