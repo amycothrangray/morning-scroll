@@ -99,6 +99,8 @@
   .f { opacity: .26; transition: opacity .45s ease; }
   /* Each flick moves exactly one item and centers it. */
   .snap { scroll-snap-align: center; scroll-snap-stop: always; }
+  /* One last stop at the Questions heading; from there the answers scroll freely. */
+  #questions { scroll-snap-align: start; scroll-snap-stop: always; scroll-margin-top: 80px; }
   .f.focus { opacity: 1; }
 
   .votd { text-align: center; padding: 6vh 0 4vh; }
@@ -506,9 +508,9 @@
       p.verses.forEach((v, vi) => h.push(`<div class="f snap ${vi === 0 ? "passage-start" : ""}">${vi === 0 ? head : ""}<p class="v" aria-label="${esc(v.label)}"><sup>${v.num}</sup>${esc(v.text)}</p></div>`));
     });
 
-    h.push(`<section class="section">`);
+    h.push(`<section class="section" id="questions">`);
     d.questions.forEach((q, qi) => {
-      h.push(`<div class="q f snap">
+      h.push(`<div class="q f">
         ${qi === 0 ? `<h2>Questions</h2>` : ""}
         <div class="num">Question ${qi + 1}</div>
         <div class="text">${esc(q.text)}</div>
@@ -516,7 +518,7 @@
         ${q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div></div>` : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`}
       </div>`);
     });
-    h.push(`</section><section class="finish f snap" id="finish"></section>`);
+    h.push(`</section><section class="finish f" id="finish"></section>`);
 
     $("column").innerHTML = h.join("");
     $("scroller").scrollTop = 0;
@@ -552,13 +554,21 @@
     const max = sc.scrollHeight - sc.clientHeight;
     $("progress").style.width = (max > 0 ? Math.min(100, 100 * sc.scrollTop / max) : 0) + "%";
   }
+  // Verses snap one per flick; the questions and answers below them scroll freely.
+  function updateSnapMode() {
+    const sc = $("scroller"), qs = $("column").querySelector(".section");
+    if (!qs) return;
+    const free = qs.getBoundingClientRect().top < sc.clientHeight; // as soon as the questions come into view
+    sc.style.scrollSnapType = free ? "none" : "";
+  }
   $("scroller").addEventListener("scroll", () => {
+    updateSnapMode();
     if (!focusQueued) { focusQueued = true; requestAnimationFrame(updateFocus); }
   }, { passive: true });
 
   // Tap a verse to bring it to the reading line.
   $("column").addEventListener("click", (e) => {
-    const v = e.target.closest(".snap");
+    const v = e.target.closest(".v")?.closest(".snap");
     if (!v || e.target.closest("a, button")) return;
     const sc = $("scroller");
     const r = v.getBoundingClientRect();
