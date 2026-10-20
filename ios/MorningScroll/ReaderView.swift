@@ -95,6 +95,7 @@ struct ReaderView: View {
         case todaysReading
         case verse(passage: Int, verse: Verse, first: Bool)
         case question(Int)
+        case quiz(Int)
         case finish
     }
 
@@ -106,6 +107,7 @@ struct ReaderView: View {
             for (vi, v) in p.verses.enumerated() { out.append(.verse(passage: pi, verse: v, first: vi == 0)) }
         }
         out += day.questions.indices.map { .question($0) }
+        out += (day.quiz ?? []).indices.map { .quiz($0) }
         out.append(.finish)
         return out
     }
@@ -171,6 +173,8 @@ struct ReaderView: View {
             }
         case .question(let i):
             question(day.questions[i], index: i)
+        case .quiz(let i):
+            quizItem(i)
         case .finish:
             finish
         }
@@ -250,6 +254,59 @@ struct ReaderView: View {
             }
         }
         .padding(.top, index == 0 ? 0 : 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func quizItem(_ index: Int) -> some View {
+        let items = day.quiz ?? []
+        let z = items[index]
+        let picks = model.quizPicks(day)
+        let chosen = picks[index]
+        let allDone = !picks.contains(-1)
+        let right = zip(items, picks).filter { $0.answer == $1 }.count
+        return VStack(alignment: .leading, spacing: 0) {
+            if index == 0 {
+                Text("Quiz").font(Theme.display(fs * 1.15))
+                Text("\(items.count) quick questions on today’s reading.")
+                    .font(.system(size: 16)).foregroundStyle(Theme.muted).padding(.top, 4).padding(.bottom, 22)
+            }
+            Text("\(index + 1) OF \(items.count)").font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.rose)
+                .padding(.bottom, 10)
+            Text(z.q).font(Theme.read(fs * 0.8)).lineSpacing(fs * 0.3).padding(.bottom, 6)
+            ForEach(z.choices.indices, id: \.self) { ci in
+                let isRight = chosen >= 0 && ci == z.answer
+                let isWrong = chosen >= 0 && ci == chosen && ci != z.answer
+                Button {
+                    withAnimation(.easeOut(duration: 0.2)) { model.answerQuiz(day, item: index, choice: ci) }
+                } label: {
+                    Text(z.choices[ci])
+                        .font(Theme.read(fs * 0.68)).foregroundStyle(Theme.text)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16).padding(.vertical, 14)
+                        .background(isRight ? Theme.unlockedBg : isWrong ? Theme.lockedBg : Theme.surface, in: RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(isRight ? Theme.sage : isWrong ? Color(hex: 0x8A4F4F) : Theme.line))
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 10)
+            }
+            if chosen >= 0 {
+                (Text(chosen == z.answer ? "That’s right. " : "Not quite. ").foregroundColor(chosen == z.answer ? Theme.sage : Theme.rose)
+                 + Text(z.why).foregroundColor(Color(hex: 0xD6CBC6)))
+                    .font(Theme.read(fs * 0.64)).lineSpacing(fs * 0.25)
+                    .padding(.top, 12)
+            }
+            if index == items.count - 1 && allDone {
+                VStack(spacing: 6) {
+                    Text("\(right) of \(items.count)").font(Theme.display(34))
+                    Text(right == items.count ? "Every one. Well read!" : right >= items.count - 1 ? "Nicely done." : "Scroll up and look again at the verses you missed.")
+                        .font(Theme.read(18)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 30)
+            }
+        }
+        .padding(.top, index == 0 ? 60 : 6)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 

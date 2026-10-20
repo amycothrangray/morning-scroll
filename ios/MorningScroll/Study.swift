@@ -13,6 +13,7 @@ struct StudyDay: Codable, Identifiable, Hashable {
     let summary: String?
     let readings: [Reading]
     let questions: [Question]
+    let quiz: [QuizItem]?
 
     var title: String { "Lesson \(lesson) · \(day)" }
 }
@@ -25,6 +26,13 @@ struct Reading: Codable, Hashable {
         case ref
         case forQuestions = "for"
     }
+}
+
+struct QuizItem: Codable, Hashable {
+    let q: String
+    let choices: [String]
+    let answer: Int
+    let why: String
 }
 
 struct Question: Codable, Hashable {

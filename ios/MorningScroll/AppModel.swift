@@ -10,6 +10,7 @@ struct Progress: Codable {
     var timerDate: String?
     var timerSecs = 0
     var pick: String?                  // a day chosen from the list instead of the next one
+    var quiz: [String: [Int]]?         // study day id → chosen answer per quiz item (-1 = not yet)
 }
 
 @MainActor @Observable
@@ -114,6 +115,22 @@ final class AppModel {
     }
 
     func isComplete(_ day: StudyDay) -> Bool { secondsRead(day) >= Self.goal && Shared.readToday }
+
+    func quizPicks(_ day: StudyDay) -> [Int] {
+        let n = day.quiz?.count ?? 0
+        let saved = progress.quiz?[day.id] ?? []
+        return Array((saved + Array(repeating: -1, count: n)).prefix(n))
+    }
+
+    func answerQuiz(_ day: StudyDay, item: Int, choice: Int) {
+        var picks = quizPicks(day)
+        guard picks.indices.contains(item), picks[item] < 0 else { return }
+        picks[item] = choice
+        var all = progress.quiz ?? [:]
+        all[day.id] = picks
+        progress.quiz = all
+        save()
+    }
 
     func resetProgress() {
         progress = Progress()

@@ -130,6 +130,20 @@
   .answer .body { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.6; color: #d6cbc6; white-space: pre-line; }
   .ask { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; text-decoration: none; }
 
+  .quiz { margin-top: 12vh; }
+  .quiz h2 { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * 1.15); margin: 0 0 4px; }
+  .qz { padding: 22px 0; border-top: 1px solid var(--line); }
+  .qz .num { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--rose); margin-bottom: 10px; }
+  .qz .text { font-family: var(--read); font-size: calc(var(--fs) * .8); line-height: 1.5; }
+  .choice { display: block; width: 100%; text-align: left; margin-top: 10px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-family: var(--read); font-size: calc(var(--fs) * .68); line-height: 1.4; }
+  .choice:disabled { color: var(--text); opacity: 1; cursor: default; }
+  .choice.right { border-color: var(--sage); background: #233032; }
+  .choice.wrong { border-color: #8a4f4f; background: #3a2626; }
+  .why { margin-top: 12px; font-family: var(--read); font-size: calc(var(--fs) * .64); line-height: 1.55; color: #d6cbc6; }
+  .why b { color: var(--sage); font-weight: 500; }
+  .why b.miss { color: var(--rose); }
+  .score { text-align: center; font-family: var(--display); font-weight: 600; font-size: 32px; margin-top: 28px; }
+  .score small { display: block; font-family: var(--read); font-weight: 400; font-size: 18px; color: var(--muted); margin-top: 6px; }
   .finish { text-align: center; margin-top: 12vh; }
   .finish h2 { font-family: var(--display); font-weight: 600; font-size: 38px; margin: 0 0 10px; }
   .finish p { font-family: var(--read); color: var(--muted); font-size: 19px; margin: 0 0 28px; line-height: 1.5; }
@@ -535,11 +549,23 @@
         ${q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div></div>` : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`}
       </div>`);
     });
-    h.push(`</section><section class="finish f" id="finish"></section>`);
+    h.push(`</section>`);
+    if (d.quiz && d.quiz.length) {
+      h.push(`<section class="quiz" id="quiz"><div class="f"><h2>Quiz</h2><p class="refs" style="text-align:left">${d.quiz.length} quick questions on today’s reading.</p></div>`);
+      d.quiz.forEach((z, zi) => h.push(`<div class="qz f" data-i="${zi}">
+        <div class="num">${zi + 1} of ${d.quiz.length}</div>
+        <div class="text">${esc(z.q)}</div>
+        ${z.choices.map((c, ci) => `<button class="choice" data-c="${ci}">${esc(c)}</button>`).join("")}
+        <div class="why" hidden></div>
+      </div>`));
+      h.push(`<div class="score" id="quiz-score" hidden></div></section>`);
+    }
+    h.push(`<section class="finish f" id="finish"></section>`);
 
     $("column").innerHTML = h.join("");
     $("scroller").scrollTop = 0;
     focusables = [...$("column").querySelectorAll(".f")];
+    (state.quiz?.[d.id] || []).forEach((c, zi) => { if (c != null) showQuizAnswer(zi, c); });
     renderFinish();
     updateFocus();
 
@@ -590,6 +616,40 @@
     const sc = $("scroller");
     const r = v.getBoundingClientRect();
     sc.scrollBy({ top: r.top + r.height / 2 - sc.clientHeight / 2, behavior: "smooth" });
+  });
+
+  // ---------- quiz ----------
+  function showQuizAnswer(zi, chosen) {
+    const z = readerDay.quiz[zi];
+    const box = $("column").querySelector(`.qz[data-i="${zi}"]`);
+    if (!box) return;
+    box.querySelectorAll(".choice").forEach((b, ci) => {
+      b.disabled = true;
+      if (ci === z.answer) b.classList.add("right");
+      else if (ci === chosen) b.classList.add("wrong");
+    });
+    const why = box.querySelector(".why");
+    why.innerHTML = `<b class="${chosen === z.answer ? "" : "miss"}">${chosen === z.answer ? "That’s right." : "Not quite."}</b> ${esc(z.why)}`;
+    why.hidden = false;
+    const picks = state.quiz?.[readerDay.id] || [];
+    const answered = readerDay.quiz.filter((_, i) => picks[i] != null).length;
+    if (answered === readerDay.quiz.length) {
+      const right = readerDay.quiz.filter((q, i) => picks[i] === q.answer).length;
+      const sc = $("quiz-score");
+      sc.innerHTML = `${right} of ${readerDay.quiz.length}<small>${right === readerDay.quiz.length ? "Every one. Well read!" : right >= readerDay.quiz.length - 1 ? "Nicely done." : "Scroll up and look again at the verses you missed."}</small>`;
+      sc.hidden = false;
+    }
+  }
+
+  $("column").addEventListener("click", (e) => {
+    const b = e.target.closest(".choice");
+    if (!b || b.disabled) return;
+    const zi = +b.closest(".qz").dataset.i;
+    state.quiz = state.quiz || {};
+    const picks = state.quiz[readerDay.id] = state.quiz[readerDay.id] || [];
+    picks[zi] = +b.dataset.c;
+    save();
+    showQuizAnswer(zi, picks[zi]);
   });
 
   function renderFinish() {
