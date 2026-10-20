@@ -137,7 +137,7 @@
   .state { text-align: center; color: var(--muted); font-size: 18px; line-height: 1.6; padding-top: 20vh; }
 
   /* ---------- Settings ---------- */
-  #settings { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
+  #welcome, #settings { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
   .sheet { width: 100%; max-width: 560px; max-height: 92dvh; overflow-y: auto; background: var(--surface); border-radius: 22px 22px 0 0; border: 1px solid var(--line); padding: 18px 16px calc(var(--safe-bottom) + 28px); }
   .sheet h3 { font-family: var(--display); font-weight: 600; font-size: 28px; margin: 4px 0 18px; display: flex; align-items: center; }
   .sheet h3 button { margin-left: auto; }
@@ -203,11 +203,28 @@
   <div class="scroller" id="scroller"><div class="column" id="column"></div></div>
 </div>
 
+<div id="welcome" class="overlay" hidden>
+  <div class="sheet" role="dialog" aria-label="Welcome">
+    <h3>Welcome</h3>
+    <div class="field">
+      <label for="welcome-name">What’s your first name?</label>
+      <input type="text" id="welcome-name" autocapitalize="words" autocomplete="given-name">
+      <div class="help">So the app can say good morning to you. You can change it later in Settings.</div>
+    </div>
+    <button class="btn primary" id="welcome-save">Start reading</button>
+  </div>
+</div>
+
 <div id="settings" hidden>
   <div class="sheet" role="dialog" aria-label="Settings">
     <h3>Settings <button class="icon-btn" id="close-settings" aria-label="Close">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button></h3>
+
+    <div class="field">
+      <label for="name">Your first name</label>
+      <input type="text" id="name" autocapitalize="words" autocomplete="given-name" placeholder="For your morning greeting">
+    </div>
 
     <div class="field">
       <span class="label">Text size</span>
@@ -252,7 +269,6 @@
 <script>
 (async () => {
   const STUDY = await fetch("study.json", { cache: "no-cache" }).then((r) => r.json());
-  const NAME = "Amy";
   const GOAL = 5 * 60; // seconds of reading required to unlock
   const KEY = "morningScroll.v1";
   const READ_LINE = 0.5; // the item crossing the middle of the screen is the one in focus
@@ -263,7 +279,7 @@
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   // ---------- state ----------
-  const defaults = { done: {}, fontSize: 30, esvKey: "", shortcutName: "Bible Done", timer: null, pick: null };
+  const defaults = { name: "", done: {}, fontSize: 30, esvKey: "", shortcutName: "Bible Done", timer: null, pick: null };
   let state;
   try { state = Object.assign({}, defaults, JSON.parse(localStorage.getItem(KEY) || "{}")); }
   catch { state = { ...defaults }; }
@@ -376,7 +392,8 @@
   // ---------- home ----------
   function greeting() {
     const h = new Date().getHours();
-    return h < 12 ? `Good morning, ${NAME}` : h < 17 ? `Good afternoon, ${NAME}` : `Good evening, ${NAME}`;
+    const hello = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+    return state.name ? `${hello}, ${state.name}` : hello;
   }
 
   const bookIcon = (size) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="#d9a7a7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5C4.5 5 8 5 12 7c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5Z"/><path d="M12 7v12.5"/><ellipse cx="12" cy="2.6" rx="3" ry=".9" stroke-width=".9"/></svg>`;
@@ -655,6 +672,7 @@
 
   // ---------- settings ----------
   function openSettings() {
+    $("name").value = state.name;
     $("fs").value = state.fontSize;
     $("esv-key").value = state.esvKey;
     $("shortcut-name").value = state.shortcutName;
@@ -667,6 +685,7 @@
   $("open-settings").onclick = openSettings;
   $("close-settings").onclick = closeSettings;
   $("settings").addEventListener("click", (e) => { if (e.target.id === "settings") closeSettings(); });
+  $("name").onchange = (e) => { state.name = e.target.value.trim(); save(); };
   $("fs").oninput = (e) => { state.fontSize = +e.target.value; applyFontSize(); save(); };
   $("esv-key").onchange = (e) => { state.esvKey = e.target.value.trim(); memo.clear(); save(); };
   $("shortcut-name").onchange = (e) => { state.shortcutName = e.target.value.trim() || "Bible Done"; $("sc-name-1").textContent = state.shortcutName; save(); };
@@ -687,6 +706,19 @@
 
   // Coming back from the unlock shortcut.
   if (location.hash === "#unlocked") history.replaceState(null, "", location.pathname);
+
+  // First visit: ask for a name for the greeting.
+  if (!state.name && !state.welcomed) {
+    $("welcome").hidden = false;
+    $("welcome-save").onclick = () => {
+      state.name = $("welcome-name").value.trim();
+      state.welcomed = true;
+      save();
+      $("welcome").hidden = true;
+      renderHome();
+    };
+    $("welcome-name").addEventListener("keydown", (e) => { if (e.key === "Enter") $("welcome-save").click(); });
+  }
 
   renderHome();
 })();

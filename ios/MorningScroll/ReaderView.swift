@@ -136,15 +136,16 @@ struct ReaderView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, geo.size.height / 2)
                     .coordinateSpace(.named(Self.space))
-                    .onGeometryChange(for: CGFloat.self) { -$0.frame(in: .scrollView).minY } action: { offset in
-                        snap.offset = offset
-                        if !reachedEnd, snap.index(at: offset + geo.size.height / 2) == list.count - 1 {
-                            reachedEnd = true
-                            model.completeIfReady(day)
-                        }
-                    }
                 }
                 .scrollIndicators(.hidden)
+                .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { _, offset in
+                    snap.offset = offset
+                    // The end counts as soon as the finish card is on screen.
+                    if !reachedEnd, let finish = snap.frames[list.count - 1], offset + geo.size.height > finish.minY + 80 {
+                        reachedEnd = true
+                        model.completeIfReady(day)
+                    }
+                }
                 .scrollTargetBehavior(OneAtATime(snap: snap))
                 .onAppear { snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
                 .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstQuestionIndex(list) }
