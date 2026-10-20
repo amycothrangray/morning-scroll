@@ -37,7 +37,7 @@ struct ReaderView: View {
         .onReceive(ticker) { _ in
             guard phase == .active else { return }
             model.tick(day)
-            if reachedEnd { model.completeIfReady(day) }
+            model.completeIfReady(day) // five minutes unlocks, wherever she is in the reading
         }
         .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
         .onDisappear {
@@ -68,7 +68,7 @@ struct ReaderView: View {
         return HStack(spacing: 10) {
             Circle().fill(left > 0 ? Theme.rose : Theme.sage).frame(width: 8, height: 8)
                 .shadow(color: left > 0 ? Theme.rose : Theme.sage, radius: 5)
-            Text(left > 0 ? "Your apps unlock when the timer ends" : "Time’s up. Finish at your own pace.")
+            Text(left > 0 ? "Your apps unlock when the timer ends" : (model.hasBlockedApps ? "Apps unlocked. Read on as long as you like." : "Time’s up. Read on as long as you like."))
                 .font(.system(size: 14)).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
             Spacer(minLength: 4)
             Text(left > 0 ? clock(left) : "Done")

@@ -617,7 +617,7 @@
   }
 
   function maybeComplete() {
-    if (reachedEnd && timerSecs() >= GOAL && !state.done[readerDay.id]) {
+    if (timerSecs() >= GOAL && !state.done[readerDay.id]) { // five minutes is enough, wherever she is
       state.done[readerDay.id] = today();
       if (state.pick === readerDay.id) state.pick = null;
       save();
@@ -646,7 +646,7 @@
       state.timer.secs++;
       if (state.timer.secs % 5 === 0) save();
       updateTimer();
-      if (reachedEnd) maybeComplete();
+      if (state.timer.secs >= GOAL) maybeComplete();
     }, 1000);
   }
   function stopTick() { if (tickHandle) clearInterval(tickHandle); tickHandle = null; }

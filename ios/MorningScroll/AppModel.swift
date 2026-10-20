@@ -102,7 +102,7 @@ final class AppModel {
         if progress.timerSecs % 5 == 0 { save() }
     }
 
-    /// Called once she has scrolled to the end; unlocks when the five minutes are also up.
+    /// Unlocks the held-back apps once the five minutes are up.
     func completeIfReady(_ day: StudyDay) {
         guard secondsRead(day) >= Self.goal else { return }
         if progress.done[day.id] == nil { progress.done[day.id] = today }
