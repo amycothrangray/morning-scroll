@@ -91,12 +91,14 @@
   .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; z-index: 4; background: var(--surface); }
   .progress i { display: block; height: 100%; width: 0; background: var(--rose-deep); transition: width .3s; }
 
-  .scroller { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .scroller { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: y mandatory; }
   .scroller::-webkit-scrollbar { display: none; }
-  .column { max-width: 680px; margin: 0 auto; padding: calc(var(--safe-top) + 110px) 24px 55vh; }
+  .column { max-width: 680px; margin: 0 auto; padding: 50vh 24px 50vh; }
 
   /* One verse at a time: whatever sits on the reading line is bright, everything else steps back. */
   .f { opacity: .26; transition: opacity .45s ease; }
+  /* Each flick moves exactly one item and centers it. */
+  .snap { scroll-snap-align: center; scroll-snap-stop: always; }
   .f.focus { opacity: 1; }
 
   .votd { text-align: center; padding: 6vh 0 4vh; }
@@ -108,11 +110,12 @@
   .today-block .ref-line { color: var(--rose); font-size: 16px; margin-bottom: 14px; line-height: 1.5; }
   .today-block .summary { font-family: var(--read); font-style: italic; color: var(--muted); font-size: calc(var(--fs) * .68); line-height: 1.6; margin: 0; }
 
-  .passage-head { margin: 10vh 0 3vh; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .passage-head { margin: 0 0 3vh; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
   .passage-head .name { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * .95); }
   .passage-head .for { color: var(--muted); font-size: 13px; background: var(--surface); border: 1px solid var(--line); padding: 3px 10px; border-radius: 999px; }
 
-  .v { font-family: var(--read); font-size: var(--fs); line-height: 1.55; margin: 0 0 1.1em; white-space: pre-line; cursor: pointer; }
+  .v { font-family: var(--read); font-size: var(--fs); line-height: 1.55; margin: 0; padding: .55em 0; white-space: pre-line; cursor: pointer; }
+  .passage-start { margin-top: 8vh; }
   .v sup { font-family: var(--ui); font-size: .48em; color: var(--rose); margin-right: .3em; font-weight: 500; }
 
   .section { margin-top: 12vh; }
@@ -120,6 +123,9 @@
   .q .num { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--rose); margin-bottom: 10px; }
   .q .text { font-family: var(--read); font-size: calc(var(--fs) * .8); line-height: 1.55; }
   .q ul { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.55; color: var(--muted); padding-left: 1.1em; margin: 12px 0 0; }
+  .answer { margin-top: 18px; padding: 16px 18px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+  .answer .label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; }
+  .answer .body { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.6; color: #d6cbc6; white-space: pre-line; }
   .ask { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; text-decoration: none; }
 
   .finish { text-align: center; margin-top: 12vh; }
@@ -241,14 +247,13 @@
   </div>
 </div>
 
-<script src="study.js"></script>
 <script>
-(() => {
-  const STUDY = window.STUDY;
+(async () => {
+  const STUDY = await fetch("study.json", { cache: "no-cache" }).then((r) => r.json());
   const NAME = "Amy";
   const GOAL = 5 * 60; // seconds of reading required to unlock
   const KEY = "morningScroll.v1";
-  const READ_LINE = 0.42; // the verse crossing this fraction of the screen height is the one in focus
+  const READ_LINE = 0.5; // the item crossing the middle of the screen is the one in focus
   const SINGLE_CHAPTER = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"];
   const ESV_NOTICE = "Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.";
 
@@ -482,13 +487,13 @@
     const d = readerDay;
     const h = [];
     if (key && key.verses.length) {
-      h.push(`<section class="votd f">
+      h.push(`<section class="votd f snap">
         <div class="eyebrow">Verse of the Day</div>
         <div class="ref-line">${esc(d.key)}</div>
         <div class="quote">${esc(key.verses.map((v) => v.text).join(" "))}</div>
       </section><hr class="rule">`);
     }
-    h.push(`<section class="today-block f">
+    h.push(`<section class="today-block f snap">
       <h2>Today’s Reading</h2>
       <div class="ref-line">Lesson ${esc(d.lesson)} · ${esc(d.day)}<br>${d.readings.map((r) => esc(r.ref)).join(" · ")}</div>
       ${d.summary ? `<p class="summary">${esc(d.summary)}</p>` : ""}
@@ -496,20 +501,22 @@
 
     passages.forEach((p, pi) => {
       const forQs = d.readings[pi].for || [];
-      h.push(`<div class="passage-head f"><span class="name">${esc(p.ref)}</span>${forQs.length ? `<span class="for">for question${forQs.length > 1 ? "s" : ""} ${forQs.join(", ")}</span>` : ""}</div>`);
-      p.verses.forEach((v) => h.push(`<p class="v f" aria-label="${esc(v.label)}"><sup>${v.num}</sup>${esc(v.text)}</p>`));
+      const head = `<div class="passage-head"><span class="name">${esc(p.ref)}</span>${forQs.length ? `<span class="for">for question${forQs.length > 1 ? "s" : ""} ${forQs.join(", ")}</span>` : ""}</div>`;
+      // The passage title rides along with its first verse so it isn't an extra stop.
+      p.verses.forEach((v, vi) => h.push(`<div class="f snap ${vi === 0 ? "passage-start" : ""}">${vi === 0 ? head : ""}<p class="v" aria-label="${esc(v.label)}"><sup>${v.num}</sup>${esc(v.text)}</p></div>`));
     });
 
-    h.push(`<section class="section"><h2 class="f">Questions</h2>`);
+    h.push(`<section class="section">`);
     d.questions.forEach((q, qi) => {
-      h.push(`<div class="q f">
+      h.push(`<div class="q f snap">
+        ${qi === 0 ? `<h2>Questions</h2>` : ""}
         <div class="num">Question ${qi + 1}</div>
         <div class="text">${esc(q.text)}</div>
         ${q.items ? `<ul>${q.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-        <a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>
+        ${q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div></div>` : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`}
       </div>`);
     });
-    h.push(`</section><section class="finish f" id="finish"></section>`);
+    h.push(`</section><section class="finish f snap" id="finish"></section>`);
 
     $("column").innerHTML = h.join("");
     $("scroller").scrollTop = 0;
@@ -551,18 +558,18 @@
 
   // Tap a verse to bring it to the reading line.
   $("column").addEventListener("click", (e) => {
-    const v = e.target.closest(".v");
-    if (!v) return;
+    const v = e.target.closest(".snap");
+    if (!v || e.target.closest("a, button")) return;
     const sc = $("scroller");
     const r = v.getBoundingClientRect();
-    sc.scrollBy({ top: r.top - sc.clientHeight * READ_LINE + 10, behavior: "smooth" });
+    sc.scrollBy({ top: r.top + r.height / 2 - sc.clientHeight / 2, behavior: "smooth" });
   });
 
   function renderFinish() {
     const fb = $("finish");
     if (!fb) return;
     const left = Math.max(0, GOAL - timerSecs());
-    const ask = `<a class="btn ghost small" href="${claudeURL(readerDay)}" target="_blank" rel="noopener">Ask Claude about today's questions</a>`;
+    const ask = `<a class="btn ghost small" href="${claudeURL(readerDay)}" target="_blank" rel="noopener">Ask Claude a follow-up</a>`;
     const notice = `<div class="copyright">${usingESV() ? esc(ESV_NOTICE) : "Scripture from the World English Bible (public domain)."}</div>`;
     if (left > 0) {
       fb.innerHTML = `<div class="halo">${bookIcon(56)}</div>

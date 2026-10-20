@@ -1,0 +1,349 @@
+import SwiftUI
+
+struct ReaderView: View {
+    let day: StudyDay
+    @Environment(AppModel.self) private var model
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var phase
+
+    @State private var keyVerse: Passage?
+    @State private var passages: [Passage] = []
+    @State private var loadError: String?
+    @State private var loading = true
+    @State private var reachedEnd = false
+    @State private var snap = SnapLayout()
+
+    private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private var fs: CGFloat { model.fontSize }
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            Theme.bg.ignoresSafeArea()
+            if loading {
+                ProgressView().tint(Theme.rose).frame(maxHeight: .infinity)
+            } else if let loadError {
+                VStack(spacing: 20) {
+                    Text(loadError).font(.system(size: 18)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                    Button("Try again") { Task { await load() } }.buttonStyle(GhostButtonStyle()).frame(width: 200)
+                }
+                .padding(24).frame(maxHeight: .infinity)
+            } else {
+                content
+            }
+            topBar
+        }
+        .foregroundStyle(Theme.text)
+        .task { await load() }
+        .onReceive(ticker) { _ in
+            guard phase == .active else { return }
+            model.tick(day)
+            if reachedEnd { model.completeIfReady(day) }
+        }
+        .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
+            model.save()
+        }
+    }
+
+    private func load() async {
+        loading = true
+        loadError = nil
+        do {
+            // One at a time keeps the free fallback API from rate-limiting us.
+            if let key = day.key { keyVerse = try await Scripture.shared.passage(key, esvKey: model.esvKey) }
+            var loaded: [Passage] = []
+            for r in day.readings { loaded.append(try await Scripture.shared.passage(r.ref, esvKey: model.esvKey)) }
+            passages = loaded
+        } catch {
+            loadError = (error as? LocalizedError)?.errorDescription ?? "Couldn't load today's reading. Check your connection and try again."
+        }
+        loading = false
+    }
+
+    // MARK: Top bar
+
+    private var topBar: some View {
+        let left = model.secondsLeft(day)
+        return HStack(spacing: 10) {
+            Circle().fill(left > 0 ? Theme.rose : Theme.sage).frame(width: 8, height: 8)
+                .shadow(color: left > 0 ? Theme.rose : Theme.sage, radius: 5)
+            Text(left > 0 ? "Your apps unlock when the timer ends" : "Time’s up. Finish at your own pace.")
+                .font(.system(size: 14)).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
+            Spacer(minLength: 4)
+            Text(left > 0 ? clock(left) : "Done")
+                .font(.system(size: 15, weight: .medium).monospacedDigit())
+                .padding(.horizontal, 12).padding(.vertical, 7)
+                .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+            Button { dismiss() } label: {
+                Image(systemName: "xmark").font(.system(size: 15, weight: .semibold))
+                    .frame(width: 40, height: 40)
+                    .background(Theme.surface, in: Circle()).overlay(Circle().stroke(Theme.line))
+            }
+            .accessibilityLabel("Close")
+        }
+        .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 24)
+        .background(LinearGradient(stops: [.init(color: Theme.bg, location: 0.6), .init(color: Theme.bg.opacity(0), location: 1)],
+                                   startPoint: .top, endPoint: .bottom).ignoresSafeArea(edges: .top))
+    }
+
+    // MARK: Scroll
+
+    /// Everything in the reader, in order. Each is one stop: a small flick moves exactly one item and centers it.
+    private enum Item {
+        case verseOfTheDay
+        case todaysReading
+        case verse(passage: Int, verse: Verse, first: Bool)
+        case question(Int)
+        case finish
+    }
+
+    private var items: [Item] {
+        var out: [Item] = []
+        if keyVerse != nil { out.append(.verseOfTheDay) }
+        out.append(.todaysReading)
+        for (pi, p) in passages.enumerated() {
+            for (vi, v) in p.verses.enumerated() { out.append(.verse(passage: pi, verse: v, first: vi == 0)) }
+        }
+        out += day.questions.indices.map { .question($0) }
+        out.append(.finish)
+        return out
+    }
+
+    private static let space = "readerContent"
+
+    private var content: some View {
+        GeometryReader { geo in
+            let list = items
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(Array(list.enumerated()), id: \.offset) { i, item in
+                            itemView(item)
+                                .padding(.vertical, 16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .focusFade()
+                                .contentShape(Rectangle())
+                                .id(i)
+                                .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(Self.space)) } action: { snap.frames[i] = $0 }
+                                .onTapGesture {
+                                    withAnimation(.easeInOut(duration: 0.35)) { proxy.scrollTo(i, anchor: .center) }
+                                }
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .frame(maxWidth: 680)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, geo.size.height / 2)
+                    .coordinateSpace(.named(Self.space))
+                    .onGeometryChange(for: CGFloat.self) { -$0.frame(in: .scrollView).minY } action: { offset in
+                        snap.offset = offset
+                        if !reachedEnd, snap.index(at: offset + geo.size.height / 2) == list.count - 1 {
+                            reachedEnd = true
+                            model.completeIfReady(day)
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
+                .scrollTargetBehavior(OneAtATime(snap: snap))
+                .onAppear { snap.count = list.count }
+                .onChange(of: list.count) { _, n in snap.count = n }
+            }
+        }
+        .ignoresSafeArea()
+    }
+
+    @ViewBuilder private func itemView(_ item: Item) -> some View {
+        switch item {
+        case .verseOfTheDay:
+            if let keyVerse, let ref = day.key { verseOfTheDay(keyVerse, ref: ref) }
+        case .todaysReading:
+            todaysReading
+        case let .verse(pi, v, first):
+            VStack(alignment: .leading, spacing: 20) {
+                if first { passageHead(passages[pi], reading: day.readings[pi]) }
+                verseText(v)
+            }
+        case .question(let i):
+            question(day.questions[i], index: i)
+        case .finish:
+            finish
+        }
+    }
+
+    private func verseOfTheDay(_ p: Passage, ref: String) -> some View {
+        VStack(spacing: 0) {
+            Text("VERSE OF THE DAY").font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.muted)
+            Text(ref).font(.system(size: 15)).foregroundStyle(Theme.rose).padding(.top, 6).padding(.bottom, 22)
+            Text(p.verses.map(\.text).joined(separator: " "))
+                .font(Theme.read(fs * 1.08)).lineSpacing(fs * 0.4).multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var todaysReading: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Today’s Reading").font(Theme.display(fs * 1.15))
+            Text("\(day.title)\n\(day.readings.map(\.ref).joined(separator: " · "))")
+                .font(.system(size: 16)).foregroundStyle(Theme.rose).lineSpacing(3).padding(.bottom, 10)
+            if let s = day.summary {
+                Text(s).font(Theme.read(fs * 0.68, italic: true)).foregroundStyle(Theme.muted).lineSpacing(fs * 0.25)
+            }
+        }
+    }
+
+    private func passageHead(_ p: Passage, reading: Reading) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Text(p.ref).font(Theme.display(fs * 0.95))
+            if let qs = reading.forQuestions, !qs.isEmpty {
+                Text("for question\(qs.count > 1 ? "s" : "") \(qs.map(String.init).joined(separator: ", "))")
+                    .font(.system(size: 13)).foregroundStyle(Theme.muted)
+                    .padding(.horizontal, 10).padding(.vertical, 3)
+                    .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+            }
+        }
+    }
+
+    private func verseText(_ v: Verse) -> some View {
+        (Text("\(v.num) ").font(.system(size: fs * 0.48, weight: .medium)).baselineOffset(fs * 0.38).foregroundColor(Theme.rose)
+         + Text(v.text).font(Theme.read(fs)))
+            .lineSpacing(fs * 0.38)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func question(_ q: Question, index: Int) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if index == 0 {
+                Text("Questions").font(Theme.display(fs * 1.15)).padding(.bottom, 18)
+            }
+            Text("QUESTION \(index + 1)").font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.rose)
+                .padding(.bottom, 10)
+            Text(q.text).font(Theme.read(fs * 0.8)).lineSpacing(fs * 0.3)
+            if let items = q.items {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(items, id: \.self) { Text("•  \($0)") }
+                }
+                .font(Theme.read(fs * 0.7)).foregroundStyle(Theme.muted).padding(.top, 12)
+            }
+            if let answer = q.answer {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("ANSWER").font(.system(size: 12, weight: .medium)).tracking(1.8).foregroundStyle(Theme.sage)
+                    Text(answer).font(Theme.read(fs * 0.7)).foregroundStyle(Color(hex: 0xD6CBC6)).lineSpacing(fs * 0.28)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Theme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.line))
+                .padding(.top, 18)
+            } else {
+                Link(destination: ClaudeLink.url(for: day, study: model.study.title, question: index)) {
+                    Text("✦  Ask Claude").font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.text)
+                        .padding(.horizontal, 18).padding(.vertical, 11)
+                        .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+                }
+                .padding(.top, 18)
+            }
+        }
+        .padding(.top, index == 0 ? 0 : 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var finish: some View {
+        VStack(spacing: 0) {
+            HaloBook().padding(.bottom, 26)
+            if model.isComplete(day) {
+                Text("Daily reading complete!").font(Theme.display(38)).multilineTextAlignment(.center).padding(.bottom, 10)
+                Text(model.hasBlockedApps ? "Your apps are unlocked. Enjoy your day with peace of mind." : "Enjoy your day with peace of mind.")
+                    .font(Theme.read(19)).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.bottom, 28)
+                Button("Back to home") { dismiss() }.buttonStyle(PrimaryButtonStyle())
+            } else {
+                Text("Almost there").font(Theme.display(38)).padding(.bottom, 10)
+                Text("Stay a little longer. Scroll back up and sit with a verse.")
+                    .font(Theme.read(19)).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.bottom, 28)
+                Button("Unlock in \(clock(model.secondsLeft(day)))") {}.buttonStyle(PrimaryButtonStyle()).disabled(true)
+            }
+            Link(destination: ClaudeLink.url(for: day, study: model.study.title)) {
+                Text("Ask Claude a follow-up")
+            }
+            .buttonStyle(GhostButtonStyle())
+            .padding(.top, 10)
+            Text(model.esvKey.isEmpty
+                 ? "Scripture from the World English Bible (public domain)."
+                 : "Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.")
+                .font(.system(size: 12)).foregroundStyle(Theme.faint).multilineTextAlignment(.center).padding(.top, 26)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func clock(_ s: Int) -> String { String(format: "%d:%02d", s / 60, s % 60) }
+}
+
+extension View {
+    /// One verse at a time: whatever sits on the reading line is bright, everything else steps back.
+    func focusFade() -> some View {
+        visualEffect { content, proxy in
+            let frame = proxy.frame(in: .scrollView)
+            let height = proxy.bounds(of: .scrollView)?.height ?? 800
+            let line = height * 0.5
+            let distance: CGFloat = (frame.minY <= line && frame.maxY >= line)
+                ? 0 : min(abs(frame.minY - line), abs(frame.maxY - line))
+            let opacity: Double = max(0.26, 1 - Double(distance) / 70)
+            return content.opacity(opacity)
+        }
+    }
+}
+
+/// Item frames and scroll position, shared with the snapping behavior (not observed, so it never re-renders).
+final class SnapLayout {
+    var frames: [Int: CGRect] = [:]
+    var offset: CGFloat = 0
+    var count = 0
+
+    /// The item under content position y (items touch, so this is almost always exact).
+    func index(at y: CGFloat) -> Int {
+        if let hit = frames.first(where: { $0.value.minY <= y && $0.value.maxY >= y }) { return hit.key }
+        return frames.min { abs($0.value.midY - y) < abs($1.value.midY - y) }?.key ?? 0
+    }
+
+    func isTall(_ i: Int, height: CGFloat) -> Bool { (frames[i]?.height ?? 0) > height - 180 }
+
+    /// Where to scroll so item i sits in the middle; long items (answers) start near the top instead.
+    func offset(for i: Int, height: CGFloat, fromBelow: Bool = false) -> CGFloat? {
+        guard let f = frames[i] else { return nil }
+        if isTall(i, height: height) { return fromBelow ? f.maxY + 60 - height : f.minY - 100 }
+        return f.midY - height / 2
+    }
+}
+
+/// One small flick = the next item, centered. Long items page through before moving on.
+struct OneAtATime: ScrollTargetBehavior {
+    let snap: SnapLayout
+
+    func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
+        let h = context.containerSize.height
+        let now = snap.offset
+        let natural = target.rect.minY
+        let maxOffset = max(0, context.contentSize.height - h)
+        let current = snap.index(at: now + h / 2)
+        var y = natural
+
+        if abs(natural - now) < 6 {
+            y = snap.offset(for: current, height: h) ?? natural
+        } else {
+            let down = natural > now
+            if snap.isTall(current, height: h), let f = snap.frames[current] {
+                if down && now + h < f.maxY + 40 {
+                    target.rect.origin.y = min(min(now + h * 0.7, f.maxY + 60 - h), maxOffset)
+                    return
+                }
+                if !down && now > f.minY - 80 {
+                    target.rect.origin.y = max(max(now - h * 0.7, f.minY - 100), 0)
+                    return
+                }
+            }
+            let next = min(max(current + (down ? 1 : -1), 0), max(snap.count - 1, 0))
+            y = snap.offset(for: next, height: h, fromBelow: !down) ?? natural
+        }
+        target.rect.origin.y = min(max(y, 0), maxOffset)
+    }
+}
