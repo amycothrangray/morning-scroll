@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Morning Scroll</title>
+<meta name="theme-color" content="#181414">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Scroll">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  /* Amy Gray Photography palette (dusty rose + warm gray), turned down for early-morning eyes. */
+  :root {
+    --bg: #181414;
+    --surface: #221d1d;
+    --surface-2: #2d2626;
+    --line: #3a3131;
+    --text: #f0e6e2;
+    --muted: #a39a94;
+    --faint: #6f6663;
+    --rose: #d9a7a7;
+    --rose-deep: #b88a8a;
+    --rose-ink: #201616;
+    --sage: #aabcbd;
+    --fs: 30px;
+    --display: "Cormorant Garamond", Georgia, serif;
+    --read: "Lora", Georgia, serif;
+    --ui: "Jost", -apple-system, system-ui, sans-serif;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--ui); }
+  body { overscroll-behavior: none; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  a { color: var(--rose); }
+  [hidden] { display: none !important; }
+
+  .icon-btn { width: 40px; height: 40px; flex: none; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 15px; font-weight: 500; }
+  .btn { display: block; width: 100%; border: 0; border-radius: 16px; padding: 18px; font-size: 19px; font-weight: 600; text-align: center; text-decoration: none; letter-spacing: .01em; }
+  .btn.primary { background: var(--rose-deep); color: var(--rose-ink); }
+  .btn.primary:disabled { background: var(--surface-2); color: var(--faint); }
+  .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--text); margin-top: 10px; }
+  .btn.small { padding: 13px; font-size: 16px; border-radius: 13px; }
+  .eyebrow { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+
+  /* ---------- Home ---------- */
+  #home { min-height: 100dvh; max-width: 560px; margin: 0 auto; padding: calc(var(--safe-top) + 14px) 16px calc(var(--safe-bottom) + 28px); display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 600; font-size: 26px; margin-right: auto; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--rose-deep); display: grid; place-items: center; }
+
+  .today { margin-top: 7vh; text-align: center; }
+  .halo { width: 116px; height: 116px; margin: 0 auto 26px; border-radius: 999px; display: grid; place-items: center; background: radial-gradient(circle, #33292a 0%, #272020 62%, transparent 74%); box-shadow: 0 0 70px rgba(217,167,167,.13); }
+  .greeting { font-family: var(--display); font-style: italic; font-size: 22px; color: var(--rose); margin-bottom: 6px; }
+  .today h1 { font-family: var(--display); font-weight: 600; font-size: 44px; margin: 6px 0 12px; line-height: 1.1; }
+  .today p { font-family: var(--read); font-size: 20px; color: var(--muted); line-height: 1.5; margin: 0 auto; max-width: 28ch; }
+  .refs { font-size: 17px; color: var(--muted); line-height: 1.6; margin-top: 12px; }
+
+  .action-card { margin-top: auto; padding-top: 34px; }
+  .action-inner { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 16px; }
+  .status-row { display: flex; align-items: center; gap: 10px; padding: 2px 4px 14px; font-size: 15px; color: var(--muted); }
+  .tag { padding: 4px 10px; border-radius: 999px; font-weight: 500; font-size: 14px; white-space: nowrap; }
+  .tag.locked { background: #3a2626; color: var(--rose); }
+  .tag.unlocked { background: #233032; color: var(--sage); }
+  .translation-note { margin-top: 16px; font-size: 14px; color: var(--faint); text-align: center; line-height: 1.5; }
+
+  .days { margin-top: 26px; }
+  .days summary { list-style: none; color: var(--muted); font-size: 16px; padding: 10px 4px; cursor: pointer; }
+  .days summary::-webkit-details-marker { display: none; }
+  .day-row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 15px 4px; font-size: 17px; }
+  .day-row .mark { width: 24px; height: 24px; border-radius: 999px; border: 2px solid var(--line); flex: none; display: grid; place-items: center; font-size: 14px; }
+  .day-row.done .mark { background: var(--sage); border-color: var(--sage); color: var(--rose-ink); }
+  .day-row.current { color: var(--rose); }
+  .day-row small { margin-left: auto; color: var(--faint); font-size: 14px; }
+
+  /* ---------- Reader ---------- */
+  #reader { position: fixed; inset: 0; background: var(--bg); z-index: 10; }
+  .reader-bar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; padding: calc(var(--safe-top) + 8px) 14px 22px; display: flex; align-items: center; gap: 10px; background: linear-gradient(var(--bg) 62%, rgba(24,20,20,0)); }
+  .reader-bar .note { margin-right: auto; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+  .reader-bar .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--rose); box-shadow: 0 0 10px var(--rose); }
+  .reader-bar .note.met .dot { background: var(--sage); box-shadow: 0 0 10px var(--sage); }
+  .timer { font-variant-numeric: tabular-nums; }
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; z-index: 4; background: var(--surface); }
+  .progress i { display: block; height: 100%; width: 0; background: var(--rose-deep); transition: width .3s; }
+
+  .scroller { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .scroller::-webkit-scrollbar { display: none; }
+  .column { max-width: 680px; margin: 0 auto; padding: calc(var(--safe-top) + 110px) 24px 55vh; }
+
+  /* One verse at a time: whatever sits on the reading line is bright, everything else steps back. */
+  .f { opacity: .26; transition: opacity .45s ease; }
+  .f.focus { opacity: 1; }
+
+  .votd { text-align: center; padding: 6vh 0 4vh; }
+  .votd .ref-line { font-size: 15px; color: var(--rose); margin: 6px 0 22px; }
+  .votd .quote { font-family: var(--read); font-size: calc(var(--fs) * 1.08); line-height: 1.5; white-space: pre-line; }
+  .rule { height: 1px; background: var(--line); margin: 4vh 0; border: 0; }
+
+  .today-block h2, .section h2 { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * 1.15); margin: 0 0 4px; line-height: 1.15; }
+  .today-block .ref-line { color: var(--rose); font-size: 16px; margin-bottom: 14px; line-height: 1.5; }
+  .today-block .summary { font-family: var(--read); font-style: italic; color: var(--muted); font-size: calc(var(--fs) * .68); line-height: 1.6; margin: 0; }
+
+  .passage-head { margin: 10vh 0 3vh; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .passage-head .name { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * .95); }
+  .passage-head .for { color: var(--muted); font-size: 13px; background: var(--surface); border: 1px solid var(--line); padding: 3px 10px; border-radius: 999px; }
+
+  .v { font-family: var(--read); font-size: var(--fs); line-height: 1.55; margin: 0 0 1.1em; white-space: pre-line; cursor: pointer; }
+  .v sup { font-family: var(--ui); font-size: .48em; color: var(--rose); margin-right: .3em; font-weight: 500; }
+
+  .section { margin-top: 12vh; }
+  .q { padding: 22px 0; border-top: 1px solid var(--line); }
+  .q .num { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--rose); margin-bottom: 10px; }
+  .q .text { font-family: var(--read); font-size: calc(var(--fs) * .8); line-height: 1.55; }
+  .q ul { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.55; color: var(--muted); padding-left: 1.1em; margin: 12px 0 0; }
+  .ask { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; text-decoration: none; }
+
+  .finish { text-align: center; margin-top: 12vh; }
+  .finish h2 { font-family: var(--display); font-weight: 600; font-size: 38px; margin: 0 0 10px; }
+  .finish p { font-family: var(--read); color: var(--muted); font-size: 19px; margin: 0 0 28px; line-height: 1.5; }
+  .copyright { font-size: 12px; color: var(--faint); margin-top: 26px; line-height: 1.5; text-align: center; }
+  .state { text-align: center; color: var(--muted); font-size: 18px; line-height: 1.6; padding-top: 20vh; }
+
+  /* ---------- Settings ---------- */
+  #settings { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { width: 100%; max-width: 560px; max-height: 92dvh; overflow-y: auto; background: var(--surface); border-radius: 22px 22px 0 0; border: 1px solid var(--line); padding: 18px 16px calc(var(--safe-bottom) + 28px); }
+  .sheet h3 { font-family: var(--display); font-weight: 600; font-size: 28px; margin: 4px 0 18px; display: flex; align-items: center; }
+  .sheet h3 button { margin-left: auto; }
+  .field { margin-bottom: 26px; }
+  .field label, .field .label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 16px; }
+  .field .help { color: var(--muted); font-size: 14px; line-height: 1.5; margin-top: 8px; }
+  .field input[type=text], .field input[type=password] { width: 100%; font: inherit; font-size: 17px; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  .field input[type=range] { width: 100%; accent-color: var(--rose-deep); }
+  .size-preview { font-family: var(--read); font-size: var(--fs); line-height: 1.5; margin-top: 10px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .row input { flex: 1; min-width: 0; }
+  .ok { color: var(--sage); }
+  .err { color: #e8958a; }
+  details.steps { border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px; margin-bottom: 14px; }
+  details.steps summary { font-weight: 500; padding: 12px 0; cursor: pointer; }
+  details.steps ol { padding-left: 1.2em; line-height: 1.6; font-size: 15px; }
+  details.steps li { margin-bottom: 8px; }
+  details.steps code { background: var(--bg); padding: 1px 6px; border-radius: 6px; font-size: 14px; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<main id="home">
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#201616" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5.5C4.5 4 8 4 12 6c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5Z"/><path d="M12 6v13.5"/></svg>
+      </span>
+      Morning Scroll
+    </div>
+    <span class="pill" title="Days in a row">🔥 <span id="streak-n">0</span></span>
+    <button class="icon-btn" id="open-settings" aria-label="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+    </button>
+  </div>
+
+  <section class="today" id="today"></section>
+
+  <div class="action-card">
+    <div class="action-inner">
+      <div class="status-row" id="lock-status"></div>
+      <button class="btn primary" id="open-reading">Open Daily Reading</button>
+      <a class="btn ghost small" id="ask-day" target="_blank" rel="noopener" hidden>Ask Claude about today's questions</a>
+    </div>
+    <div class="translation-note" id="translation-note"></div>
+  </div>
+
+  <details class="days">
+    <summary>All lessons ›</summary>
+    <div id="day-list"></div>
+  </details>
+</main>
+
+<div id="reader" hidden>
+  <div class="reader-bar">
+    <span class="note" id="timer-note"><span class="dot"></span><span id="timer-text">Your apps unlock when the timer ends</span></span>
+    <span class="pill timer" id="timer">5:00</span>
+    <button class="icon-btn" id="close-reader" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="progress"><i id="progress"></i></div>
+  </div>
+  <div class="scroller" id="scroller"><div class="column" id="column"></div></div>
+</div>
+
+<div id="settings" hidden>
+  <div class="sheet" role="dialog" aria-label="Settings">
+    <h3>Settings <button class="icon-btn" id="close-settings" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button></h3>
+
+    <div class="field">
+      <span class="label">Text size</span>
+      <input type="range" id="fs" min="22" max="46" step="1">
+      <div class="size-preview">The LORD is my shepherd; I shall not want.</div>
+    </div>
+
+    <div class="field">
+      <label for="esv-key">ESV API key</label>
+      <div class="row">
+        <input type="password" id="esv-key" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste your key">
+        <button class="btn ghost small" id="test-key" style="width:auto;margin:0">Test</button>
+      </div>
+      <div class="help" id="key-status"></div>
+      <div class="help">Free for personal use. Sign up at <a href="https://api.esv.org/account/create-application/" target="_blank" rel="noopener">api.esv.org</a>, create an application, and paste the key here. It stays on this phone. Until then the app reads from the World English Bible.</div>
+    </div>
+
+    <div class="field">
+      <label for="shortcut-name">Unlock shortcut name</label>
+      <input type="text" id="shortcut-name" autocapitalize="words">
+      <div class="help">The app runs this shortcut when you finish, so your other apps stop sending you here until tomorrow.</div>
+    </div>
+
+    <details class="steps">
+      <summary>Set up app blocking (one time, about 5 minutes)</summary>
+      <ol>
+        <li>Open <b>Shortcuts</b> → <b>Shortcuts</b> tab → <b>+</b>. Name it <code id="sc-name-1">Bible Done</code>.</li>
+        <li>Add <b>Date</b> (Current Date), then <b>Format Date</b> → Date Format: Custom → <code>yyyy-MM-dd</code>.</li>
+        <li>Add <b>Save File</b>. Turn off “Ask Where to Save,” set the path to <code>bible-done.txt</code> (in the Shortcuts folder), and turn on “Overwrite If File Exists.”</li>
+        <li>Go to the <b>Automation</b> tab → <b>+</b> → <b>App</b>. Choose the apps to hold back (Instagram, Facebook, Mail, News…). <b>Don’t pick Safari</b>, because this app runs in Safari. Choose “Is Opened” and “Run Immediately.”</li>
+        <li>In that automation add <b>Get File from Folder</b>: folder Shortcuts, path <code>bible-done.txt</code>, “Error If Not Found” off.</li>
+        <li>Add <b>Get Text from Input</b> (the file), then <b>Date</b> + <b>Format Date</b> <code>yyyy-MM-dd</code> again.</li>
+        <li>Add <b>If</b>: Text <b>is not</b> Formatted Date → inside it add <b>Open URLs</b> with <code id="app-url">this page’s address</code>.</li>
+      </ol>
+      <p class="help">Until you finish the day’s reading, opening any of those apps sends you here. Tapping “Unlock my apps” at the end saves today’s date, and the automation lets you through until tomorrow.</p>
+    </details>
+
+    <button class="btn ghost small" id="reset">Reset my progress</button>
+  </div>
+</div>
+
+<script src="study.js"></script>
+<script>
+(() => {
+  const STUDY = window.STUDY;
+  const NAME = "Amy";
+  const GOAL = 5 * 60; // seconds of reading required to unlock
+  const KEY = "morningScroll.v1";
+  const READ_LINE = 0.42; // the verse crossing this fraction of the screen height is the one in focus
+  const SINGLE_CHAPTER = ["Obadiah", "Philemon", "2 John", "3 John", "Jude"];
+  const ESV_NOTICE = "Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.";
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // ---------- state ----------
+  const defaults = { done: {}, fontSize: 30, esvKey: "", shortcutName: "Bible Done", timer: null, pick: null };
+  let state;
+  try { state = Object.assign({}, defaults, JSON.parse(localStorage.getItem(KEY) || "{}")); }
+  catch { state = { ...defaults }; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const today = () => iso(new Date());
+  const dayById = (id) => STUDY.days.find((d) => d.id === id);
+  const nextDay = () => STUDY.days.find((d) => !state.done[d.id]) || STUDY.days[STUDY.days.length - 1];
+  const finishedToday = () => Object.values(state.done).includes(today());
+  const activeDay = () => (state.pick && dayById(state.pick)) || (finishedToday() ? null : nextDay());
+
+  function streak() {
+    const dates = new Set(Object.values(state.done));
+    const d = new Date();
+    if (!dates.has(today())) d.setDate(d.getDate() - 1);
+    let n = 0;
+    while (dates.has(iso(d))) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+
+  const applyFontSize = () => document.documentElement.style.setProperty("--fs", state.fontSize + "px");
+
+  // ---------- scripture ----------
+  function parseRef(ref) {
+    const m = ref.match(/^(.*?)\s+(\d+)(?::(\d+)(?:-(\d+))?)?$/);
+    if (!m) return { book: ref, chapter: null };
+    return SINGLE_CHAPTER.includes(m[1]) ? { book: m[1], chapter: null } : { book: m[1], chapter: +m[2] };
+  }
+  const usingESV = () => !!state.esvKey.trim();
+  const translationName = () => (usingESV() ? "ESV" : "WEB");
+
+  const memo = new Map();
+  function getPassage(ref) {
+    const cacheKey = translationName() + "|" + ref;
+    if (!memo.has(cacheKey)) {
+      memo.set(cacheKey, (usingESV() ? fetchESV(ref) : fetchWEB(ref)).catch((e) => { memo.delete(cacheKey); throw e; }));
+    }
+    return memo.get(cacheKey);
+  }
+
+  async function fetchESV(ref) {
+    const params = new URLSearchParams({
+      q: ref,
+      "include-passage-references": "false",
+      "include-verse-numbers": "true",
+      "include-first-verse-numbers": "true",
+      "include-footnotes": "false",
+      "include-footnote-body": "false",
+      "include-headings": "false",
+      "include-short-copyright": "false",
+      "include-copyright": "false",
+      "include-selahs": "true",
+      "indent-paragraphs": "0",
+      "indent-poetry": "false",
+      "indent-declares": "0",
+      "indent-psalm-doxology": "0",
+      "line-length": "0"
+    });
+    const res = await fetch("https://api.esv.org/v3/passage/text/?" + params, {
+      headers: { Authorization: "Token " + state.esvKey.trim() }
+    });
+    if (res.status === 401 || res.status === 403) throw new Error("The ESV key was rejected. Check it in Settings.");
+    if (!res.ok) throw new Error("The ESV service had a problem (" + res.status + "). Try again in a minute.");
+    const data = await res.json();
+    return parseESVText(ref, (data.passages || [])[0] || "");
+  }
+
+  function parseESVText(ref, text) {
+    const { book, chapter } = parseRef(ref);
+    const parts = text.split(/\[(\d+)\]/);
+    let lead = parts[0].trim(); // a psalm superscription arrives before verse 1
+    const verses = [];
+    for (let i = 1; i < parts.length; i += 2) {
+      const num = +parts[i];
+      let body = parts[i + 1].replace(/\(ESV\)\s*$/, "").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim();
+      if (lead) { body = lead + "\n" + body; lead = ""; }
+      verses.push({ num, label: chapter ? `${book} ${chapter}:${num}` : `${book} ${num}`, text: body });
+    }
+    return { ref, verses };
+  }
+
+  async function fetchWEB(ref) {
+    const res = await fetch("https://bible-api.com/" + encodeURIComponent(ref) + "?translation=webbe");
+    if (!res.ok) throw new Error("Couldn't load " + ref + " (" + res.status + "). Check your connection and try again.");
+    const data = await res.json();
+    const { book, chapter } = parseRef(ref);
+    return {
+      ref,
+      verses: data.verses.map((v) => ({
+        num: v.verse,
+        label: chapter ? `${book} ${v.chapter}:${v.verse}` : `${book} ${v.verse}`,
+        text: v.text.replace(/\s+/g, " ").trim() // WEB hard-wraps lines mid-sentence
+      }))
+    };
+  }
+
+  // ---------- Claude prompts ----------
+  const qText = (q, i) => `Question ${i + 1}: ${q.text}${q.items ? "\n" + q.items.map((x) => "  - " + x).join("\n") : ""}`;
+  const dayTitle = (d) => `${STUDY.title} Lesson ${d.lesson}, ${d.day}`;
+  function claudeURL(day, qIndex) {
+    const head = `I'm working through a Bible study on ${dayTitle(day)}. Today's passages: ${day.readings.map((r) => r.ref).join("; ")}.`;
+    const ask = "Answer from the ESV and cite verse numbers. Keep each answer to a short paragraph. For personal reflection questions, give me something to think about rather than answering for me.";
+    const body = qIndex == null
+      ? `${head}\n\nPlease help me with today's questions. ${ask}\n\n${day.questions.map(qText).join("\n\n")}`
+      : `${head}\n\nPlease help me with this question. ${ask}\n\n${qText(day.questions[qIndex], qIndex)}`;
+    return "https://claude.ai/new?q=" + encodeURIComponent(body);
+  }
+
+  // ---------- home ----------
+  function greeting() {
+    const h = new Date().getHours();
+    return h < 12 ? `Good morning, ${NAME}` : h < 17 ? `Good afternoon, ${NAME}` : `Good evening, ${NAME}`;
+  }
+
+  const bookIcon = (size) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="#d9a7a7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5C4.5 5 8 5 12 7c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5Z"/><path d="M12 7v12.5"/><ellipse cx="12" cy="2.6" rx="3" ry=".9" stroke-width=".9"/></svg>`;
+
+  function fmtDate(s) {
+    const [y, m, d] = s.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  }
+
+  function renderHome() {
+    applyFontSize();
+    $("streak-n").textContent = streak();
+    const day = activeDay();
+    const t = $("today");
+
+    if (!day) {
+      const last = STUDY.days.filter((d) => state.done[d.id] === today()).pop();
+      const upNext = STUDY.days.find((d) => !state.done[d.id]);
+      t.innerHTML = `
+        <div class="halo">${bookIcon(56)}</div>
+        <h1>Daily reading complete!</h1>
+        <p>Enjoy your day with peace of mind.</p>
+        <div class="refs">${upNext ? `Tomorrow: Lesson ${esc(upNext.lesson)} · ${esc(upNext.day)}` : "You've finished every day in this study."}</div>`;
+      $("open-reading").textContent = "Read again";
+      $("ask-day").hidden = !last;
+      if (last) $("ask-day").href = claudeURL(last);
+    } else {
+      const resuming = state.timer && state.timer.dayId === day.id && state.timer.date === today();
+      t.innerHTML = `
+        <div class="halo">${bookIcon(56)}</div>
+        <div class="greeting">${esc(greeting())}</div>
+        <div class="eyebrow">${esc(STUDY.title)} · Lesson ${esc(day.lesson)}</div>
+        <h1>${esc(day.day)}</h1>
+        <div class="refs">${day.readings.map((r) => esc(r.ref)).join(" · ")}</div>`;
+      $("open-reading").textContent = resuming ? "Continue Daily Reading" : "Open Daily Reading";
+      $("ask-day").hidden = true;
+    }
+
+    $("lock-status").innerHTML = finishedToday()
+      ? `<span class="tag unlocked">Unlocked</span> until tomorrow`
+      : `<span class="tag locked">Locked</span> 5 minutes of reading to unlock`;
+
+    $("translation-note").innerHTML = usingESV()
+      ? "English Standard Version"
+      : `Reading from the World English Bible. <a href="#" id="add-key">Add your ESV key</a> to switch.`;
+    const addKey = $("add-key");
+    if (addKey) addKey.onclick = (e) => { e.preventDefault(); openSettings(); };
+
+    const cur = STUDY.days.find((d) => !state.done[d.id]);
+    $("day-list").innerHTML = STUDY.days.map((d) => `
+      <button class="day-row ${state.done[d.id] ? "done" : ""} ${d === cur ? "current" : ""}" data-id="${d.id}">
+        <span class="mark">${state.done[d.id] ? "✓" : ""}</span>
+        Lesson ${esc(d.lesson)} · ${esc(d.day)}
+        <small>${state.done[d.id] ? esc(fmtDate(state.done[d.id])) : d === cur ? "Up next" : ""}</small>
+      </button>`).join("");
+  }
+
+  $("day-list").addEventListener("click", (e) => {
+    const row = e.target.closest(".day-row");
+    if (!row) return;
+    state.pick = row.dataset.id; save();
+    openReader();
+  });
+  $("open-reading").onclick = () => {
+    if (!activeDay()) {
+      const last = STUDY.days.filter((d) => state.done[d.id] === today()).pop();
+      state.pick = (last || nextDay()).id; save();
+    }
+    openReader();
+  };
+
+  // ---------- reader ----------
+  let readerDay = null, tickHandle = null, wakeLock = null, endObserver = null, reachedEnd = false, focusables = [];
+
+  const timerSecs = () => {
+    const t = state.timer;
+    return t && readerDay && t.dayId === readerDay.id && t.date === today() ? t.secs : 0;
+  };
+
+  async function openReader() {
+    readerDay = activeDay() || nextDay();
+    reachedEnd = false;
+    if (!state.timer || state.timer.dayId !== readerDay.id || state.timer.date !== today()) {
+      state.timer = { dayId: readerDay.id, date: today(), secs: 0 };
+      save();
+    }
+    $("home").hidden = true;
+    $("reader").hidden = false;
+    updateTimer();
+    $("progress").style.width = "0";
+    $("scroller").scrollTop = 0;
+    $("column").innerHTML = `<div class="state">Opening ${esc(readerDay.readings[0].ref)}…</div>`;
+    requestWake();
+    startTick();
+
+    let key, passages = [];
+    try {
+      // One at a time keeps the free fallback API from rate-limiting us.
+      if (readerDay.key) key = await getPassage(readerDay.key);
+      for (const r of readerDay.readings) passages.push(await getPassage(r.ref));
+    } catch (err) {
+      $("column").innerHTML = `<div class="state">${esc(err.message)}<br><br><button class="btn ghost small" id="retry">Try again</button></div>`;
+      $("retry").onclick = openReader;
+      return;
+    }
+    buildReader(key, passages);
+  }
+
+  function buildReader(key, passages) {
+    const d = readerDay;
+    const h = [];
+    if (key && key.verses.length) {
+      h.push(`<section class="votd f">
+        <div class="eyebrow">Verse of the Day</div>
+        <div class="ref-line">${esc(d.key)}</div>
+        <div class="quote">${esc(key.verses.map((v) => v.text).join(" "))}</div>
+      </section><hr class="rule">`);
+    }
+    h.push(`<section class="today-block f">
+      <h2>Today’s Reading</h2>
+      <div class="ref-line">Lesson ${esc(d.lesson)} · ${esc(d.day)}<br>${d.readings.map((r) => esc(r.ref)).join(" · ")}</div>
+      ${d.summary ? `<p class="summary">${esc(d.summary)}</p>` : ""}
+    </section>`);
+
+    passages.forEach((p, pi) => {
+      const forQs = d.readings[pi].for || [];
+      h.push(`<div class="passage-head f"><span class="name">${esc(p.ref)}</span>${forQs.length ? `<span class="for">for question${forQs.length > 1 ? "s" : ""} ${forQs.join(", ")}</span>` : ""}</div>`);
+      p.verses.forEach((v) => h.push(`<p class="v f" aria-label="${esc(v.label)}"><sup>${v.num}</sup>${esc(v.text)}</p>`));
+    });
+
+    h.push(`<section class="section"><h2 class="f">Questions</h2>`);
+    d.questions.forEach((q, qi) => {
+      h.push(`<div class="q f">
+        <div class="num">Question ${qi + 1}</div>
+        <div class="text">${esc(q.text)}</div>
+        ${q.items ? `<ul>${q.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        <a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>
+      </div>`);
+    });
+    h.push(`</section><section class="finish f" id="finish"></section>`);
+
+    $("column").innerHTML = h.join("");
+    $("scroller").scrollTop = 0;
+    focusables = [...$("column").querySelectorAll(".f")];
+    renderFinish();
+    updateFocus();
+
+    endObserver && endObserver.disconnect();
+    endObserver = new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) { reachedEnd = true; maybeComplete(); }
+    }, { root: $("scroller"), threshold: 0.4 });
+    endObserver.observe($("finish"));
+  }
+
+  // Brighten the block sitting on the reading line; dim the rest.
+  let focusQueued = false, focused = null;
+  function updateFocus() {
+    focusQueued = false;
+    const sc = $("scroller");
+    const line = sc.clientHeight * READ_LINE;
+    let best = null, bestDist = Infinity;
+    for (const el of focusables) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > sc.clientHeight) continue;
+      const dist = r.top <= line && r.bottom >= line ? 0 : Math.min(Math.abs(r.top - line), Math.abs(r.bottom - line));
+      if (dist < bestDist) { best = el; bestDist = dist; }
+    }
+    if (best !== focused) {
+      focused && focused.classList.remove("focus");
+      best && best.classList.add("focus");
+      focused = best;
+    }
+    const max = sc.scrollHeight - sc.clientHeight;
+    $("progress").style.width = (max > 0 ? Math.min(100, 100 * sc.scrollTop / max) : 0) + "%";
+  }
+  $("scroller").addEventListener("scroll", () => {
+    if (!focusQueued) { focusQueued = true; requestAnimationFrame(updateFocus); }
+  }, { passive: true });
+
+  // Tap a verse to bring it to the reading line.
+  $("column").addEventListener("click", (e) => {
+    const v = e.target.closest(".v");
+    if (!v) return;
+    const sc = $("scroller");
+    const r = v.getBoundingClientRect();
+    sc.scrollBy({ top: r.top - sc.clientHeight * READ_LINE + 10, behavior: "smooth" });
+  });
+
+  function renderFinish() {
+    const fb = $("finish");
+    if (!fb) return;
+    const left = Math.max(0, GOAL - timerSecs());
+    const ask = `<a class="btn ghost small" href="${claudeURL(readerDay)}" target="_blank" rel="noopener">Ask Claude about today's questions</a>`;
+    const notice = `<div class="copyright">${usingESV() ? esc(ESV_NOTICE) : "Scripture from the World English Bible (public domain)."}</div>`;
+    if (left > 0) {
+      fb.innerHTML = `<div class="halo">${bookIcon(56)}</div>
+        <h2>Almost there</h2>
+        <p>Stay a little longer. Scroll back up and sit with a verse.</p>
+        <button class="btn primary" disabled>Unlock in ${fmtClock(left)}</button>
+        ${ask}${notice}`;
+    } else {
+      fb.innerHTML = `<div class="halo">${bookIcon(56)}</div>
+        <h2>Daily reading complete!</h2>
+        <p>Enjoy your day with peace of mind.</p>
+        <button class="btn primary" id="unlock">Unlock my apps</button>
+        ${ask}
+        <button class="btn ghost small" id="go-home">Back to home</button>${notice}`;
+      $("unlock").onclick = runUnlockShortcut;
+      $("go-home").onclick = closeReader;
+    }
+  }
+
+  function maybeComplete() {
+    if (reachedEnd && timerSecs() >= GOAL && !state.done[readerDay.id]) {
+      state.done[readerDay.id] = today();
+      if (state.pick === readerDay.id) state.pick = null;
+      save();
+    }
+    renderFinish();
+  }
+
+  function runUnlockShortcut() {
+    const back = encodeURIComponent(location.origin + location.pathname + "#unlocked");
+    location.href = "shortcuts://x-callback-url/run-shortcut?name=" + encodeURIComponent(state.shortcutName || "Bible Done") +
+      "&x-success=" + back + "&x-cancel=" + back + "&x-error=" + back;
+  }
+
+  const fmtClock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  function updateTimer() {
+    const left = Math.max(0, GOAL - timerSecs());
+    $("timer").textContent = left > 0 ? fmtClock(left) : "Done";
+    $("timer-text").textContent = left > 0 ? "Your apps unlock when the timer ends" : "Time’s up. Finish at your own pace.";
+    $("timer-note").classList.toggle("met", left === 0);
+  }
+
+  function startTick() {
+    stopTick();
+    tickHandle = setInterval(() => {
+      if (document.visibilityState !== "visible" || $("reader").hidden) return;
+      state.timer.secs++;
+      if (state.timer.secs % 5 === 0) save();
+      updateTimer();
+      if (reachedEnd) maybeComplete();
+    }, 1000);
+  }
+  function stopTick() { if (tickHandle) clearInterval(tickHandle); tickHandle = null; }
+
+  async function requestWake() {
+    try { if ("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); } catch {}
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && !$("reader").hidden) requestWake();
+  });
+
+  function closeReader() {
+    stopTick(); save();
+    endObserver && endObserver.disconnect();
+    try { wakeLock && wakeLock.release(); } catch {}
+    focused = null;
+    $("reader").hidden = true;
+    $("home").hidden = false;
+    $("column").innerHTML = "";
+    renderHome();
+  }
+  $("close-reader").onclick = closeReader;
+
+  // ---------- settings ----------
+  function openSettings() {
+    $("fs").value = state.fontSize;
+    $("esv-key").value = state.esvKey;
+    $("shortcut-name").value = state.shortcutName;
+    $("sc-name-1").textContent = state.shortcutName || "Bible Done";
+    $("app-url").textContent = location.origin + location.pathname;
+    $("key-status").textContent = "";
+    $("settings").hidden = false;
+  }
+  function closeSettings() { $("settings").hidden = true; renderHome(); }
+  $("open-settings").onclick = openSettings;
+  $("close-settings").onclick = closeSettings;
+  $("settings").addEventListener("click", (e) => { if (e.target.id === "settings") closeSettings(); });
+  $("fs").oninput = (e) => { state.fontSize = +e.target.value; applyFontSize(); save(); };
+  $("esv-key").onchange = (e) => { state.esvKey = e.target.value.trim(); memo.clear(); save(); };
+  $("shortcut-name").onchange = (e) => { state.shortcutName = e.target.value.trim() || "Bible Done"; $("sc-name-1").textContent = state.shortcutName; save(); };
+  $("test-key").onclick = async () => {
+    state.esvKey = $("esv-key").value.trim(); memo.clear(); save();
+    const st = $("key-status");
+    if (!state.esvKey) { st.innerHTML = `<span class="err">Paste a key first.</span>`; return; }
+    st.textContent = "Checking…";
+    try {
+      const p = await fetchESV("Lamentations 3:22-23");
+      st.innerHTML = `<span class="ok">Works.</span> “${esc(p.verses[0].text)}”`;
+    } catch (err) { st.innerHTML = `<span class="err">${esc(err.message)}</span>`; }
+  };
+  $("reset").onclick = () => {
+    if (!confirm("Clear your completed days and streak? Your settings stay.")) return;
+    state.done = {}; state.timer = null; state.pick = null; save(); closeSettings();
+  };
+
+  // Coming back from the unlock shortcut.
+  if (location.hash === "#unlocked") history.replaceState(null, "", location.pathname);
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
