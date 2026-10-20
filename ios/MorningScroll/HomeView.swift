@@ -6,6 +6,7 @@ struct HomeView: View {
     @State private var showSettings = false
     @State private var showPicker = false
     @State private var showDays = false
+    @State private var nameDraft = ""
 
     var body: some View {
         @Bindable var model = model
@@ -31,6 +32,38 @@ struct HomeView: View {
         .sheet(isPresented: $showSettings) { SettingsView() }
         .familyActivityPicker(isPresented: $showPicker, selection: $model.selection)
         .fullScreenCover(item: $model.readingDay) { day in ReaderView(day: day) }
+        .sheet(isPresented: Binding(get: { !model.askedName }, set: { _ in })) { welcome }
+    }
+
+    private var welcome: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Welcome").font(Theme.display(34))
+            Text("What’s your first name?").font(.system(size: 17, weight: .medium))
+            TextField("First name", text: $nameDraft)
+                .textContentType(.givenName)
+                .textInputAutocapitalization(.words)
+                .font(.system(size: 19))
+                .padding(14)
+                .background(Theme.bg, in: RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line))
+                .submitLabel(.done)
+                .onSubmit(saveName)
+            Text("So the app can say good morning to you. You can change it later in Settings.")
+                .font(.system(size: 14)).foregroundStyle(Theme.muted)
+            Spacer()
+            Button("Start reading", action: saveName).buttonStyle(PrimaryButtonStyle())
+        }
+        .padding(24)
+        .foregroundStyle(Theme.text)
+        .presentationDetents([.medium])
+        .presentationBackground(Theme.surface)
+        .interactiveDismissDisabled()
+        .preferredColorScheme(.dark)
+    }
+
+    private func saveName() {
+        model.name = nameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        model.askedName = true
     }
 
     private var topBar: some View {
@@ -181,7 +214,8 @@ struct HomeView: View {
 
     private var greeting: String {
         let h = Calendar.current.component(.hour, from: Date())
-        return h < 12 ? "Good morning, Amy" : h < 17 ? "Good afternoon, Amy" : "Good evening, Amy"
+        let hello = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"
+        return model.name.isEmpty ? hello : "\(hello), \(model.name)"
     }
 
     private func shortDate(_ s: String) -> String {

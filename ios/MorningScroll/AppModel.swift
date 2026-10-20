@@ -22,6 +22,14 @@ final class AppModel {
     var readingDay: StudyDay?
     var authError: String?
 
+    /// First name for the greeting; asked for on first launch.
+    var name: String {
+        didSet { UserDefaults.standard.set(name, forKey: "name") }
+    }
+    var askedName: Bool {
+        didSet { UserDefaults.standard.set(askedName, forKey: "askedName") }
+    }
+
     var fontSize: Double {
         didSet { UserDefaults.standard.set(fontSize, forKey: "fontSize") }
     }
@@ -42,6 +50,8 @@ final class AppModel {
     init() {
         let d = UserDefaults.standard
         progress = (d.data(forKey: "progress")).flatMap { try? JSONDecoder().decode(Progress.self, from: $0) } ?? Progress()
+        name = d.string(forKey: "name") ?? ""
+        askedName = d.bool(forKey: "askedName")
         fontSize = d.object(forKey: "fontSize") as? Double ?? 30
         esvKey = d.string(forKey: "esvKey") ?? ""
         selection = Shared.selection
@@ -181,6 +191,6 @@ final class AppModel {
     }
 
     func refreshStudy() async {
-        if let latest = await StudyLoader.fetchLatest() { study = latest }
+        if let latest = await StudyLoader.fetchLatest(), (latest.version ?? 0) >= (study.version ?? 0) { study = latest }
     }
 }

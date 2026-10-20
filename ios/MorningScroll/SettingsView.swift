@@ -14,6 +14,12 @@ struct SettingsView: View {
         @Bindable var model = model
         NavigationStack {
             Form {
+                Section("Your first name") {
+                    TextField("For your morning greeting", text: $model.name)
+                        .textContentType(.givenName)
+                        .textInputAutocapitalization(.words)
+                }
+
                 Section("Text size") {
                     Slider(value: $model.fontSize, in: 22...46, step: 1)
                     Text("The LORD is my shepherd; I shall not want.")

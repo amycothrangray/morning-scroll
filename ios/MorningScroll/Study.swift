@@ -1,6 +1,7 @@
 import Foundation
 
 struct Study: Codable {
+    let version: Int?   // bump in study.json whenever lessons, answers or quizzes change
     let title: String
     let days: [StudyDay]
 }
@@ -52,16 +53,22 @@ enum StudyLoader {
         return dir.appendingPathComponent("study.json")
     }
 
+    /// The newer of the bundled copy and the last download.
     static func local() -> Study {
-        if let data = try? Data(contentsOf: cacheURL), let study = try? JSONDecoder().decode(Study.self, from: data) {
-            return study
-        }
         let url = Bundle.main.url(forResource: "study", withExtension: "json")!
-        return try! JSONDecoder().decode(Study.self, from: Data(contentsOf: url))
+        let bundled = try! JSONDecoder().decode(Study.self, from: Data(contentsOf: url))
+        if let data = try? Data(contentsOf: cacheURL), let cached = try? JSONDecoder().decode(Study.self, from: data),
+           (cached.version ?? 0) >= (bundled.version ?? 0) {
+            return cached
+        }
+        return bundled
     }
 
     static func fetchLatest() async -> Study? {
-        var request = URLRequest(url: remoteURL)
+        // A unique query skips GitHub's 10-minute cache so new lessons show up right away.
+        var c = URLComponents(url: remoteURL, resolvingAgainstBaseURL: false)!
+        c.queryItems = [.init(name: "t", value: String(Int(Date().timeIntervalSince1970)))]
+        var request = URLRequest(url: c.url!)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         guard let (data, response) = try? await URLSession.shared.data(for: request),
               (response as? HTTPURLResponse)?.statusCode == 200,

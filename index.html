@@ -282,7 +282,7 @@
 
 <script>
 (async () => {
-  const STUDY = await fetch("study.json", { cache: "no-cache" }).then((r) => r.json());
+  const STUDY = await fetch("study.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json());
   const GOAL = 5 * 60; // seconds of reading required to unlock
   const KEY = "morningScroll.v1";
   const READ_LINE = 0.5; // the item crossing the middle of the screen is the one in focus
