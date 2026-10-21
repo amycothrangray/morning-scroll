@@ -17,6 +17,7 @@ struct ReaderView: View {
     @State private var speaker = Speaker()
     @State private var quotes: [String: String] = [:]
     @State private var quotesTask: Task<Void, Never>?
+    @State private var scrubLabel: String?
 
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private var fs: CGFloat { model.fontSize }
@@ -102,7 +103,9 @@ struct ReaderView: View {
             }
             .accessibilityLabel("Close")
         }
-        .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 24)
+        .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 12)
+        .overlay(alignment: .bottom) { scrubber.offset(y: 22) }
+        .padding(.bottom, 12)
         .background(LinearGradient(stops: [.init(color: Theme.bg, location: 0.6), .init(color: Theme.bg.opacity(0), location: 1)],
                                    startPoint: .top, endPoint: .bottom).ignoresSafeArea(edges: .top))
     }
@@ -175,10 +178,64 @@ struct ReaderView: View {
                 .scrollPosition($position)
                 .onAppear { snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
                 .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstQuestionIndex(list) }
-                .onChange(of: focusedIndex) { _, _ in if speaker.isOn { speakCurrent() } }
+                .onChange(of: focusedIndex) { _, _ in if speaker.isOn && scrubLabel == nil { speakCurrent() } }
             }
         }
         .ignoresSafeArea()
+    }
+
+    // MARK: Progress bar (drag it to rewind or skip ahead)
+
+    private var scrubber: some View {
+        let list = items
+        let n = max(list.count - 1, 1)
+        let fraction = CGFloat(min(focusedIndex, n)) / CGFloat(n)
+        return GeometryReader { g in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Theme.surface2).frame(height: scrubLabel == nil ? 4 : 6)
+                Capsule().fill(Theme.roseDeep).frame(width: max(4, g.size.width * fraction), height: scrubLabel == nil ? 4 : 6)
+                Circle().fill(Theme.rose).frame(width: 16, height: 16)
+                    .shadow(color: Theme.rose.opacity(0.3), radius: 4)
+                    .offset(x: g.size.width * fraction - 8)
+                    .opacity(scrubLabel == nil ? 0 : 1)
+                if let scrubLabel {
+                    Text(scrubLabel)
+                        .font(.system(size: 15)).foregroundStyle(Theme.text)
+                        .padding(.horizontal, 12).padding(.vertical, 6)
+                        .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+                        .fixedSize()
+                        .position(x: min(max(g.size.width * fraction, 70), g.size.width - 70), y: 38)
+                }
+            }
+            .frame(height: 30)
+            .contentShape(Rectangle())
+            .gesture(DragGesture(minimumDistance: 0).onChanged { v in
+                if scrubLabel == nil { speaker.pause() }
+                let f = min(max(v.location.x / g.size.width, 0), 1)
+                let i = Int((f * CGFloat(n)).rounded())
+                scrubLabel = itemLabel(list[i])
+                if let y = snap.offset(for: i, height: snap.height) { position.scrollTo(y: max(0, y)) }
+            }.onEnded { _ in
+                scrubLabel = nil
+                if speaker.isOn { speakCurrent() }
+            })
+        }
+        .frame(height: 30)
+        .accessibilityLabel("Reading position")
+    }
+
+    private func itemLabel(_ item: Item) -> String {
+        switch item {
+        case .verseOfTheDay: return "Verse of the Day"
+        case .todaysReading: return "Today’s Reading"
+        case let .verse(pi, v, _):
+            let ref = passages[pi].ref
+            if let colon = ref.firstIndex(of: ":") { return "\(ref[..<colon]):\(v.num)" }
+            return ref.replacing(try! Regex(#"\s\d+$"#), with: "") + " \(v.num)" // one-chapter books like 3 John
+        case .question(let i): return "Question \(i + 1)"
+        case .quiz: return "Quiz"
+        case .finish: return "The end"
+        }
     }
 
     // MARK: Verse quotes

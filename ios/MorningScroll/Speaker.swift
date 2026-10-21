@@ -35,6 +35,12 @@ final class Speaker: NSObject, AVSpeechSynthesizerDelegate {
         synth.speak(u)
     }
 
+    /// Stop the current sentence but stay in read-aloud mode (used while scrubbing).
+    func pause() {
+        onDone = nil
+        synth.stopSpeaking(at: .immediate)
+    }
+
     func stop() {
         isOn = false
         onDone = nil
