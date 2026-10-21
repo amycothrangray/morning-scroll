@@ -88,6 +88,7 @@
   .reader-bar .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--rose); box-shadow: 0 0 10px var(--rose); }
   .reader-bar .note.met .dot { background: var(--sage); box-shadow: 0 0 10px var(--sage); }
   .timer { font-variant-numeric: tabular-nums; }
+  #read-aloud[aria-pressed="true"] { background: var(--rose-deep); border-color: var(--rose-deep); color: var(--rose-ink); }
   .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; z-index: 4; background: var(--surface); }
   .progress i { display: block; height: 100%; width: 0; background: var(--rose-deep); transition: width .3s; }
 
@@ -142,6 +143,10 @@
   .why { margin-top: 12px; font-family: var(--read); font-size: calc(var(--fs) * .64); line-height: 1.55; color: #d6cbc6; }
   .why b { color: var(--sage); font-weight: 500; }
   .why b.miss { color: var(--rose); }
+  .quotes { margin-top: 14px; display: grid; gap: 12px; }
+  .quotes:empty { display: none; }
+  .vquote { font-family: var(--read); font-style: italic; font-size: calc(var(--fs) * .64); line-height: 1.55; color: var(--text); border-left: 2px solid var(--rose-deep); padding-left: 12px; }
+  .vquote .qref { display: block; font-family: var(--ui); font-style: normal; font-size: 13px; letter-spacing: .03em; color: var(--rose); margin-bottom: 3px; }
   .score { text-align: center; font-family: var(--display); font-weight: 600; font-size: 32px; margin-top: 28px; }
   .score small { display: block; font-family: var(--read); font-weight: 400; font-size: 18px; color: var(--muted); margin-top: 6px; }
   .finish { text-align: center; margin-top: 12vh; }
@@ -208,6 +213,9 @@
 <div id="reader" hidden>
   <div class="reader-bar">
     <span class="note" id="timer-note"><span class="dot"></span><span id="timer-text">Your apps unlock when the timer ends</span></span>
+    <button class="icon-btn" id="read-aloud" aria-label="Read aloud" aria-pressed="false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
     <span class="pill timer" id="timer">5:00</span>
     <button class="icon-btn" id="close-reader" aria-label="Close">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
@@ -546,7 +554,7 @@
         <div class="num">Question ${qi + 1}</div>
         <div class="text">${esc(q.text)}</div>
         ${q.items ? `<ul>${q.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-        ${q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div></div>` : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`}
+        ${q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div>${quotesBox(q.refs)}</div>` : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`}
       </div>`);
     });
     h.push(`</section>`);
@@ -557,6 +565,7 @@
         <div class="text">${esc(z.q)}</div>
         ${z.choices.map((c, ci) => `<button class="choice" data-c="${ci}">${esc(c)}</button>`).join("")}
         <div class="why" hidden></div>
+        <div hidden class="why-quotes">${quotesBox(z.refs)}</div>
       </div>`));
       h.push(`<div class="score" id="quiz-score" hidden></div></section>`);
     }
@@ -566,6 +575,7 @@
     $("scroller").scrollTop = 0;
     focusables = [...$("column").querySelectorAll(".f")];
     (state.quiz?.[d.id] || []).forEach((c, zi) => { if (c != null) showQuizAnswer(zi, c); });
+    loadQuotes(d);
     renderFinish();
     updateFocus();
 
@@ -593,6 +603,7 @@
       focused && focused.classList.remove("focus");
       best && best.classList.add("focus");
       focused = best;
+      if (reading) speakFocused();
     }
     const max = sc.scrollHeight - sc.clientHeight;
     $("progress").style.width = (max > 0 ? Math.min(100, 100 * sc.scrollTop / max) : 0) + "%";
@@ -618,6 +629,97 @@
     sc.scrollBy({ top: r.top + r.height / 2 - sc.clientHeight / 2, behavior: "smooth" });
   });
 
+  // ---------- read aloud ----------
+  // A British female voice reads whatever is in focus, then moves on to the next item by itself.
+  let reading = false, voice = null;
+  const synth = window.speechSynthesis;
+
+  function pickVoice() {
+    const gb = (synth?.getVoices() || []).filter((v) => v.lang.replace("_", "-") === "en-GB");
+    const female = /serena|kate|stephanie|martha|libby|sonia|hazel|susan|female/i;
+    const quality = (v) => (/premium/i.test(v.name) ? 2 : /enhanced/i.test(v.name) ? 1 : 0);
+    const best = gb.filter((v) => female.test(v.name)).sort((a, b) => quality(b) - quality(a));
+    return best[0] || gb[0] || null;
+  }
+  if (synth) synth.onvoiceschanged = () => { voice = pickVoice(); };
+
+  function speakText(el) {
+    if (!el || el.closest(".quiz") || el.id === "finish") return null;
+    const t = (sel) => [...el.querySelectorAll(sel)].map((n) => n.innerText.trim()).join(" ");
+    if (el.classList.contains("votd")) return "Verse of the day. " + t(".ref-line") + ". " + t(".quote");
+    if (el.classList.contains("today-block")) return "Today's reading. " + t(".summary");
+    if (el.classList.contains("q")) {
+      const v = el.querySelector(".answer .body");
+      // Parenthetical references read badly aloud; the quotes below the answer cover them.
+      return t(".num") + ". " + t(".text") + (v ? " Answer. " + v.innerText.replace(/\s*\([^)]*\d[^)]*\)/g, "").replace(/•/g, ".") : "");
+    }
+    const verse = el.querySelector(".v");
+    if (verse) {
+      const head = el.querySelector(".passage-head .name");
+      return (head ? head.innerText.replace(/:.*$/, "").replace(/\s(\d+)$/, " chapter $1") + ". " : "") + verse.innerText.replace(/^\d+/, "");
+    }
+    return null;
+  }
+
+  function speakFocused() {
+    if (!synth) return;
+    synth.cancel();
+    const text = speakText(focused);
+    if (!text) { stopReading(); return; }
+    const u = new SpeechSynthesisUtterance(text.replace(/\s+/g, " "));
+    voice = voice || pickVoice();
+    if (voice) u.voice = voice;
+    u.lang = "en-GB";
+    u.rate = 0.92;
+    const mine = focused;
+    u.onend = () => {
+      if (!reading || focused !== mine) return;
+      const i = focusables.indexOf(mine);
+      const next = focusables[i + 1];
+      if (!next || !speakText(next)) { stopReading(); return; }
+      const sc = $("scroller"), r = next.getBoundingClientRect();
+      sc.scrollBy({ top: r.top + Math.min(r.height, sc.clientHeight * 0.8) / 2 - sc.clientHeight / 2, behavior: "smooth" });
+    };
+    synth.speak(u);
+  }
+
+  function stopReading() {
+    reading = false;
+    synth && synth.cancel();
+    $("read-aloud").setAttribute("aria-pressed", "false");
+  }
+
+  $("read-aloud").onclick = () => {
+    if (!synth) { alert("This browser can't read aloud."); return; }
+    if (reading) { stopReading(); return; }
+    reading = true;
+    $("read-aloud").setAttribute("aria-pressed", "true");
+    speakFocused();
+  };
+
+  // ---------- verse quotes under answers ----------
+  // Every verse an answer or quiz explanation cites is quoted below it, in the reader's translation.
+  const quotesBox = (refs) => refs && refs.length ? `<div class="quotes" data-refs="${esc(refs.join("|"))}"></div>` : "";
+
+  async function loadQuotes(day) {
+    const boxes = [...$("column").querySelectorAll(".quotes")];
+    const refs = [...new Set(boxes.flatMap((b) => b.dataset.refs.split("|")))];
+    const text = {};
+    for (const ref of refs) {
+      if (readerDay !== day || $("reader").hidden) return; // she left the reading
+      try {
+        const p = await getPassage(ref);
+        text[ref] = p.verses.map((v) => v.text.replace(/\s*\n\s*/g, " ")).join(" ");
+      } catch { continue; }
+      for (const b of boxes) {
+        const want = b.dataset.refs.split("|");
+        if (!want.includes(ref)) continue;
+        b.innerHTML = want.filter((r) => text[r]).map((r) => `<div class="vquote"><span class="qref">${esc(r)}</span>“${esc(text[r])}”</div>`).join("");
+      }
+      if (!usingESV()) await new Promise((r) => setTimeout(r, 2100)); // the free fallback allows ~15 requests per 30 seconds
+    }
+  }
+
   // ---------- quiz ----------
   function showQuizAnswer(zi, chosen) {
     const z = readerDay.quiz[zi];
@@ -631,6 +733,7 @@
     const why = box.querySelector(".why");
     why.innerHTML = `<b class="${chosen === z.answer ? "" : "miss"}">${chosen === z.answer ? "That’s right." : "Not quite."}</b> ${esc(z.why)}`;
     why.hidden = false;
+    box.querySelector(".why-quotes").hidden = false;
     const picks = state.quiz?.[readerDay.id] || [];
     const answered = readerDay.quiz.filter((_, i) => picks[i] != null).length;
     if (answered === readerDay.quiz.length) {
@@ -719,6 +822,7 @@
   });
 
   function closeReader() {
+    stopReading();
     stopTick(); save();
     endObserver && endObserver.disconnect();
     try { wakeLock && wakeLock.release(); } catch {}

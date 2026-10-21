@@ -12,6 +12,11 @@ struct ReaderView: View {
     @State private var loading = true
     @State private var reachedEnd = false
     @State private var snap = SnapLayout()
+    @State private var position = ScrollPosition(edge: .top)
+    @State private var focusedIndex = 0
+    @State private var speaker = Speaker()
+    @State private var quotes: [String: String] = [:]
+    @State private var quotesTask: Task<Void, Never>?
 
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private var fs: CGFloat { model.fontSize }
@@ -42,6 +47,8 @@ struct ReaderView: View {
         .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
+            speaker.stop()
+            quotesTask?.cancel()
             model.save()
         }
     }
@@ -55,6 +62,8 @@ struct ReaderView: View {
             var loaded: [Passage] = []
             for r in day.readings { loaded.append(try await Scripture.shared.passage(r.ref, esvKey: model.esvKey)) }
             passages = loaded
+            quotesTask?.cancel()
+            quotesTask = Task { await loadQuotes() }
         } catch {
             loadError = (error as? LocalizedError)?.errorDescription ?? "Couldn't load today's reading. Check your connection and try again."
         }
@@ -71,6 +80,17 @@ struct ReaderView: View {
             Text(left > 0 ? "Your apps unlock when the timer ends" : (model.hasBlockedApps ? "Apps unlocked. Read on as long as you like." : "Time’s up. Read on as long as you like."))
                 .font(.system(size: 14)).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
             Spacer(minLength: 4)
+            Button {
+                if speaker.isOn { speaker.stop() } else { speaker.isOn = true; speakCurrent() }
+            } label: {
+                Image(systemName: speaker.isOn ? "speaker.wave.2.fill" : "speaker.wave.2")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(speaker.isOn ? Theme.roseInk : Theme.text)
+                    .frame(width: 40, height: 40)
+                    .background(speaker.isOn ? Theme.roseDeep : Theme.surface, in: Circle())
+                    .overlay(Circle().stroke(speaker.isOn ? Theme.roseDeep : Theme.line))
+            }
+            .accessibilityLabel(speaker.isOn ? "Stop reading aloud" : "Read aloud")
             Text(left > 0 ? clock(left) : "Done")
                 .font(.system(size: 15, weight: .medium).monospacedDigit())
                 .padding(.horizontal, 12).padding(.vertical, 7)
@@ -142,6 +162,9 @@ struct ReaderView: View {
                 .scrollIndicators(.hidden)
                 .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { _, offset in
                     snap.offset = offset
+                    snap.height = geo.size.height
+                    let now = snap.index(at: offset + geo.size.height / 2)
+                    if now != focusedIndex { focusedIndex = now }
                     // The end counts as soon as the finish card is on screen.
                     if !reachedEnd, let finish = snap.frames[list.count - 1], offset + geo.size.height > finish.minY + 80 {
                         reachedEnd = true
@@ -149,11 +172,87 @@ struct ReaderView: View {
                     }
                 }
                 .scrollTargetBehavior(OneAtATime(snap: snap))
+                .scrollPosition($position)
                 .onAppear { snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
                 .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstQuestionIndex(list) }
+                .onChange(of: focusedIndex) { _, _ in if speaker.isOn { speakCurrent() } }
             }
         }
         .ignoresSafeArea()
+    }
+
+    // MARK: Verse quotes
+
+    @ViewBuilder private func verseQuotes(_ refs: [String]?) -> some View {
+        let shown = (refs ?? []).filter { quotes[$0] != nil }
+        if !shown.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(shown, id: \.self) { r in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(r).font(.system(size: 13)).foregroundStyle(Theme.rose)
+                        Text("“\(quotes[r] ?? "")”").font(Theme.read(fs * 0.64, italic: true)).foregroundStyle(Theme.text)
+                            .lineSpacing(fs * 0.22)
+                    }
+                    .padding(.leading, 12)
+                    .overlay(alignment: .leading) { Rectangle().fill(Theme.roseDeep).frame(width: 2) }
+                }
+            }
+            .padding(.top, 12)
+        }
+    }
+
+    /// Fetch every verse the answers and quiz cite, one at a time (the free fallback is rate-limited).
+    private func loadQuotes() async {
+        var refs: [String] = []
+        for r in day.questions.flatMap({ $0.refs ?? [] }) + (day.quiz ?? []).flatMap({ $0.refs ?? [] }) where !refs.contains(r) {
+            refs.append(r)
+        }
+        for r in refs {
+            if Task.isCancelled { return }
+            if let p = try? await Scripture.shared.passage(r, esvKey: model.esvKey) {
+                quotes[r] = p.verses.map { $0.text.replacingOccurrences(of: "\n", with: " ") }.joined(separator: " ")
+            }
+            if model.esvKey.isEmpty { try? await Task.sleep(for: .seconds(2.1)) }
+        }
+    }
+
+    // MARK: Read aloud
+
+    private func spokenText(_ item: Item) -> String? {
+        // Parenthetical references read badly aloud ("thirty-eight colon twenty-six"); the quotes cover them.
+        func clean(_ s: String) -> String {
+            s.replacing(try! Regex(#"\s*\([^)]*\d[^)]*\)"#), with: "").replacingOccurrences(of: "•", with: ".")
+        }
+        func chapterOf(_ ref: String) -> String {
+            ref.replacing(try! Regex(#":.*$"#), with: "").replacing(try! Regex(#"\s(\d+)$"#)) { " chapter \($0.output[1].substring ?? "")" }
+        }
+        switch item {
+        case .verseOfTheDay:
+            guard let keyVerse, let ref = day.key else { return nil }
+            return "Verse of the day. \(ref.replacingOccurrences(of: ":", with: ", verse ")). " + keyVerse.verses.map(\.text).joined(separator: " ")
+        case .todaysReading:
+            return "Today's reading. " + (day.summary ?? "")
+        case let .verse(pi, v, first):
+            return (first ? chapterOf(passages[pi].ref) + ". " : "") + v.text
+        case .question(let i):
+            let q = day.questions[i]
+            return "Question \(i + 1). \(q.text) " + (q.items?.joined(separator: ". ") ?? "") + (q.answer.map { " Answer. " + clean($0) } ?? "")
+        case .quiz, .finish:
+            return nil
+        }
+    }
+
+    private func speakCurrent() {
+        let list = items
+        guard list.indices.contains(focusedIndex), let text = spokenText(list[focusedIndex]) else { speaker.stop(); return }
+        let i = focusedIndex
+        speaker.speak(text) {
+            guard speaker.isOn, focusedIndex == i else { return }
+            let next = i + 1
+            guard list.indices.contains(next), spokenText(list[next]) != nil,
+                  let y = snap.offset(for: next, height: snap.height) else { speaker.stop(); return }
+            withAnimation(.easeInOut(duration: 0.6)) { position.scrollTo(y: max(0, y)) }
+        }
     }
 
     private func firstQuestionIndex(_ list: [Item]) -> Int {
@@ -238,6 +337,7 @@ struct ReaderView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("ANSWER").font(.system(size: 12, weight: .medium)).tracking(1.8).foregroundStyle(Theme.sage)
                     Text(answer).font(Theme.read(fs * 0.7)).foregroundStyle(Color(hex: 0xD6CBC6)).lineSpacing(fs * 0.28)
+                    verseQuotes(q.refs)
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -295,6 +395,7 @@ struct ReaderView: View {
                  + Text(z.why).foregroundColor(Color(hex: 0xD6CBC6)))
                     .font(Theme.read(fs * 0.64)).lineSpacing(fs * 0.25)
                     .padding(.top, 12)
+                verseQuotes(z.refs)
             }
             if index == items.count - 1 && allDone {
                 VStack(spacing: 6) {
@@ -360,6 +461,7 @@ final class SnapLayout {
     var frames: [Int: CGRect] = [:]
     var offset: CGFloat = 0
     var count = 0
+    var height: CGFloat = 800
     var firstFree = Int.max   // from here on (questions and answers) scrolling is free
 
     /// The item under content position y (items touch, so this is almost always exact).

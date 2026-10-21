@@ -34,12 +34,14 @@ struct QuizItem: Codable, Hashable {
     let choices: [String]
     let answer: Int
     let why: String
+    let refs: [String]?   // verses cited in "why", quoted under it
 }
 
 struct Question: Codable, Hashable {
     let text: String
     let items: [String]?
     let answer: String?
+    let refs: [String]?   // verses cited in the answer, quoted under it
 }
 
 /// Gail's study lives in study.json on the website, so new lessons show up without reinstalling the app.
