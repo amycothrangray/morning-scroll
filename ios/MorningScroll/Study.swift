@@ -35,6 +35,7 @@ struct QuizItem: Codable, Hashable {
     let answer: Int
     let why: String
     let refs: [String]?   // verses cited in "why", quoted under it
+    let from: Int?        // set when the item tests a study question's answer rather than the passage
 }
 
 struct Question: Codable, Hashable {

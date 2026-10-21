@@ -561,7 +561,7 @@
     if (d.quiz && d.quiz.length) {
       h.push(`<section class="quiz" id="quiz"><div class="f"><h2>Quiz</h2><p class="refs" style="text-align:left">${d.quiz.length} quick questions on today’s reading.</p></div>`);
       d.quiz.forEach((z, zi) => h.push(`<div class="qz f" data-i="${zi}">
-        <div class="num">${zi + 1} of ${d.quiz.length}</div>
+        <div class="num">${zi + 1} of ${d.quiz.length}${z.from ? ` · About question ${z.from}` : ""}</div>
         <div class="text">${esc(z.q)}</div>
         ${z.choices.map((c, ci) => `<button class="choice" data-c="${ci}">${esc(c)}</button>`).join("")}
         <div class="why" hidden></div>

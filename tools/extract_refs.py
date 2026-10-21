@@ -36,29 +36,33 @@ def fmt(book, c, v, v2):
         return f"{book} {v}" + (f"-{v2}" if v2 else "")
     return f"{book} {c}:{v}" + (f"-{v2}" if v2 else "")
 
-def refs_in(text, book, chapter):
-    # "v. 5" means the passage under discussion: the last reference that named its book, not a bare "35:22".
+def refs_in(text, book, chapter, home="Genesis"):
+    # home: the study's book. A bare "48:4" means it, unless listed right after another book ("Romans 8:1, 33-34").
+    # "v. 5" always means the passage the study question is about, never a cross-reference mentioned along the way.
     out, last_was_ref, vbook, vchapter = [], False, book, chapter
+    prev_end = 0
     for m in TOKEN.finditer(text):
         g = m.groupdict()
+        adjacent = re.fullmatch(r"[\s,;]*(?:and\s+)?", text[prev_end:m.start()]) is not None
+        prev_end = m.end()
         if g["book"]:
             book = g["book"]
             if book in SINGLE:
                 v, v2, c = int(g["c"]), None, 1
             elif g["v"] is None:
                 chapter, last_was_ref = int(g["c"]), False   # whole chapter: remember, don't quote
-                vbook, vchapter = book, chapter
                 continue
             else:
                 c, v, v2 = int(g["c"]), int(g["v"]), g["v2"] and int(g["v2"])
-            vbook, vchapter = book, c
         elif g["rv"]:
             if vchapter is None: continue
             book, c, v, v2 = vbook, vchapter, int(g["rv"]), g["rv2"] and int(g["rv2"])
         elif g["bc"]:
+            if not (adjacent and last_was_ref):
+                book = home
             c, v, v2 = int(g["bc"]), int(g["bv"]), g["bv2"] and int(g["bv2"])
         else:
-            if not last_was_ref or chapter is None: continue
+            if not (adjacent and last_was_ref) or chapter is None: continue
             c, v, v2 = chapter, int(g["lv"]), g["lv2"] and int(g["lv2"])
         chapter, last_was_ref = c, True
         if v2 and (v2 <= v or v2 - v + 1 > MAX_VERSES):
@@ -73,10 +77,10 @@ def main(path="study.json"):
     for day in study["days"]:
         for i, q in enumerate(day["questions"]):
             book, chapter = default_context(day, i + 1)
-            q["refs"] = refs_in(q.get("answer", ""), book, chapter)
+            q["refs"] = refs_in(q.get("answer", ""), book, chapter, study["title"])
         for z in day.get("quiz") or []:
             book, chapter = default_context(day, 1)
-            z["refs"] = refs_in(z.get("why", ""), book, chapter)
+            z["refs"] = refs_in(z.get("why", ""), book, chapter, study["title"])
     json.dump(study, open(path, "w"), indent=2, ensure_ascii=False)
     return study
 

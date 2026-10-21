@@ -370,7 +370,7 @@ struct ReaderView: View {
                 Text("\(items.count) quick questions on today’s reading.")
                     .font(.system(size: 16)).foregroundStyle(Theme.muted).padding(.top, 4).padding(.bottom, 22)
             }
-            Text("\(index + 1) OF \(items.count)").font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.rose)
+            Text("\(index + 1) OF \(items.count)" + (z.from.map { " · ABOUT QUESTION \($0)" } ?? "")).font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.rose)
                 .padding(.bottom, 10)
             Text(z.q).font(Theme.read(fs * 0.8)).lineSpacing(fs * 0.3).padding(.bottom, 6)
             ForEach(z.choices.indices, id: \.self) { ci in

@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "title": "Genesis",
   "days": [
     {
@@ -84,8 +84,8 @@
             "Matthew 1:3",
             "Matthew 1:5",
             "Matthew 1:6",
-            "Ruth 3:16",
-            "Ruth 3:18"
+            "Matthew 1:16",
+            "Matthew 1:18"
           ]
         },
         {
@@ -175,6 +175,65 @@
           "refs": [
             "Matthew 1:3"
           ]
+        },
+        {
+          "q": "True or false: In both Tamar's story and John 8, the people ready to punish the woman were guilty too.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "Judah was the man involved with Tamar, and the men in John 8 left one by one when Jesus told the sinless one to throw first (John 8:7, 9).",
+          "from": 1,
+          "refs": [
+            "John 8:7",
+            "John 8:9"
+          ]
+        },
+        {
+          "q": "Judah's confession was the first real crack in his hardness. How does that change show up later?",
+          "choices": [
+            "He marries Tamar and raises the twins",
+            "He leaves his brothers and stays in Canaan",
+            "He offers himself as a slave in Benjamin's place",
+            "He builds an altar at Bethel"
+          ],
+          "answer": 2,
+          "why": "After admitting Tamar was more righteous than he was, Judah later offered himself as a slave in Benjamin's place (Genesis 44:33).",
+          "from": 3,
+          "refs": [
+            "Genesis 44:33"
+          ]
+        },
+        {
+          "q": "What do Tamar, Rahab, Ruth and Bathsheba have in common in Matthew's genealogy?",
+          "choices": [
+            "All were born in Bethlehem",
+            "All were daughters of priests",
+            "All were barren until old age",
+            "All were foreigners or closely tied to one"
+          ],
+          "answer": 3,
+          "why": "Each was a foreigner or tied to one, and God used each to carry the line toward David and Jesus (Matthew 1:3-6).",
+          "from": 6,
+          "refs": [
+            "Matthew 1:3-6"
+          ]
+        },
+        {
+          "q": "Why would moving to Egypt help Jacob's family, according to the study?",
+          "choices": [
+            "Egypt's land was more fertile than Canaan",
+            "Egyptians kept apart from shepherds, so the family wouldn't blend in",
+            "Pharaoh promised to make them all officials",
+            "Canaan had no room left for their flocks"
+          ],
+          "answer": 1,
+          "why": "Egyptians looked down on shepherds, so the family could live apart in Goshen and grow into a nation without being absorbed (Genesis 46:34).",
+          "from": 8,
+          "refs": [
+            "Genesis 46:34"
+          ]
         }
       ]
     },
@@ -233,14 +292,14 @@
           "refs": [
             "Genesis 39:8",
             "James 4:7",
-            "James 4:9",
+            "Genesis 39:9",
             "Psalm 119:11",
-            "Psalm 119:8-9",
+            "Genesis 39:8-9",
             "Luke 16:10",
+            "Genesis 39:10",
             "Galatians 6:9",
-            "Galatians 6:10",
             "Proverbs 5:8",
-            "Proverbs 5:12",
+            "Genesis 39:12",
             "1 Corinthians 6:18",
             "2 Timothy 2:22",
             "1 Corinthians 10:13"
@@ -335,6 +394,64 @@
           "why": "Jesus said lustful looking is adultery already committed in the heart (Matthew 5:28).",
           "refs": [
             "Matthew 5:28"
+          ]
+        },
+        {
+          "q": "Besides sinning against God, what other wrong did Joseph say giving in would be?",
+          "choices": [
+            "Betraying Potiphar's trust",
+            "Breaking Egyptian law",
+            "Shaming his father Jacob",
+            "Disobeying Pharaoh"
+          ],
+          "answer": 0,
+          "why": "Joseph would not betray Potiphar, who had trusted him with everything except his wife (Genesis 39:8-9).",
+          "from": 1,
+          "refs": [
+            "Genesis 39:8-9"
+          ]
+        },
+        {
+          "q": "Why do sins like gossip and angry words against others also wrong God?",
+          "choices": [
+            "They break a specific temple law",
+            "They always lead to violence",
+            "Every person is made in God's image and loved by him",
+            "God only cares about sins done in public"
+          ],
+          "answer": 2,
+          "why": "People are made in God's image, so cursing or tearing them down wrongs him too (James 3:9-10).",
+          "from": 2,
+          "refs": [
+            "James 3:9-10"
+          ]
+        },
+        {
+          "q": "What promise does the study say Joseph's escape from Potiphar's wife illustrates?",
+          "choices": [
+            "God removes all temptation from the faithful",
+            "God rewards resistance with wealth",
+            "Temptation stops once you resist it the first time",
+            "God provides a way out of temptation"
+          ],
+          "answer": 3,
+          "why": "God gave Joseph a way out, as he promises to do when we are tempted (1 Corinthians 10:13).",
+          "from": 3,
+          "refs": [
+            "1 Corinthians 10:13"
+          ]
+        },
+        {
+          "q": "True or false: Genesis 39 plainly says Potiphar spared Joseph because he doubted his wife's story.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "The text doesn't say why; it says Potiphar's anger burned but not at whom, so any reason is inference (Genesis 39:19).",
+          "from": 5,
+          "refs": [
+            "Genesis 39:19"
           ]
         }
       ]
@@ -438,7 +555,7 @@
             "1 Chronicles 22:13",
             "2 Chronicles 31:21",
             "Psalm 1:1-6",
-            "Joshua 1:7-9",
+            "Deuteronomy 29:7-9",
             "3 John 2"
           ]
         },
@@ -547,6 +664,65 @@
           "why": "Integrity guides the upright, while the treacherous are destroyed by their crookedness (Proverbs 11:3).",
           "refs": [
             "Proverbs 11:3"
+          ]
+        },
+        {
+          "q": "True or false: In Genesis 39, God was with Joseph by getting him out of his hard circumstances.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "God didn't remove Joseph's hardship; even in prison the LORD was with him and showed him steadfast love (Genesis 39:21).",
+          "from": 1,
+          "refs": [
+            "Genesis 39:21"
+          ]
+        },
+        {
+          "q": "What common thread does the study find in the verses about prosperity?",
+          "choices": [
+            "Prosperity grows out of obedience and a heart set on God",
+            "Prosperity means God's people never face hardship",
+            "Prosperity comes from hard work alone",
+            "Prosperity is a reward for giving money"
+          ],
+          "answer": 0,
+          "why": "Hezekiah sought God and did every work with all his heart, and he prospered (2 Chronicles 31:21).",
+          "from": 2,
+          "refs": [
+            "2 Chronicles 31:21"
+          ]
+        },
+        {
+          "q": "What does the Hebrew word tsalach, used of Joseph in Genesis 39, mean?",
+          "choices": [
+            "To gain great wealth",
+            "To succeed or push through to a good end",
+            "To be set free",
+            "To be honored by kings"
+          ],
+          "answer": 1,
+          "why": "Tsalach means to succeed or advance to a good end, and it is used of Joseph as a slave and a prisoner (Genesis 39:2-3, 23).",
+          "from": 3,
+          "refs": [
+            "Genesis 39:2-3",
+            "Genesis 39:23"
+          ]
+        },
+        {
+          "q": "How does the study define integrity?",
+          "choices": [
+            "Being wealthy and well respected",
+            "Never facing temptation",
+            "Following every custom of your culture",
+            "Being whole and undivided, the same in private and public"
+          ],
+          "answer": 3,
+          "why": "Integrity is being the same in private as in public, as Joseph showed when he ran with no one else in the house (Genesis 39:11-12).",
+          "from": 4,
+          "refs": [
+            "Genesis 39:11-12"
           ]
         }
       ]
@@ -712,6 +888,65 @@
           "refs": [
             "Genesis 37:2",
             "Genesis 41:46"
+          ]
+        },
+        {
+          "q": "Using Joseph as the example, what does the study say a waiting season can be?",
+          "choices": [
+            "A sign God has shelved your gifts",
+            "A punishment for past pride",
+            "A place where God quietly trains a gift",
+            "Time that simply has to be endured"
+          ],
+          "answer": 2,
+          "why": "Joseph's gift for managing people and resources grew in Potiphar's house and in prison, places he never would have chosen (Genesis 39:4, 22).",
+          "from": 1,
+          "refs": [
+            "Genesis 39:4",
+            "Genesis 39:22"
+          ]
+        },
+        {
+          "q": "What does Joseph's story show about children raised in the same flawed home?",
+          "choices": [
+            "They always turn out alike",
+            "Each makes his own choices, and God can raise up a faithful one",
+            "The youngest is always the most faithful",
+            "Parents' sins decide their children's future"
+          ],
+          "answer": 1,
+          "why": "Raised in the same home as brothers who chose violence and deceit, Joseph refused sin at great cost (Genesis 39:9).",
+          "from": 2,
+          "refs": [
+            "Genesis 39:9"
+          ]
+        },
+        {
+          "q": "What pattern links Genesis 12:2-3, 30:27 and 39:5?",
+          "choices": [
+            "Outsiders are cursed for dealing with Abraham's family",
+            "God blesses only those born in Canaan",
+            "Famine follows Abraham's family wherever it goes",
+            "Outsiders with Abraham's family in their household share the blessing"
+          ],
+          "answer": 3,
+          "why": "God promised to bless those who blessed Abram, and he blessed Potiphar's house for Joseph's sake (Genesis 39:5).",
+          "from": 4,
+          "refs": [
+            "Genesis 39:5"
+          ]
+        },
+        {
+          "q": "True or false: Joseph made himself known to his brothers soon after he stood before Pharaoh.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "About nine more years passed, through seven years of plenty and two of famine, before he revealed himself (Genesis 45:6).",
+          "from": 5,
+          "refs": [
+            "Genesis 45:6"
           ]
         }
       ]
@@ -956,6 +1191,64 @@
           "refs": [
             "Romans 5:3-4"
           ]
+        },
+        {
+          "q": "Joseph noticed the two officials looked troubled and asked why. What quality did that show?",
+          "choices": [
+            "Curiosity about palace affairs",
+            "Fear of the officials",
+            "Compassion and attentiveness",
+            "A wish to earn favors"
+          ],
+          "answer": 2,
+          "why": "Though he had been wronged himself, Joseph noticed their sad faces and asked what was wrong (Genesis 40:6-7).",
+          "from": 1,
+          "refs": [
+            "Genesis 40:6-7"
+          ]
+        },
+        {
+          "q": "What made Joseph's time in prison undeserved?",
+          "choices": [
+            "He had stolen from Potiphar's house",
+            "He was punished for telling his dreams",
+            "He refused to work as a slave",
+            "He was jailed for something he didn't do"
+          ],
+          "answer": 3,
+          "why": "Potiphar's wife falsely accused him, and he was imprisoned though he had done nothing wrong (Genesis 40:15).",
+          "from": 3,
+          "refs": [
+            "Genesis 40:15"
+          ]
+        },
+        {
+          "q": "Hebrews says Jesus was made \"perfect through suffering.\" What does \"perfect\" mean there?",
+          "choices": [
+            "Complete, fully fitted to be our Savior",
+            "Cleansed of sin that needed correcting",
+            "Freed from ever feeling pain again",
+            "Rewarded with God's love for enduring"
+          ],
+          "answer": 0,
+          "why": "\"Perfect\" means complete and fully fitted to be our Savior, not that he had sin to correct (Hebrews 2:10).",
+          "from": 5,
+          "refs": [
+            "Hebrews 2:10"
+          ]
+        },
+        {
+          "q": "True or false: Hebrews 10 says believers need endurance so they can receive what God promised.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "We need endurance so that after doing God's will we receive what he promised (Hebrews 10:36).",
+          "from": 6,
+          "refs": [
+            "Hebrews 10:36"
+          ]
         }
       ]
     },
@@ -1042,20 +1335,20 @@
           "answer": "Romans 8:28 doesn't say every event is good; it says God works all things together for good for those who love him. In Joseph's life:\n• His brothers' betrayal got him to Egypt (37:28, 36), which he later saw as God's doing (45:5-8; 50:20).\n• Slavery in Potiphar's house trained him to manage a household and its resources (39:4-6).\n• A false accusation put him in the king's prison (39:20), where Pharaoh's officials were held (40:1-3).\n• Interpreting the cupbearer's dream put his name into the palace (40:9-13; 41:9-13).\n• The cupbearer's forgetting meant Joseph was remembered at the moment Pharaoh needed him (41:1, 9-14).\n• Years of hardship shaped a humbler man who gave God the credit (41:16).\n• All of it put him in place to save Egypt and his own family from famine (41:53-57; 45:7).",
           "refs": [
             "Romans 8:28",
-            "Romans 37:28",
-            "Romans 37:36",
-            "Romans 45:5-8",
-            "Romans 50:20",
-            "Romans 39:4-6",
-            "Romans 39:20",
-            "Romans 40:1-3",
-            "Romans 40:9-13",
-            "Romans 41:9-13",
-            "Romans 41:1",
-            "Romans 41:9-14",
-            "Romans 41:16",
-            "Romans 41:53-57",
-            "Romans 45:7"
+            "Genesis 37:28",
+            "Genesis 37:36",
+            "Genesis 45:5-8",
+            "Genesis 50:20",
+            "Genesis 39:4-6",
+            "Genesis 39:20",
+            "Genesis 40:1-3",
+            "Genesis 40:9-13",
+            "Genesis 41:9-13",
+            "Genesis 41:1",
+            "Genesis 41:9-14",
+            "Genesis 41:16",
+            "Genesis 41:53-57",
+            "Genesis 45:7"
           ]
         },
         {
@@ -1141,6 +1434,64 @@
           "why": "The promise is for those who love God and are called according to his purpose (Romans 8:28).",
           "refs": [
             "Romans 8:28"
+          ]
+        },
+        {
+          "q": "Which of these shows Joseph didn't grow bitter toward God?",
+          "choices": [
+            "He named his sons to credit God for helping him",
+            "He stopped interpreting dreams after the cupbearer forgot him",
+            "He demanded that Pharaoh punish his brothers",
+            "He refused to speak of God in Egypt"
+          ],
+          "answer": 0,
+          "why": "Joseph named his sons to credit God for helping him past his hardship and making him fruitful (Genesis 41:51-52).",
+          "from": 1,
+          "refs": [
+            "Genesis 41:51-52"
+          ]
+        },
+        {
+          "q": "What does the cupbearer forgetting Joseph have in common with Deuteronomy 6:10-12?",
+          "choices": [
+            "Both show God punishing forgetfulness right away",
+            "Both warn against trusting Egypt",
+            "Both are about keeping the Sabbath",
+            "Comfort makes people forget who helped them"
+          ],
+          "answer": 3,
+          "why": "Once things went well for him, the cupbearer forgot Joseph, the same pattern Moses warned would make Israel forget God (Genesis 40:23).",
+          "from": 4,
+          "refs": [
+            "Genesis 40:23"
+          ]
+        },
+        {
+          "q": "True or false: Romans 8:28 teaches that every event in a believer's life is good.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "It doesn't call every event good; it says God works all things together for good for those who love him (Romans 8:28).",
+          "from": 5,
+          "refs": [
+            "Romans 8:28"
+          ]
+        },
+        {
+          "q": "What weakness do many readers see in Joseph at 17, before his hard years?",
+          "choices": [
+            "Laziness in his work",
+            "Immaturity, maybe pride",
+            "Cowardice before his brothers",
+            "Greed for his father's wealth"
+          ],
+          "answer": 1,
+          "why": "He brought a bad report about his brothers and told his dreams of them bowing to brothers who already hated him (Genesis 37:2).",
+          "from": 6,
+          "refs": [
+            "Genesis 37:2"
           ]
         }
       ]
@@ -1271,6 +1622,64 @@
           "why": "Joseph told Pharaoh to take up a fifth of the land's produce in the plentiful years (Genesis 41:34).",
           "refs": [
             "Genesis 41:34"
+          ]
+        },
+        {
+          "q": "Why might the two extra years in prison have been Joseph's darkest hour?",
+          "choices": [
+            "He was moved to a harsher dungeon",
+            "Hope had seemed close, then nothing came of it",
+            "His brothers came to mock him",
+            "The keeper took away his responsibilities"
+          ],
+          "answer": 1,
+          "why": "A hope raised and then dropped can hurt more than the original loss (Proverbs 13:12).",
+          "from": 1,
+          "refs": [
+            "Proverbs 13:12"
+          ]
+        },
+        {
+          "q": "Joseph went from forgotten prisoner to second only to Pharaoh in one day. What does that show?",
+          "choices": [
+            "Hard work always pays off quickly",
+            "Pharaoh was easily impressed",
+            "When God's time comes, he can change things completely and quickly",
+            "Joseph had been planning his release"
+          ],
+          "answer": 2,
+          "why": "That morning Joseph was rushed out of the dungeon, and by day's end he was set over all Egypt (Genesis 41:40-43).",
+          "from": 2,
+          "refs": [
+            "Genesis 41:40-43"
+          ]
+        },
+        {
+          "q": "Which long-dormant \"seed\" began to flower when Egyptians cried \"Bow the knee!\" before Joseph?",
+          "choices": [
+            "His dreams of others bowing to him",
+            "His father's blessing on Judah",
+            "His coat of many colors",
+            "His friendship with the baker"
+          ],
+          "answer": 0,
+          "why": "His dreams at 17 of sheaves and stars bowing to him lay dormant for 13 years and began to come true (Genesis 41:43).",
+          "from": 3,
+          "refs": [
+            "Genesis 41:43"
+          ]
+        },
+        {
+          "q": "True or false: The study says the harvest from faithful seeds is often noticed only in hindsight.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "Faithfulness and kindness often take years to show fruit, so we shouldn't grow weary of doing good (Galatians 6:9).",
+          "from": 4,
+          "refs": [
+            "Galatians 6:9"
           ]
         }
       ]
@@ -1420,6 +1829,66 @@
           "why": "Pharaoh asked his servants if they could find a man like this, in whom is the Spirit of God (Genesis 41:38).",
           "refs": [
             "Genesis 41:38"
+          ]
+        },
+        {
+          "q": "Before Joseph was brought in, who was able to interpret Pharaoh's two dreams?",
+          "choices": [
+            "The chief cupbearer",
+            "Pharaoh's priests at On",
+            "Pharaoh himself",
+            "No one, not even his magicians or wise men"
+          ],
+          "answer": 3,
+          "why": "Both dreams troubled Pharaoh, and none of his magicians or wise men could interpret them (Genesis 41:8).",
+          "from": 1,
+          "refs": [
+            "Genesis 41:8"
+          ]
+        },
+        {
+          "q": "What did Joseph's answer to Pharaoh in Genesis 41:16 show about him?",
+          "choices": [
+            "Humility and confidence in God",
+            "Fear of Pharaoh's anger",
+            "Bitterness toward the cupbearer who forgot him",
+            "Pride in his gift for dreams"
+          ],
+          "answer": 0,
+          "why": "Joseph took no credit and boldly pointed Pharaoh to God, with no bitterness about being forgotten (Genesis 41:16).",
+          "from": 2,
+          "refs": [
+            "Genesis 41:16"
+          ]
+        },
+        {
+          "q": "True or false: The study names serving or giving in order to be seen as one way we steal God's glory.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "Doing good to be seen by others takes credit that belongs to God (Matthew 6:1-4).",
+          "from": 4,
+          "refs": [
+            "Matthew 6:1-4"
+          ]
+        },
+        {
+          "q": "How many times does Joseph mention God in his answer to Pharaoh in Genesis 41:25-36?",
+          "choices": [
+            "Once",
+            "Twice",
+            "Four times",
+            "Seven times"
+          ],
+          "answer": 2,
+          "why": "Joseph names God four times: God revealed, showed, fixed, and will bring about what is coming (Genesis 41:25, 28, 32).",
+          "from": 5,
+          "refs": [
+            "Genesis 41:25",
+            "Genesis 41:28",
+            "Genesis 41:32"
           ]
         }
       ]
@@ -1628,6 +2097,62 @@
           "refs": [
             "Genesis 48:5"
           ]
+        },
+        {
+          "q": "In 1 Kings 3, what did Solomon ask God for?",
+          "choices": [
+            "Riches and honor",
+            "An understanding mind to govern God's people",
+            "A long life",
+            "Victory over his enemies"
+          ],
+          "answer": 1,
+          "why": "Solomon asked for an understanding mind, and God added the riches and honor he hadn't asked for (1 Kings 3:7-15).",
+          "from": 2,
+          "refs": []
+        },
+        {
+          "q": "True or false: Joseph told Pharaoh his two dreams carried two separate messages.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "Joseph said the two dreams were one message about what God was about to do (Genesis 41:25-26).",
+          "from": 3,
+          "refs": [
+            "Genesis 41:25-26"
+          ]
+        },
+        {
+          "q": "How much of the produce did Joseph advise collecting during the seven good years?",
+          "choices": [
+            "One-tenth",
+            "One-half",
+            "All of it",
+            "One-fifth"
+          ],
+          "answer": 3,
+          "why": "Joseph told Pharaoh to appoint overseers and take one-fifth of the produce during the plentiful years (Genesis 41:34).",
+          "from": 4,
+          "refs": [
+            "Genesis 41:34"
+          ]
+        },
+        {
+          "q": "Pharaoh's gifts reversed what the brothers did. What replaced the robe they stripped from Joseph?",
+          "choices": [
+            "Garments of fine linen",
+            "A new coat of many colors",
+            "A priest's ephod",
+            "Sackcloth"
+          ],
+          "answer": 0,
+          "why": "Pharaoh clothed Joseph in fine linen and put a gold chain around his neck (Genesis 41:42).",
+          "from": 5,
+          "refs": [
+            "Genesis 41:42"
+          ]
         }
       ]
     },
@@ -1805,6 +2330,64 @@
           "refs": [
             "Genesis 43:34"
           ]
+        },
+        {
+          "q": "Why was Benjamin so precious to Jacob that he wouldn't send him to Egypt?",
+          "choices": [
+            "He was Jacob's firstborn",
+            "He had been sick as a child",
+            "He was Rachel's only remaining son",
+            "He managed Jacob's flocks"
+          ],
+          "answer": 2,
+          "why": "With Joseph presumed dead, Benjamin was Rachel's last son, and Jacob feared harm might come to him (Genesis 42:4).",
+          "from": 2,
+          "refs": [
+            "Genesis 42:4"
+          ]
+        },
+        {
+          "q": "According to the study, what was Joseph testing by hiding his silver cup in Benjamin's sack?",
+          "choices": [
+            "Whether Benjamin was a thief",
+            "Whether they'd abandon Benjamin to save themselves",
+            "Whether his steward could be trusted",
+            "Whether they could pay for more grain"
+          ],
+          "answer": 1,
+          "why": "The cup was the final test of whether they would let Benjamin become a slave to save themselves, as they once sold Joseph (Genesis 44:2).",
+          "from": 3,
+          "refs": [
+            "Genesis 44:2"
+          ]
+        },
+        {
+          "q": "Why did the brothers think God was against them when they found their silver returned?",
+          "choices": [
+            "They had stolen the silver",
+            "Joseph told them God was angry",
+            "Jacob had warned them before they left",
+            "Guilt over Joseph colored how they read everything"
+          ],
+          "answer": 3,
+          "why": "Already sure they were being paid back for Joseph, they read an unexplained gift as God setting them up (Genesis 42:28).",
+          "from": 5,
+          "refs": [
+            "Genesis 42:28"
+          ]
+        },
+        {
+          "q": "True or false: Even after Jacob died, the brothers still feared Joseph would pay them back.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "Their guilt never fully went away; after Jacob's death they feared Joseph would repay them for the evil they did (Genesis 50:15).",
+          "from": 6,
+          "refs": [
+            "Genesis 50:15"
+          ]
         }
       ]
     },
@@ -1980,6 +2563,64 @@
           "refs": [
             "1 John 3:20"
           ]
+        },
+        {
+          "q": "What does it mean that some people have a \"seared\" conscience?",
+          "choices": [
+            "It is extra sensitive to sin",
+            "It has been burned numb and no longer warns them",
+            "It has been cleansed by grace",
+            "It belongs to a brand-new believer"
+          ],
+          "answer": 1,
+          "why": "A seared conscience is burned numb like cauterized skin, so a person can do wrong and feel nothing (1 Timothy 4:1-2).",
+          "from": 1,
+          "refs": [
+            "1 Timothy 4:1-2"
+          ]
+        },
+        {
+          "q": "True or false: The study says a feeling of guilt always means sin is involved.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "Guilt feelings can come from real sin, but also from false sources such as the accuser (Revelation 12:10).",
+          "from": 2,
+          "refs": [
+            "Revelation 12:10"
+          ]
+        },
+        {
+          "q": "How does the study describe the Holy Spirit's conviction?",
+          "choices": [
+            "Vague, telling you you're a failure",
+            "It keeps accusing after you confess",
+            "It pushes you away from God",
+            "Specific, pointing you to Christ and confession"
+          ],
+          "answer": 3,
+          "why": "The Spirit's conviction names a particular sin and leads to confession, then lifts once you confess (John 16:8).",
+          "from": 3,
+          "refs": [
+            "John 16:8"
+          ]
+        },
+        {
+          "q": "According to the study, when is Romans 8:1's promise of no condemnation true for those in Christ?",
+          "choices": [
+            "Now, not someday",
+            "Only after we die",
+            "Once we stop sinning",
+            "On the day of judgment"
+          ],
+          "answer": 0,
+          "why": "There is \"now\" no condemnation for those in Christ Jesus; no verdict stands against them today (Romans 8:1).",
+          "from": 6,
+          "refs": [
+            "Romans 8:1"
+          ]
         }
       ]
     },
@@ -2131,6 +2772,64 @@
           "why": "Jacob said Joseph and Simeon were gone, they wanted Benjamin, and all this had come against him (Genesis 42:36).",
           "refs": [
             "Genesis 42:36"
+          ]
+        },
+        {
+          "q": "Years before offering himself for Benjamin, what had Judah proposed doing with Joseph?",
+          "choices": [
+            "Killing him in the field",
+            "Hiding him from their father",
+            "Selling him for profit",
+            "Leaving him in the pit"
+          ],
+          "answer": 2,
+          "why": "Judah once proposed selling Joseph for profit, which makes his offer to take Benjamin's place a real change (Genesis 37:26-27).",
+          "from": 1,
+          "refs": [
+            "Genesis 37:26-27"
+          ]
+        },
+        {
+          "q": "Many point to which event as the turning point in Judah's life?",
+          "choices": [
+            "Wrestling with God at Peniel",
+            "Being held in an Egyptian prison",
+            "Seeing Joseph's dreams come true",
+            "Being exposed by Tamar in Genesis 38"
+          ],
+          "answer": 3,
+          "why": "Exposed by Tamar, Judah admitted she was more righteous than he, the first time we see him own his sin (Genesis 38:26).",
+          "from": 2,
+          "refs": [
+            "Genesis 38:26"
+          ]
+        },
+        {
+          "q": "Why did Joseph leave the room to weep in Genesis 43:30?",
+          "choices": [
+            "He heard that Jacob was ill",
+            "He saw Benjamin, his mother's son",
+            "His brothers bowed down to him",
+            "Simeon had been released"
+          ],
+          "answer": 1,
+          "why": "Seeing Benjamin, his mother's son, moved Joseph so deeply that he went out to weep in private (Genesis 43:30).",
+          "from": 3,
+          "refs": [
+            "Genesis 43:30"
+          ]
+        },
+        {
+          "q": "True or false: When the cup was found, all the brothers went back to the city with Benjamin.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "They tore their clothes and all returned with Benjamin rather than leaving him, a sign of real repentance (Genesis 44:13).",
+          "from": 5,
+          "refs": [
+            "Genesis 44:13"
           ]
         }
       ]
@@ -2291,6 +2990,64 @@
           "why": "Jacob didn't believe them at first, but when he saw the wagons Joseph sent, his spirit revived (Genesis 45:26-27).",
           "refs": [
             "Genesis 45:26-27"
+          ]
+        },
+        {
+          "q": "Joseph told his brothers that, in the end, who really sent him to Egypt?",
+          "choices": [
+            "His brothers",
+            "Pharaoh",
+            "The Midianite traders",
+            "God"
+          ],
+          "answer": 3,
+          "why": "Joseph said it was not his brothers who sent him there, but God (Genesis 45:8).",
+          "from": 3,
+          "refs": [
+            "Genesis 45:8"
+          ]
+        },
+        {
+          "q": "Why did Joseph tell his brothers, \"Do not quarrel on the way\"?",
+          "choices": [
+            "He knew they might start blaming each other",
+            "He feared robbers would hear them",
+            "Pharaoh disliked noisy travelers",
+            "Benjamin was too young for arguing"
+          ],
+          "answer": 0,
+          "why": "Joseph sent them off with gifts and told them not to quarrel, knowing they might blame each other (Genesis 45:24).",
+          "from": 2,
+          "refs": [
+            "Genesis 45:24"
+          ]
+        },
+        {
+          "q": "What freed Joseph to forgive the brothers who had sold him?",
+          "choices": [
+            "Time had made him forget the wrong",
+            "Pharaoh ordered him to make peace",
+            "Seeing his hard years through God's purposes",
+            "His brothers paid back what they owed"
+          ],
+          "answer": 2,
+          "why": "Joseph saw that God used his brothers' harm to keep the family alive, and that freed him to forgive (Genesis 45:5-8).",
+          "from": 4,
+          "refs": [
+            "Genesis 45:5-8"
+          ]
+        },
+        {
+          "q": "True or false: Joseph's brothers had done something to earn the kindness they received in Genesis 45.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "The brothers earned none of it; they were forgiven instead of punished for selling Joseph (Genesis 45:15).",
+          "from": 6,
+          "refs": [
+            "Genesis 45:15"
           ]
         }
       ]
@@ -2485,6 +3242,64 @@
           "refs": [
             "Genesis 47:9"
           ]
+        },
+        {
+          "q": "Why did God tell Isaac and Jacob opposite things about going down to Egypt?",
+          "choices": [
+            "He had changed his mind about the promise",
+            "Jacob had more faith than Isaac",
+            "His guidance fits the person and the moment in his plan",
+            "Egypt had become a safer place"
+          ],
+          "answer": 2,
+          "why": "God's guidance fits the person and the moment, so he told Jacob, \"Do not be afraid to go down to Egypt\" (Genesis 46:3).",
+          "from": 1,
+          "refs": [
+            "Genesis 46:3"
+          ]
+        },
+        {
+          "q": "What does the careful list of seventy names in Genesis 46 show?",
+          "choices": [
+            "The beginning of the nation God promised Abraham",
+            "Which sons Joseph had forgiven",
+            "Who would serve in Pharaoh's court",
+            "The family members who stayed in Canaan"
+          ],
+          "answer": 0,
+          "why": "The seventy who went to Egypt were the start of the nation God promised would come from Abraham (Genesis 46:27).",
+          "from": 3,
+          "refs": [
+            "Genesis 46:27"
+          ]
+        },
+        {
+          "q": "About how many men on foot left Egypt at the exodus, besides women and children?",
+          "choices": [
+            "Seven thousand",
+            "Seventy thousand",
+            "Six million",
+            "Six hundred thousand"
+          ],
+          "answer": 3,
+          "why": "Seventy went down, and about six hundred thousand men left, as God promised to make them a great nation (Exodus 12:37).",
+          "from": 4,
+          "refs": [
+            "Exodus 12:37"
+          ]
+        },
+        {
+          "q": "True or false: Living apart in Goshen helped Jacob's family stay a distinct people instead of blending in.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "Set apart in Goshen with good pasture, Israel stayed distinct and multiplied greatly (Genesis 47:27).",
+          "from": 6,
+          "refs": [
+            "Genesis 47:27"
+          ]
         }
       ]
     },
@@ -2573,7 +3388,7 @@
           "refs": [
             "Genesis 48:5",
             "1 Chronicles 5:1-2",
-            "1 Chronicles 48:4"
+            "Genesis 48:4"
           ]
         },
         {
@@ -2668,6 +3483,64 @@
           "why": "Jacob told Joseph that God Almighty (El Shaddai) appeared to him at Luz and blessed him (Genesis 48:3).",
           "refs": [
             "Genesis 48:3"
+          ]
+        },
+        {
+          "q": "True or false: Egypt's priests also had to sell their land to Pharaoh during the famine.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "Nearly all the land went to Pharaoh, but the priests kept theirs (Genesis 47:22).",
+          "from": 1,
+          "refs": [
+            "Genesis 47:22"
+          ]
+        },
+        {
+          "q": "Why did Jacob claim Ephraim and Manasseh as his own sons?",
+          "choices": [
+            "Joseph asked him to raise them in Canaan",
+            "To replace Benjamin as his youngest",
+            "To give Joseph a double share of the inheritance",
+            "Pharaoh required it before Jacob died"
+          ],
+          "answer": 2,
+          "why": "Ranking the boys with Reuben and Simeon gave Joseph the firstborn's double portion, two tribes (Genesis 48:5).",
+          "from": 7,
+          "refs": [
+            "Genesis 48:5"
+          ]
+        },
+        {
+          "q": "Which is another time Genesis favors a younger one over the older?",
+          "choices": [
+            "Cain's offering over Abel's",
+            "Ishmael chosen over Isaac",
+            "Leah loved more than Rachel",
+            "Jacob chosen over Esau"
+          ],
+          "answer": 3,
+          "why": "Like Ephraim over Manasseh, God chose Jacob over his older brother Esau (Genesis 25:23).",
+          "from": 8,
+          "refs": [
+            "Genesis 25:23"
+          ]
+        },
+        {
+          "q": "In Genesis, the name El Shaddai often comes with what kind of promise?",
+          "choices": [
+            "Fruitfulness when it looked impossible",
+            "Warnings of coming judgment",
+            "Rules for offering sacrifices",
+            "Instructions for building an altar"
+          ],
+          "answer": 0,
+          "why": "God Almighty, El Shaddai, made promises of fruitfulness when they looked impossible (Genesis 35:11).",
+          "from": 9,
+          "refs": [
+            "Genesis 35:11"
           ]
         }
       ]
@@ -2777,7 +3650,7 @@
             "Genesis 48:21",
             "Genesis 48:22",
             "Joshua 24:32",
-            "Joshua 47:29-31"
+            "Genesis 47:29-31"
           ]
         }
       ],
@@ -2848,6 +3721,64 @@
           "why": "Jacob had Joseph put his hand under his thigh and swear to bury him with his fathers, not in Egypt (Genesis 47:29-31).",
           "refs": [
             "Genesis 47:29-31"
+          ]
+        },
+        {
+          "q": "Jacob called God \"the angel who has\" done what for him?",
+          "choices": [
+            "Made me rich in flocks",
+            "Spoken to me in dreams",
+            "Given me victory over Esau",
+            "Redeemed me from all evil"
+          ],
+          "answer": 3,
+          "why": "Jacob blessed the boys in the name of the angel who redeemed him from all evil (Genesis 48:16).",
+          "from": 1,
+          "refs": [
+            "Genesis 48:16"
+          ]
+        },
+        {
+          "q": "In Psalm 23:4, why need we not fear in the valley of the shadow of death?",
+          "choices": [
+            "Because the valley is short",
+            "Because he is with us",
+            "Because our enemies are gone",
+            "Because we know the way"
+          ],
+          "answer": 1,
+          "why": "We fear no evil in the valley of the shadow of death, because the shepherd is with us (Psalm 23:4).",
+          "from": 3,
+          "refs": [
+            "Psalm 23:4"
+          ]
+        },
+        {
+          "q": "In John 10, how does the good shepherd call his own sheep?",
+          "choices": [
+            "With a horn",
+            "By counting them",
+            "By name",
+            "With a staff"
+          ],
+          "answer": 2,
+          "why": "The good shepherd calls his own sheep by name and leads them out (John 10:3).",
+          "from": 4,
+          "refs": [
+            "John 10:3"
+          ]
+        },
+        {
+          "q": "True or false: Jacob gave Joseph one extra portion of land beyond what his brothers received.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 0,
+          "why": "Jacob gave Joseph one portion more than his brothers, likely Shechem, where Joseph's bones were later buried (Genesis 48:22).",
+          "from": 7,
+          "refs": [
+            "Genesis 48:22"
           ]
         }
       ]
@@ -3052,6 +3983,64 @@
           "why": "Joseph died at 110 years old and was embalmed and put in a coffin in Egypt (Genesis 50:26).",
           "refs": [
             "Genesis 50:26"
+          ]
+        },
+        {
+          "q": "Christians see Genesis 49:10 fulfilled in Jesus, called what in Revelation 5:5?",
+          "choices": [
+            "The Root of Jesse",
+            "The Good Shepherd",
+            "The Bright Morning Star",
+            "The Lion of the tribe of Judah"
+          ],
+          "answer": 3,
+          "why": "The scepter promised to Judah points to Jesus, \"the Lion of the tribe of Judah\" (Revelation 5:5).",
+          "from": 2,
+          "refs": [
+            "Revelation 5:5"
+          ]
+        },
+        {
+          "q": "The brothers may have expected Joseph to act like whom, who planned revenge once his father died?",
+          "choices": [
+            "Cain",
+            "Esau",
+            "Laban",
+            "Ishmael"
+          ],
+          "answer": 1,
+          "why": "They may have feared Joseph would act like Esau, who planned to kill Jacob after their father died (Genesis 27:41).",
+          "from": 5,
+          "refs": [
+            "Genesis 27:41"
+          ]
+        },
+        {
+          "q": "Which of these did Joseph do to show he had completely forgiven his brothers?",
+          "choices": [
+            "Promised to provide for them and their little ones",
+            "Made them swear loyalty to Pharaoh",
+            "Accepted their offer to be his servants",
+            "Sent them back to live in Canaan"
+          ],
+          "answer": 0,
+          "why": "Joseph told them not to fear and promised to provide for them and their little ones (Genesis 50:21).",
+          "from": 6,
+          "refs": [
+            "Genesis 50:21"
+          ]
+        },
+        {
+          "q": "True or false: Genesis records Jacob actually asking Joseph to forgive his brothers.",
+          "choices": [
+            "True",
+            "False"
+          ],
+          "answer": 1,
+          "why": "The brothers' message claimed Jacob asked this, but Genesis never records him saying it (Genesis 50:16-17).",
+          "from": 4,
+          "refs": [
+            "Genesis 50:16-17"
           ]
         }
       ]
