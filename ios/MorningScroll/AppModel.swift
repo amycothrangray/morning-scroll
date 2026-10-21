@@ -14,12 +14,20 @@ struct Progress: Codable {
     var words: [String: Int]?          // Day Six: study day id → chosen Word of the Week
 }
 
+/// Seconds read today. Kept apart from `progress` so the once-a-second tick only redraws the timer.
+struct ReadingTimer {
+    var day: String?
+    var date: String?
+    var secs = 0
+}
+
 @MainActor @Observable
 final class AppModel {
     static let goal = 5 * 60
 
     var study: Study = StudyLoader.local()
     var progress: Progress
+    var timer: ReadingTimer
     var readingDay: StudyDay?
     var authError: String?
 
@@ -50,7 +58,9 @@ final class AppModel {
 
     init() {
         let d = UserDefaults.standard
-        progress = (d.data(forKey: "progress")).flatMap { try? JSONDecoder().decode(Progress.self, from: $0) } ?? Progress()
+        let saved = (d.data(forKey: "progress")).flatMap { try? JSONDecoder().decode(Progress.self, from: $0) } ?? Progress()
+        progress = saved
+        timer = ReadingTimer(day: saved.timerDay, date: saved.timerDate, secs: saved.timerSecs)
         name = d.string(forKey: "name") ?? ""
         askedName = d.bool(forKey: "askedName")
         fontSize = d.object(forKey: "fontSize") as? Double ?? 30
@@ -59,7 +69,11 @@ final class AppModel {
     }
 
     func save() {
-        UserDefaults.standard.set(try? JSONEncoder().encode(progress), forKey: "progress")
+        var p = progress // a copy, so saving doesn't count as a change to `progress`
+        p.timerDay = timer.day
+        p.timerDate = timer.date
+        p.timerSecs = timer.secs
+        UserDefaults.standard.set(try? JSONEncoder().encode(p), forKey: "progress")
     }
 
     // MARK: Days
@@ -87,13 +101,14 @@ final class AppModel {
     }
 
     func open(_ day: StudyDay) {
-        if progress.timerDay != day.id || progress.timerDate != today {
-            progress.timerDay = day.id
-            progress.timerDate = today
-            progress.timerSecs = 0
-            save()
-        }
+        startTimer(day)
         readingDay = day
+    }
+
+    private func startTimer(_ day: StudyDay) {
+        guard timer.day != day.id || timer.date != today else { return }
+        timer = ReadingTimer(day: day.id, date: today, secs: 0)
+        save()
     }
 
     func pick(_ day: StudyDay) {
@@ -103,20 +118,22 @@ final class AppModel {
     }
 
     func secondsRead(_ day: StudyDay) -> Int {
-        progress.timerDay == day.id && progress.timerDate == today ? progress.timerSecs : 0
+        timer.day == day.id && timer.date == today ? timer.secs : 0
     }
 
     func secondsLeft(_ day: StudyDay) -> Int { max(0, Self.goal - secondsRead(day)) }
 
     func tick(_ day: StudyDay) {
-        if progress.timerDay != day.id || progress.timerDate != today { open(day) }
-        progress.timerSecs += 1
-        if progress.timerSecs % 5 == 0 { save() }
+        startTimer(day)
+        timer.secs += 1
+        if timer.secs % 5 == 0 { save() }
     }
 
     /// Unlocks the held-back apps once the five minutes are up.
     func completeIfReady(_ day: StudyDay) {
         guard secondsRead(day) >= Self.goal else { return }
+        // Already recorded: don't touch `progress` again (every write redraws the reader).
+        if progress.done[day.id] != nil, progress.readDates.contains(today), progress.pick != day.id, Shared.readToday { return }
         if progress.done[day.id] == nil { progress.done[day.id] = today }
         if progress.pick == day.id { progress.pick = nil }
         progress.readDates.insert(today)
@@ -157,6 +174,7 @@ final class AppModel {
 
     func resetProgress() {
         progress = Progress()
+        timer = ReadingTimer()
         save()
         Shared.doneDate = nil
         Shared.sync()

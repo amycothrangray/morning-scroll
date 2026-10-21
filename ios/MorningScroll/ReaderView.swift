@@ -12,12 +12,10 @@ struct ReaderView: View {
     @State private var loading = true
     @State private var reachedEnd = false
     @State private var snap = SnapLayout()
-    @State private var position = ScrollPosition(edge: .top)
-    @State private var focusedIndex = 0
+    @State private var focus = ReaderFocus()
     @State private var speaker = Speaker()
     @State private var quotes: [String: String] = [:]
     @State private var quotesTask: Task<Void, Never>?
-    @State private var scrubLabel: String?
 
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private var fs: CGFloat { model.fontSize }
@@ -36,7 +34,12 @@ struct ReaderView: View {
             } else {
                 content
             }
-            topBar
+            ReaderTopBar(day: day, speaker: speaker, focus: focus, count: items.count,
+                         label: { i in let list = items; return list.indices.contains(i) ? itemLabel(list[i]) : "" },
+                         jump: { i in jump(to: i, animated: false) },
+                         scrubEnded: { if speaker.isOn { speakCurrent() } },
+                         toggleSpeech: { if speaker.isOn { speaker.stop() } else { speaker.isOn = true; speakCurrent() } },
+                         close: { dismiss() })
         }
         .foregroundStyle(Theme.text)
         .task { await load() }
@@ -71,44 +74,7 @@ struct ReaderView: View {
         loading = false
     }
 
-    // MARK: Top bar
-
-    private var topBar: some View {
-        let left = model.secondsLeft(day)
-        return HStack(spacing: 10) {
-            Circle().fill(left > 0 ? Theme.rose : Theme.sage).frame(width: 8, height: 8)
-                .shadow(color: left > 0 ? Theme.rose : Theme.sage, radius: 5)
-            Text(left > 0 ? "Your apps unlock when the timer ends" : (model.hasBlockedApps ? "Apps unlocked. Read on as long as you like." : "Time’s up. Read on as long as you like."))
-                .font(.system(size: 14)).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
-            Spacer(minLength: 4)
-            Button {
-                if speaker.isOn { speaker.stop() } else { speaker.isOn = true; speakCurrent() }
-            } label: {
-                Image(systemName: speaker.isOn ? "speaker.wave.2.fill" : "speaker.wave.2")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(speaker.isOn ? Theme.roseInk : Theme.text)
-                    .frame(width: 40, height: 40)
-                    .background(speaker.isOn ? Theme.roseDeep : Theme.surface, in: Circle())
-                    .overlay(Circle().stroke(speaker.isOn ? Theme.roseDeep : Theme.line))
-            }
-            .accessibilityLabel(speaker.isOn ? "Stop reading aloud" : "Read aloud")
-            Text(left > 0 ? clock(left) : "Done")
-                .font(.system(size: 15, weight: .medium).monospacedDigit())
-                .padding(.horizontal, 12).padding(.vertical, 7)
-                .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
-            Button { dismiss() } label: {
-                Image(systemName: "xmark").font(.system(size: 15, weight: .semibold))
-                    .frame(width: 40, height: 40)
-                    .background(Theme.surface, in: Circle()).overlay(Circle().stroke(Theme.line))
-            }
-            .accessibilityLabel("Close")
-        }
-        .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 12)
-        .overlay(alignment: .bottom) { scrubber.offset(y: 22) }
-        .padding(.bottom, 12)
-        .background(LinearGradient(stops: [.init(color: Theme.bg, location: 0.6), .init(color: Theme.bg.opacity(0), location: 1)],
-                                   startPoint: .top, endPoint: .bottom).ignoresSafeArea(edges: .top))
-    }
+    // MARK: Top bar (its own view, below, so the timer redraws only itself)
 
     // MARK: Scroll
 
@@ -166,8 +132,12 @@ struct ReaderView: View {
                 .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { _, offset in
                     snap.offset = offset
                     snap.height = geo.size.height
+                    // Only the progress bar watches `focus`, so this never redraws the reading mid-flick.
                     let now = snap.index(at: offset + geo.size.height / 2)
-                    if now != focusedIndex { focusedIndex = now }
+                    if now != focus.index {
+                        focus.index = now
+                        if speaker.isOn && focus.label == nil { speakCurrent() }
+                    }
                     // The end counts as soon as the finish card is on screen.
                     if !reachedEnd, let finish = snap.frames[list.count - 1], offset + geo.size.height > finish.minY + 80 {
                         reachedEnd = true
@@ -175,53 +145,24 @@ struct ReaderView: View {
                     }
                 }
                 .scrollTargetBehavior(OneAtATime(snap: snap))
-                .scrollPosition($position)
-                .onAppear { snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
+                .onAppear { focus.proxy = proxy; snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
                 .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstQuestionIndex(list) }
-                .onChange(of: focusedIndex) { _, _ in if speaker.isOn && scrubLabel == nil { speakCurrent() } }
             }
         }
         .ignoresSafeArea()
     }
 
-    // MARK: Progress bar (drag it to rewind or skip ahead)
-
-    private var scrubber: some View {
-        let list = items
-        let n = max(list.count - 1, 1)
-        let fraction = CGFloat(min(focusedIndex, n)) / CGFloat(n)
-        return GeometryReader { g in
-            ZStack(alignment: .leading) {
-                Capsule().fill(Theme.surface2).frame(height: scrubLabel == nil ? 4 : 6)
-                Capsule().fill(Theme.roseDeep).frame(width: max(4, g.size.width * fraction), height: scrubLabel == nil ? 4 : 6)
-                Circle().fill(Theme.rose).frame(width: 16, height: 16)
-                    .shadow(color: Theme.rose.opacity(0.3), radius: 4)
-                    .offset(x: g.size.width * fraction - 8)
-                    .opacity(scrubLabel == nil ? 0 : 1)
-                if let scrubLabel {
-                    Text(scrubLabel)
-                        .font(.system(size: 15)).foregroundStyle(Theme.text)
-                        .padding(.horizontal, 12).padding(.vertical, 6)
-                        .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
-                        .fixedSize()
-                        .position(x: min(max(g.size.width * fraction, 70), g.size.width - 70), y: 38)
-                }
-            }
-            .frame(height: 30)
-            .contentShape(Rectangle())
-            .gesture(DragGesture(minimumDistance: 0).onChanged { v in
-                if scrubLabel == nil { speaker.pause() }
-                let f = min(max(v.location.x / g.size.width, 0), 1)
-                let i = Int((f * CGFloat(n)).rounded())
-                scrubLabel = itemLabel(list[i])
-                if let y = snap.offset(for: i, height: snap.height) { position.scrollTo(y: max(0, y)) }
-            }.onEnded { _ in
-                scrubLabel = nil
-                if speaker.isOn { speakCurrent() }
-            })
+    /// Bring item i to the reading line (long items start near the top instead of centering).
+    private func jump(to i: Int, animated: Bool) {
+        var anchor = UnitPoint.center
+        if snap.isTall(i, height: snap.height), let f = snap.frames[i], abs(snap.height - f.height) > 1 {
+            anchor = UnitPoint(x: 0.5, y: 100 / (snap.height - f.height)) // puts the item's top 100pt down
         }
-        .frame(height: 30)
-        .accessibilityLabel("Reading position")
+        if animated {
+            withAnimation(.easeInOut(duration: 0.6)) { focus.proxy?.scrollTo(i, anchor: anchor) }
+        } else {
+            focus.proxy?.scrollTo(i, anchor: anchor)
+        }
     }
 
     private func itemLabel(_ item: Item) -> String {
@@ -325,13 +266,19 @@ struct ReaderView: View {
         for r in day.questions.flatMap({ $0.refs ?? [] }) + (day.quiz ?? []).flatMap({ $0.refs ?? [] }) + wordRefs where !refs.contains(r) {
             refs.append(r)
         }
-        for r in refs {
+        // Publish in batches: every update redraws the reading, which can jolt a flick in progress.
+        var found: [String: String] = [:]
+        for (n, r) in refs.enumerated() {
             if Task.isCancelled { return }
             if let p = try? await Scripture.shared.passage(r, esvKey: model.esvKey) {
-                quotes[r] = p.verses.map { $0.text.replacingOccurrences(of: "\n", with: " ") }.joined(separator: " ")
+                found[r] = p.verses.map { $0.text.replacingOccurrences(of: "\n", with: " ") }.joined(separator: " ")
             }
-            if model.esvKey.isEmpty { try? await Task.sleep(for: .seconds(2.1)) }
+            if model.esvKey.isEmpty {
+                if n % 6 == 5 { quotes.merge(found) { $1 } }
+                try? await Task.sleep(for: .seconds(2.1))
+            }
         }
+        quotes.merge(found) { $1 }
     }
 
     // MARK: Read aloud
@@ -363,14 +310,13 @@ struct ReaderView: View {
 
     private func speakCurrent() {
         let list = items
-        guard list.indices.contains(focusedIndex), let text = spokenText(list[focusedIndex]) else { speaker.stop(); return }
-        let i = focusedIndex
+        let i = focus.index
+        guard list.indices.contains(i), let text = spokenText(list[i]) else { speaker.stop(); return }
         speaker.speak(text) {
-            guard speaker.isOn, focusedIndex == i else { return }
+            guard speaker.isOn, focus.index == i else { return }
             let next = i + 1
-            guard list.indices.contains(next), spokenText(list[next]) != nil,
-                  let y = snap.offset(for: next, height: snap.height) else { speaker.stop(); return }
-            withAnimation(.easeInOut(duration: 0.6)) { position.scrollTo(y: max(0, y)) }
+            guard list.indices.contains(next), spokenText(list[next]) != nil else { speaker.stop(); return }
+            jump(to: next, animated: true)
         }
     }
 
@@ -394,7 +340,7 @@ struct ReaderView: View {
         case .quiz(let i):
             quizItem(i)
         case .finish:
-            finish
+            FinishCard(day: day, close: { dismiss() })
         }
     }
 
@@ -534,14 +480,132 @@ struct ReaderView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var finish: some View {
+}
+
+private func clock(_ s: Int) -> String { String(format: "%d:%02d", s / 60, s % 60) }
+
+/// Which item is on the reading line, and the label shown while dragging the progress bar.
+/// Only the progress bar reads this, so scrolling never redraws the reading itself.
+@Observable
+final class ReaderFocus {
+    var index = 0
+    var label: String?
+    @ObservationIgnored var proxy: ScrollViewProxy?
+}
+
+/// The bar across the top: timer, read-aloud, close, and the draggable progress bar.
+private struct ReaderTopBar: View {
+    let day: StudyDay
+    let speaker: Speaker
+    let focus: ReaderFocus
+    let count: Int
+    let label: (Int) -> String
+    let jump: (Int) -> Void
+    let scrubEnded: () -> Void
+    let toggleSpeech: () -> Void
+    let close: () -> Void
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        let left = model.secondsLeft(day)
+        HStack(spacing: 10) {
+            Circle().fill(left > 0 ? Theme.rose : Theme.sage).frame(width: 8, height: 8)
+                .shadow(color: left > 0 ? Theme.rose : Theme.sage, radius: 5)
+            Text(left > 0 ? "Your apps unlock when the timer ends" : (model.hasBlockedApps ? "Apps unlocked. Read on as long as you like." : "Time’s up. Read on as long as you like."))
+                .font(.system(size: 14)).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
+            Spacer(minLength: 4)
+            Button(action: toggleSpeech) {
+                Image(systemName: speaker.isOn ? "speaker.wave.2.fill" : "speaker.wave.2")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(speaker.isOn ? Theme.roseInk : Theme.text)
+                    .frame(width: 40, height: 40)
+                    .background(speaker.isOn ? Theme.roseDeep : Theme.surface, in: Circle())
+                    .overlay(Circle().stroke(speaker.isOn ? Theme.roseDeep : Theme.line))
+            }
+            .accessibilityLabel(speaker.isOn ? "Stop reading aloud" : "Read aloud")
+            Text(left > 0 ? clock(left) : "Done")
+                .font(.system(size: 15, weight: .medium).monospacedDigit())
+                .padding(.horizontal, 12).padding(.vertical, 7)
+                .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+            Button(action: close) {
+                Image(systemName: "xmark").font(.system(size: 15, weight: .semibold))
+                    .frame(width: 40, height: 40)
+                    .background(Theme.surface, in: Circle()).overlay(Circle().stroke(Theme.line))
+            }
+            .accessibilityLabel("Close")
+        }
+        .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 12)
+        .overlay(alignment: .bottom) {
+            Scrubber(focus: focus, speaker: speaker, count: count, label: label, jump: jump, ended: scrubEnded).offset(y: 22)
+        }
+        .padding(.bottom, 12)
+        .background(LinearGradient(stops: [.init(color: Theme.bg, location: 0.6), .init(color: Theme.bg.opacity(0), location: 1)],
+                                   startPoint: .top, endPoint: .bottom).ignoresSafeArea(edges: .top))
+    }
+}
+
+/// Drag to rewind or skip ahead. Every verse, question and quiz item gets an equal share of the bar.
+private struct Scrubber: View {
+    let focus: ReaderFocus
+    let speaker: Speaker
+    let count: Int
+    let label: (Int) -> String
+    let jump: (Int) -> Void
+    let ended: () -> Void
+
+    var body: some View {
+        let n = max(count - 1, 1)
+        let fraction = CGFloat(min(focus.index, n)) / CGFloat(n)
+        let dragging = focus.label != nil
+        GeometryReader { g in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Theme.surface2).frame(height: dragging ? 6 : 4)
+                Capsule().fill(Theme.roseDeep).frame(width: max(4, g.size.width * fraction), height: dragging ? 6 : 4)
+                Circle().fill(Theme.rose).frame(width: 16, height: 16)
+                    .shadow(color: Theme.rose.opacity(0.3), radius: 4)
+                    .offset(x: g.size.width * fraction - 8)
+                    .opacity(dragging ? 1 : 0)
+                if let text = focus.label {
+                    Text(text)
+                        .font(.system(size: 15)).foregroundStyle(Theme.text)
+                        .padding(.horizontal, 12).padding(.vertical, 6)
+                        .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+                        .fixedSize()
+                        .position(x: min(max(g.size.width * fraction, 70), g.size.width - 70), y: 38)
+                }
+            }
+            .frame(height: 30)
+            .contentShape(Rectangle())
+            .gesture(DragGesture(minimumDistance: 0).onChanged { v in
+                if focus.label == nil { speaker.pause() }
+                let f = min(max(v.location.x / g.size.width, 0), 1)
+                let i = Int((f * CGFloat(n)).rounded())
+                focus.label = label(i)
+                jump(i)
+            }.onEnded { _ in
+                focus.label = nil
+                ended()
+            })
+        }
+        .frame(height: 30)
+        .accessibilityLabel("Reading position")
+    }
+}
+
+/// The last card. It reads the timer, so it lives in its own view and redraws alone each second.
+private struct FinishCard: View {
+    let day: StudyDay
+    let close: () -> Void
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
         VStack(spacing: 0) {
             HaloBook().padding(.bottom, 26)
             if model.isComplete(day) {
                 Text("Daily reading complete!").font(Theme.display(38)).multilineTextAlignment(.center).padding(.bottom, 10)
                 Text(model.hasBlockedApps ? "Your apps are unlocked. Enjoy your day with peace of mind." : "Enjoy your day with peace of mind.")
                     .font(Theme.read(19)).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.bottom, 28)
-                Button("Back to home") { dismiss() }.buttonStyle(PrimaryButtonStyle())
+                Button("Back to home", action: close).buttonStyle(PrimaryButtonStyle())
             } else {
                 Text("Almost there").font(Theme.display(38)).padding(.bottom, 10)
                 Text("Stay a little longer. Scroll back up and sit with a verse.")
@@ -560,8 +624,6 @@ struct ReaderView: View {
         }
         .frame(maxWidth: .infinity)
     }
-
-    private func clock(_ s: Int) -> String { String(format: "%d:%02d", s / 60, s % 60) }
 }
 
 extension View {
