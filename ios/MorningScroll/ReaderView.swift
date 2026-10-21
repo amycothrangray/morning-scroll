@@ -238,6 +238,66 @@ struct ReaderView: View {
         }
     }
 
+    // MARK: Day Six word study
+
+    @ViewBuilder private func wordStudyAnswer(_ ws: Int) -> some View {
+        let words = day.words ?? []
+        let chosen = model.chosenWord(day)
+        if ws == 1 {
+            VStack(spacing: 10) {
+                ForEach(words.indices, id: \.self) { wi in
+                    let w = words[wi]
+                    Button { withAnimation(.easeOut(duration: 0.2)) { model.chooseWord(day, wi) } } label: {
+                        HStack(alignment: .center, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(w.word).font(Theme.display(fs * 0.85))
+                                Text("\(w.translit) · \(w.strongs) · \(w.verse)").font(.system(size: 14)).foregroundStyle(Theme.muted)
+                            }
+                            Spacer(minLength: 8)
+                            Text(w.hebrew).font(.system(size: fs * 0.85)).foregroundStyle(Theme.rose)
+                        }
+                        .foregroundStyle(Theme.text)
+                        .padding(.horizontal, 16).padding(.vertical, 14)
+                        .background(chosen == w ? Color(hex: 0x2E2424) : Theme.surface, in: RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(chosen == w ? Theme.roseDeep : Theme.line))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.top, 16)
+        }
+        if let w = chosen {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("ANSWER · \(w.word.uppercased())").font(.system(size: 12, weight: .medium)).tracking(1.8).foregroundStyle(Theme.sage)
+                Text(w.answers[ws - 1]).font(Theme.read(fs * 0.7)).foregroundStyle(Color(hex: 0xD6CBC6)).lineSpacing(fs * 0.28)
+                verseQuotes(w.refs?[safe: ws - 1])
+                let links: [(String, URL)] = ws == 2 ? [("Interlinear", BibleHub.interlinear(w.verse)), ("Strong’s \(w.strongs)", BibleHub.strongs(w.strongs))]
+                    : ws == 4 ? [("All uses on BibleHub", BibleHub.strongs(w.strongs))]
+                    : ws == 5 ? [("Commentaries", BibleHub.commentaries(w.verse))] : []
+                if !links.isEmpty {
+                    HStack(spacing: 8) {
+                        ForEach(links, id: \.0) { link in
+                            Link(destination: link.1) {
+                                Text(link.0).font(.system(size: 14)).foregroundStyle(Theme.text)
+                                    .padding(.horizontal, 12).padding(.vertical, 7)
+                                    .background(Theme.bg, in: Capsule()).overlay(Capsule().stroke(Theme.line))
+                            }
+                        }
+                    }
+                    .padding(.top, 6)
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Theme.surface, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.line))
+            .padding(.top, 18)
+        } else if ws > 1 {
+            Text("Pick a word in Question 1 to see this answer.")
+                .font(Theme.read(fs * 0.64, italic: true)).foregroundStyle(Theme.muted).padding(.top, 14)
+        }
+    }
+
     // MARK: Verse quotes
 
     @ViewBuilder private func verseQuotes(_ refs: [String]?) -> some View {
@@ -261,7 +321,8 @@ struct ReaderView: View {
     /// Fetch every verse the answers and quiz cite, one at a time (the free fallback is rate-limited).
     private func loadQuotes() async {
         var refs: [String] = []
-        for r in day.questions.flatMap({ $0.refs ?? [] }) + (day.quiz ?? []).flatMap({ $0.refs ?? [] }) where !refs.contains(r) {
+        let wordRefs = (day.words ?? []).flatMap { ($0.refs ?? []).flatMap { $0 } }
+        for r in day.questions.flatMap({ $0.refs ?? [] }) + (day.quiz ?? []).flatMap({ $0.refs ?? [] }) + wordRefs where !refs.contains(r) {
             refs.append(r)
         }
         for r in refs {
@@ -293,7 +354,8 @@ struct ReaderView: View {
             return (first ? chapterOf(passages[pi].ref) + ". " : "") + v.text
         case .question(let i):
             let q = day.questions[i]
-            return "Question \(i + 1). \(q.text) " + (q.items?.joined(separator: ". ") ?? "") + (q.answer.map { " Answer. " + clean($0) } ?? "")
+            let answer = q.wordStudy.flatMap { ws in model.chosenWord(day)?.answers[safe: ws - 1] } ?? q.answer
+            return "Question \(q.n ?? i + 1). \(q.text) " + (q.items?.joined(separator: ". ") ?? "") + (answer.map { " Answer. " + clean($0) } ?? "")
         case .quiz, .finish:
             return nil
         }
@@ -378,10 +440,12 @@ struct ReaderView: View {
 
     private func question(_ q: Question, index: Int) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            if index == 0 {
+            if let section = q.section {
+                Text(section).font(Theme.display(fs * 1.15)).padding(.bottom, 18).padding(.top, index == 0 ? 0 : 40)
+            } else if index == 0 {
                 Text("Questions").font(Theme.display(fs * 1.15)).padding(.bottom, 18)
             }
-            Text("QUESTION \(index + 1)").font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.rose)
+            Text("QUESTION \(q.n ?? index + 1)").font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.rose)
                 .padding(.bottom, 10)
             Text(q.text).font(Theme.read(fs * 0.8)).lineSpacing(fs * 0.3)
             if let items = q.items {
@@ -390,7 +454,9 @@ struct ReaderView: View {
                 }
                 .font(Theme.read(fs * 0.7)).foregroundStyle(Theme.muted).padding(.top, 12)
             }
-            if let answer = q.answer {
+            if let ws = q.wordStudy {
+                wordStudyAnswer(ws)
+            } else if let answer = q.answer {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("ANSWER").font(.system(size: 12, weight: .medium)).tracking(1.8).foregroundStyle(Theme.sage)
                     Text(answer).font(Theme.read(fs * 0.7)).foregroundStyle(Color(hex: 0xD6CBC6)).lineSpacing(fs * 0.28)

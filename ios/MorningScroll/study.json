@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "title": "Genesis",
   "days": [
     {
@@ -452,6 +452,284 @@
           "from": 5,
           "refs": [
             "Genesis 39:19"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7-6",
+      "lesson": "7",
+      "day": "Day Six",
+      "summary": "Four Hebrew words from Genesis 38–39 to study: Judah's pledge, Tamar being “more righteous,” and Joseph's choice to “refuse” rather than “sin” against God.",
+      "readings": [
+        {
+          "ref": "Genesis 38:18",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 38:26",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 39:9",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 39:8",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "text": "From your reading this week, choose ONE WORD to research. Is there a word that is repeated? Is there a word that strikes you as especially significant or “jumps out” at you? Is there a word that intrigues or puzzles you? Your Word of the Week:",
+          "wordStudy": 1,
+          "section": "Optional Word Study",
+          "refs": []
+        },
+        {
+          "text": "Type in your verse reference at biblehub.com. Click the Interlinear tab (“Int” on a mobile device) at the top in order to find the word in the original language. Click the link to the Strong’s number to view the Lexical Summary. What is the Hebrew word and the Strong’s #?",
+          "wordStudy": 2,
+          "refs": []
+        },
+        {
+          "text": "What are the range of meanings you find when search the Strong’s definitions? What are synonyms or antonyms?",
+          "wordStudy": 3,
+          "refs": []
+        },
+        {
+          "text": "From the column on the right, find several other places in the Old Testament where this word is used. Click on the link to read the verse. What insight does this give you?",
+          "wordStudy": 4,
+          "refs": []
+        },
+        {
+          "text": "Now, type in your verse reference again at biblehub.com, but this time click the Commentaries tab. Browse through these to see if you can gain any additional helpful information.",
+          "wordStudy": 5,
+          "refs": []
+        },
+        {
+          "text": "What has your study taught you? Have you been able to find a point of application? As you have spent time meditating on the meaning of this word in this passage, has God given you any insight into why this word stood out to you today?",
+          "wordStudy": 6,
+          "refs": []
+        },
+        {
+          "text": "Which of God’s attributes were most clear to you this week?",
+          "answer": "• Merciful: Jesus refused to condemn the woman and told her to sin no more (John 8:11).\n• Holy: sin is first an offense against him (Genesis 39:9; Psalm 51:4).\n• Sovereign over human mess: he carried the line of Jesus through Perez, born of Judah's sin (Matthew 1:3).\n• Faithful and present: the LORD was with Joseph in Potiphar's house and again in prison (Genesis 39:2, 21).",
+          "n": 1,
+          "section": "Weekly Review",
+          "refs": [
+            "John 8:11",
+            "Genesis 39:9",
+            "Psalm 51:4",
+            "Matthew 1:3",
+            "Genesis 39:2",
+            "Genesis 39:21"
+          ]
+        },
+        {
+          "text": "Which passages or insights were most meaningful to you this week? Explain.",
+          "answer": "• Judah's “She is more righteous than I” (Genesis 38:26): the first time he tells the truth on himself, and the beginning of the man who later offers his life for Benjamin (Genesis 44:33).\n• Joseph's “How then can I do this great wickedness and sin against God?” (Genesis 39:9) beside David's “Against you, you only, have I sinned” (Psalm 51:4): both saw sin as personal to God.\n• John 8:1-11 read with Genesis 38: the accusers in both stories were guilty too, and the only one with the right to condemn chose mercy.",
+          "n": 2,
+          "refs": [
+            "Genesis 38:26",
+            "Genesis 44:33",
+            "Genesis 39:9",
+            "Psalm 51:4"
+          ]
+        },
+        {
+          "text": "How have you applied what you’ve discovered this week about God, others, or yourself?",
+          "answer": "This week's passages press two questions: am I resisting temptation early, the way Joseph did (Genesis 39:10, 12), and am I quicker to judge others than to confess my own sin, as Judah was (Genesis 38:24)? Jesus' mercy came with a command to live differently (John 8:11).\nTo consider: Which step from Joseph's example (saying no right away, calling it sin, staying away, running) do you need to practice this week, and in what situation?",
+          "n": 3,
+          "refs": [
+            "Genesis 39:10",
+            "Genesis 39:12",
+            "Genesis 38:24",
+            "John 8:11"
+          ]
+        }
+      ],
+      "words": [
+        {
+          "word": "Pledge",
+          "verse": "Genesis 38:18",
+          "hebrew": "עֵרָבוֹן",
+          "translit": "ʿērābôn",
+          "strongs": "H6162",
+          "gloss": "pledge, security, guarantee",
+          "answers": [
+            "“Pledge” appears three times in Genesis 38 (vv. 17, 18, 20), and the whole story turns on it. Judah handed over his seal, cord and staff to settle a cheap deal, and those same items exposed him three months later (Genesis 38:25).",
+            "עֵרָבוֹן (ʿērābôn), Strong's H6162. BibleHub's Strong's page spells the heading עֲרָבוֹן (erabon). In the verse it has the article: הָֽעֵרָבוֹן, “the pledge.” A noun: something handed over as security until a debt is paid.",
+            "Strong's: “a pawn (given as security),” from the root ʿārab (H6148), to exchange or become surety. Brown-Driver-Briggs: give a pledge, then receive it back once the condition is met. BibleHub's topical note adds that a pledge also identified the debtor if a dispute came up, which is exactly how Tamar used it.\nSynonyms: security, collateral, guarantee, deposit, surety.\nAntonyms: default, forfeit, a broken promise.\nThe Greek arrabōn comes from this word, and Paul uses it for the Holy Spirit as God's “guarantee” (2 Corinthians 1:22; Ephesians 1:14).",
+            "The right column lists only three verses, all in Genesis 38, so click the root ʿārab (H6148) under Word Origin.\n• Genesis 38:20: Judah's friend can't find the woman to redeem the pledge.\n• Genesis 43:9: Judah tells Jacob, “I will be a pledge of his safety.”\n• Genesis 44:32: Judah says he became a pledge for Benjamin, then offers himself as a slave in the boy's place (v. 33).\n• Isaiah 38:14: Hezekiah asks God, “be my pledge of safety!”\nInsight: The man who gave up his belongings as a pledge for sin later puts up his own life as the pledge for his brother.",
+            "• Cambridge Bible: a seal and a carved staff were a chief's most personal possessions and a near-certain means of identification; Tamar's request is the turning point of the story.\n• Matthew Poole: God ordered events so that Judah's sin would come to light.\n• Matthew Henry: that Christ came from Judah after a chapter like this shows God chooses by grace, not merit.",
+            "Judah treated his pledge as a throwaway, and it came back to expose him. Later he offers himself as the pledge for Benjamin (Genesis 44:32-33), and God gives his Spirit as the pledge that he will finish what he began in us (Ephesians 1:13-14).\nTo consider: Where are you doubting that God will finish his work in you, and how does the pledge of his Spirit answer that doubt?"
+          ],
+          "refs": [
+            [
+              "Genesis 38:17",
+              "Genesis 38:18",
+              "Genesis 38:20",
+              "Genesis 38:25"
+            ],
+            [],
+            [
+              "2 Corinthians 1:22",
+              "Ephesians 1:14"
+            ],
+            [
+              "Genesis 38:20",
+              "Genesis 43:9",
+              "Genesis 44:32",
+              "Genesis 38:33",
+              "Isaiah 38:14"
+            ],
+            [],
+            [
+              "Genesis 44:32-33",
+              "Ephesians 1:13-14"
+            ]
+          ]
+        },
+        {
+          "word": "More righteous",
+          "verse": "Genesis 38:26",
+          "hebrew": "צָדַק",
+          "translit": "ṣādaq (tsadaq)",
+          "strongs": "H6663",
+          "gloss": "to be in the right, be just; justify",
+          "answers": [
+            "Judah's confession turns on this one verb, and it's a puzzle: the woman who posed as a prostitute is the one called righteous. Working out what the word measures explains why Judah said it.",
+            "צָדַק (tsadaq), Strong's H6663. In the verse it's צָֽדְקָה (ṣā·ḏə·qāh), “she is righteous,” followed by מִמֶּנִּי, “than I.” A verb: to be right, be just, be in the right.",
+            "Strong's: “to be (causatively, make) right (in a moral or forensic sense).” Forensic means courtroom language. Brown-Driver-Briggs lists Genesis 38:26 under “have a just cause, be in the right.” Other forms mean justify, declare righteous, vindicate, acquit, do justice. It's about who has right on their side in a dispute, so it doesn't call Tamar sinless.\nSynonyms: just, upright, innocent, vindicated, in the right.\nAntonyms: guilty, wicked, condemned.",
+            "• Genesis 44:16: Judah again: “how can we clear ourselves? God has found out the guilt of your servants.”\n• Job 9:2: “How can a man be in the right before God?”\n• Psalm 51:4: David confesses so that God is “justified in your words.”\n• Jeremiah 3:11: “Faithless Israel has shown herself more righteous than treacherous Judah,” the same comparison, with Judah on the losing side again.\n• Isaiah 53:11: God's servant will “make many to be accounted righteous.”\nInsight: People can only admit someone else is more in the right than they are; God himself makes the guilty righteous.",
+            "• Cambridge Bible: the verb means to be in the right, so Judah is saying “she is in her rights as against me,” because he denied her the marriage to Shelah she was owed.\n• Benson and Poole: Tamar was more at fault in the sexual sin, but Judah was more unjust, since he broke his promise and caused hers. Never going back to her showed his confession was real.\n• Barnes: Judah was a harsh judge in a case where he was just as guilty.",
+            "Tamar wasn't sinless; she was in the right about what she was owed. Judah's admission is the first honest thing he says in the chapter, and the change in him starts there (Genesis 44:33).\nTo consider: In a conflict you're in now, have you been so focused on the other person's fault that you haven't admitted where they are in the right?"
+          ],
+          "refs": [
+            [],
+            [],
+            [
+              "Genesis 38:26"
+            ],
+            [
+              "Genesis 44:16",
+              "Job 9:2",
+              "Psalm 51:4",
+              "Jeremiah 3:11",
+              "Isaiah 53:11"
+            ],
+            [],
+            [
+              "Genesis 44:33"
+            ]
+          ]
+        },
+        {
+          "word": "Sin",
+          "verse": "Genesis 39:9",
+          "hebrew": "חָטָא",
+          "translit": "ḥāṭāʾ (chata)",
+          "strongs": "H2398",
+          "gloss": "to miss, go wrong, sin",
+          "answers": [
+            "Joseph's reason for refusing Potiphar's wife comes down to this word: “sin against God.” The same verb is in David's confession, “Against you, you only, have I sinned” (Psalm 51:4), so it ties the week's two Old Testament readings together.",
+            "חָטָא (chata), Strong's H2398. In the verse it's וְחָטָאתִי (wə·ḥā·ṭā·ṯî), “and sin.” A verb: to miss, go wrong, sin.",
+            "Strong's: “properly, to miss; hence (figuratively and generally) to sin; by inference, to forfeit, lack, expiate, repent.” Brown-Driver-Briggs: “miss (a goal or way), go wrong, sin,” with Judges 20:16 for slingers who could hit a hair and not miss. In another verb form it means the opposite: to purify or cleanse from sin. It occurs about 238 times.\nSynonyms: iniquity, transgression, wickedness, evil, offend, trespass.\nAntonyms: righteousness, obedience; cleanse, purify.",
+            "• Genesis 20:6: God tells Abimelech, “it was I who kept you from sinning against me.”\n• Genesis 42:22: Reuben: “Did I not tell you not to sin against the boy?”\n• Genesis 43:9: Judah: “let me bear the blame forever,” the same verb.\n• Exodus 32:30: Moses: “You have sinned a great sin.”\n• Psalm 51:7: “Purge me with hyssop” uses this verb in its cleansing sense.\nInsight: Sin against a person is also sin against God, and the verb that names the failure also names God's cleansing of it.",
+            "• Barnes: Joseph appealed to three things at once: honor toward a master who trusted him, chastity (“this great wickedness”), and piety (“sin against God”).\n• Jamieson-Fausset-Brown: “against God” is the real principle of purity, and it is enough on its own.\n• Cambridge Bible: Joseph takes the simplest line, that the act is wrong in God's sight, and the note compares Psalm 51:4.",
+            "Joseph didn't weigh the odds of getting caught; he named the act for what it was, aimed at God. Seeing sin as missing God's mark, and as personal to him, makes it more serious and also easier to confess, since the one I've wronged is the one who cleanses (Psalm 51:7).\nTo consider: Is there a sin you've been calling by a softer name, and what changes if you call it sin against God, as Joseph did?"
+          ],
+          "refs": [
+            [
+              "Psalm 51:4"
+            ],
+            [],
+            [
+              "Judges 20:16"
+            ],
+            [
+              "Genesis 20:6",
+              "Genesis 42:22",
+              "Genesis 43:9",
+              "Exodus 32:30",
+              "Psalm 51:7"
+            ],
+            [
+              "Psalm 51:4"
+            ],
+            [
+              "Psalm 51:7"
+            ]
+          ]
+        },
+        {
+          "word": "Refused",
+          "verse": "Genesis 39:8",
+          "hebrew": "מָאֵן",
+          "translit": "maʾēn (ma'en)",
+          "strongs": "H3985",
+          "gloss": "to refuse, say no",
+          "answers": [
+            "“Refused” is the first thing Joseph does in the scene, before he gives a single reason (Genesis 39:8), and verse 10 shows he kept refusing day after day. It's an ordinary word, but two chapters earlier it describes Jacob refusing comfort over Joseph (Genesis 37:35), which makes it worth tracing.",
+            "מָאֵן (maʾēn), Strong's H3985. In the verse it's וַיְמָאֵן (way·mā·ʾên), “and he refused.” A verb: to refuse.",
+            "Strong's: simply “to refuse,” which the KJV sometimes renders “utterly.” Brown-Driver-Briggs: used in the intensive form and usually followed by another verb (“refused to go,” “refused to listen”); Genesis 39:8 is one of the few places it stands alone, followed by “and said.” BibleHub's topical note counts about 41 uses and describes a deliberate, accountable “No” that can be righteous resistance as well as rebellion.\nSynonyms: decline, reject, withhold, resist.\nAntonyms: consent, yield, comply, agree.",
+            "• Genesis 37:35: Jacob “refused to be comforted” over Joseph.\n• Exodus 7:14: “Pharaoh's heart is hardened; he refuses to let the people go.”\n• Deuteronomy 25:7: a brother-in-law who “refuses to perpetuate his brother's name,” the duty Onan dodged and Judah withheld (Genesis 38:9, 14).\n• 2 Kings 5:16: Elisha refuses Naaman's gift.\nInsight: The same word describes a hard heart refusing God and a faithful heart refusing sin; what matters is what you are saying no to.",
+            "• Matthew Henry: when trouble didn't break Joseph, Satan tried pleasure, and from someone whose favor could have advanced him; he resisted by God's grace.\n• Gill: Joseph didn't just refuse but reasoned with her, naming the act as ingratitude to his master and sin against God.\n• Pulpit Commentary: he answered an unclean proposal with clean words, and the note compares Psalm 51:4 for how God views the act.",
+            "Joseph said no before he explained himself, and he had to say it again every day (Genesis 39:10). The same word describes Pharaoh's no to God (Exodus 7:14); Joseph could refuse sin because he had already settled his loyalty to God.\nTo consider: What is one thing you need to decide ahead of time to refuse, so you aren't deciding it fresh every time it comes up?"
+          ],
+          "refs": [
+            [
+              "Genesis 39:8",
+              "Genesis 39:10",
+              "Genesis 37:35"
+            ],
+            [],
+            [
+              "Genesis 39:8"
+            ],
+            [
+              "Genesis 37:35",
+              "Exodus 7:14",
+              "Deuteronomy 25:7",
+              "Genesis 38:9",
+              "Genesis 38:14",
+              "2 Kings 5:16"
+            ],
+            [
+              "Psalm 51:4"
+            ],
+            [
+              "Genesis 39:10",
+              "Exodus 7:14"
+            ]
           ]
         }
       ]
@@ -1685,6 +1963,302 @@
       ]
     },
     {
+      "id": "8B-6",
+      "lesson": "8B",
+      "day": "Day Six",
+      "summary": "Four Hebrew words from Genesis 39-40 and Psalm 25: the steadfast love God showed Joseph in prison (chesed), the remembering the cupbearer failed to do (zakar), the success God gave Joseph's work (tsalach), and the integrity David prays for while he waits (tom).",
+      "readings": [
+        {
+          "ref": "Genesis 39:21",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 40:23",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 39:2",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Psalm 25:21",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "text": "From your reading this week, choose ONE WORD to research. Is there a word that is repeated? Is there a word that strikes you as especially significant or “jumps out” at you? Is there a word that intrigues or puzzles you? Your Word of the Week:",
+          "wordStudy": 1,
+          "section": "Optional Word Study",
+          "refs": []
+        },
+        {
+          "text": "Type in your verse reference at biblehub.com. Click the Interlinear tab (“Int” on a mobile device) at the top in order to find the word in the original language. Click the link to the Strong’s number to view the Lexical Summary. What is the Hebrew word and the Strong’s #?",
+          "wordStudy": 2,
+          "refs": []
+        },
+        {
+          "text": "What are the range of meanings you find when search the Strong’s definitions? What are synonyms or antonyms?",
+          "wordStudy": 3,
+          "refs": []
+        },
+        {
+          "text": "From the column on the right, find several other places in the Old Testament where this word is used. Click on the link to read the verse. What insight does this give you?",
+          "wordStudy": 4,
+          "refs": []
+        },
+        {
+          "text": "Now, type in your verse reference again at biblehub.com, but this time click the Commentaries tab. Browse through these to see if you can gain any additional helpful information.",
+          "wordStudy": 5,
+          "refs": []
+        },
+        {
+          "text": "What has your study taught you? Have you been able to find a point of application? As you have spent time meditating on the meaning of this word in this passage, has God given you any insight into why this word stood out to you today?",
+          "wordStudy": 6,
+          "refs": []
+        },
+        {
+          "text": "Which of God’s attributes were most clear to you this week?",
+          "answer": "• Present: the LORD was with Joseph in a slave's house and in prison (Genesis 39:2, 21).\n• Loyal in love: he showed Joseph steadfast love when the people around him failed him (Genesis 39:21).\n• In charge of timing: two forgotten years ended on the day Pharaoh needed an interpreter (Genesis 41:9-14).\n• The one who reveals: interpretations belong to God, and he gives the answer (Genesis 40:8; 41:16).\nTo consider: Which of these do you most need to believe about God in your own situation this week?",
+          "n": 1,
+          "section": "Weekly Review",
+          "refs": [
+            "Genesis 39:2",
+            "Genesis 39:21",
+            "Genesis 41:9-14",
+            "Genesis 40:8",
+            "Genesis 41:16"
+          ]
+        },
+        {
+          "text": "Which passages or insights were most meaningful to you this week? Explain.",
+          "answer": "• Genesis 39:21: \"But the LORD was with Joseph\" comes right after the prison door shuts. God's steadfast love met him inside rather than getting him out.\n• Genesis 40:23: One short verse holds two years of silence, and God used even the cupbearer's forgetting to bring Joseph out at the right moment.\n• 2 Corinthians 4:17: Paul calls his hardships a light, momentary affliction producing eternal glory, and Joseph's thirteen years show what that looks like in a single life.\nTo consider: Which of these passages do you want to keep in front of you next week, and where will you put it?",
+          "n": 2,
+          "refs": [
+            "Genesis 39:21",
+            "Genesis 40:23",
+            "2 Corinthians 4:17"
+          ]
+        },
+        {
+          "text": "How have you applied what you’ve discovered this week about God, others, or yourself?",
+          "answer": "Joseph's faithfulness showed up in small, daily choices: doing the work given to him (Genesis 39:22), refusing a private compromise (39:9), noticing two troubled faces (40:6-7), and giving God the credit (40:8).\nTo consider: Which one of these did you practice this week, and which one do you want to choose on purpose in the week ahead?",
+          "n": 3,
+          "refs": [
+            "Genesis 39:22",
+            "Genesis 39:9",
+            "Genesis 40:6-7",
+            "Genesis 40:8"
+          ]
+        }
+      ],
+      "words": [
+        {
+          "word": "Steadfast love",
+          "verse": "Genesis 39:21",
+          "hebrew": "חֶסֶד",
+          "translit": "chesed",
+          "strongs": "H2617",
+          "gloss": "loyal love, kindness, mercy",
+          "answers": [
+            "It comes at the lowest point of Genesis 39. Joseph has just been jailed on a false charge, and the next sentence says the LORD showed him steadfast love (Genesis 39:21). Then in prison Joseph asks the cupbearer for the same thing, \"do me the kindness\" of remembering him (Genesis 40:14). One word, two very different givers.",
+            "חֶסֶד, chesed (KHEH-sed), Strong's H2617. On the Interlinear tab it sits under \"kindness\" (KJV \"mercy\"), with the verb \"extended\" in front of it: the LORD stretched out chesed to Joseph. In the verse it is spelled חָסֶד because of its position in the sentence; the dictionary form is חֶסֶד.\nGloss: loyal, faithful love; kindness; mercy.",
+            "Lexical Summary: lovingkindness, mercy, steadfast love, loyalty, faithfulness, goodness. Strong's traces it to chasad, \"to be kind.\" Brown-Driver-Briggs counts about 247 uses and splits them into kindness people show each other (it lists Genesis 40:14 here) and God's lovingkindness, which rescues from trouble (Genesis 39:21 is listed there), keeps covenant, and is called abundant and everlasting.\n• Synonyms: emet (faithfulness, truth), rachamim (compassion), chen (favor, the very next word in 39:21)\n• Antonyms: cruelty (BDB sets the \"man of chesed\" against the cruel man in Proverbs 11:17); in the story itself, forgetting (Genesis 40:23)",
+            "• Genesis 24:27: Abraham's servant praises God for not abandoning his steadfast love and faithfulness; chesed shows up as guidance on the road.\n• Genesis 32:10: Jacob says he is unworthy of the least of God's steadfast love.\n• Genesis 40:14: Joseph asks the cupbearer for chesed, and the man forgets him (40:23).\n• Exodus 34:6: God names himself abounding in steadfast love and faithfulness.\n• Lamentations 3:22: In a destroyed Jerusalem, the LORD's steadfast love has not ended.\nInsight: Chesed is God's loyalty showing up in places of loss, a road, a prison, a ruined city, and the one time Joseph looked for it from a person, it didn't come.",
+            "• Matthew Henry: Joseph was cut off from every friend and relative, but not from God; a person with a clear conscience in prison still has a good God there.\n• Pulpit Commentary: the Hebrew literally says God \"extended kindness\" to Joseph.\n• Jamieson-Fausset-Brown: the jailer may have known Joseph was innocent, but a higher influence was at work.\n• Keil & Delitzsch: the LORD's presence is what won Joseph the governor's trust and made his work prosper.",
+            "God's steadfast love in Genesis 39:21 didn't open the prison door; it came inside. And when Joseph asked a man for chesed, the man forgot, which puts God's loyalty and human loyalty side by side in two chapters.\nTo consider: Where are you waiting on someone else's kindness right now, and what would it look like to look for God's steadfast love in that same place?"
+          ],
+          "refs": [
+            [
+              "Genesis 39:21",
+              "Genesis 40:14"
+            ],
+            [],
+            [
+              "Genesis 40:14",
+              "Genesis 39:21",
+              "Proverbs 11:17",
+              "Genesis 40:23"
+            ],
+            [
+              "Genesis 24:27",
+              "Genesis 32:10",
+              "Genesis 40:14",
+              "Genesis 40:23",
+              "Exodus 34:6",
+              "Lamentations 3:22"
+            ],
+            [],
+            [
+              "Genesis 39:21"
+            ]
+          ]
+        },
+        {
+          "word": "Remember",
+          "verse": "Genesis 40:23",
+          "hebrew": "זָכַר",
+          "translit": "zakar",
+          "strongs": "H2142",
+          "gloss": "to remember, call to mind, mention",
+          "answers": [
+            "It frames Joseph's longest wait. He asks the cupbearer to remember him (Genesis 40:14), the chapter ends with \"the chief cupbearer did not remember Joseph, but forgot him\" (Genesis 40:23), and two years later the same man says, \"I remember my offenses today\" (Genesis 41:9).",
+            "זָכַר, zakar (zaw-KAR), Strong's H2142. In Genesis 40:23 it sits under \"did remember,\" right after \"not.\" In 40:14 it appears twice: \"remember me,\" and in a causative form, \"make mention of me\" to Pharaoh. Genesis 41:9 uses that causative form too.\nGloss: to remember, call to mind, mention.",
+            "Lexical Summary: to remember, recall, call to mind, mention. Strong's says it properly means \"to mark (so as to be recognized),\" and by extension to mention. Brown-Driver-Briggs describes remembering that affects present feeling, thought or action: God remembering his covenant and his people, and people remembering God's dealings or their own sins. The Topical Lexicon counts about 232 uses and notes that biblical remembering usually leads to action.\n• Synonyms: make mention, think on (KJV, 40:14), be mindful\n• Antonym: shakach, \"forget\" (H7911), the very next word in Genesis 40:23",
+            "• Genesis 8:1: God remembered Noah, and right away sent a wind to lower the waters.\n• Genesis 30:22: God remembered Rachel, listened to her and opened her womb.\n• Genesis 41:9: The cupbearer finally remembers, two years late, at the moment Pharaoh needs Joseph.\n• Judges 16:28: Samson prays, \"remember me,\" and asks for strength one more time.\n• Psalm 25:7: David asks God not to remember his youthful sins but to remember him according to his steadfast love.\nInsight: When God remembers, he acts. The cupbearer's memory failed, but its timing in 41:9 shows Joseph had not been forgotten by God.",
+            "• Benson: once the cupbearer was back at court, Joseph's kindness slipped from his mind, a picture of how the world's friendship disappoints.\n• Matthew Henry: people at ease easily forget others in distress, and Joseph learned to trust God alone. Henry turns it on the reader: we blame the cupbearer, yet forget Christ, who did far more for us.\n• Jamieson-Fausset-Brown: the forgetting reflects no credit on the cupbearer, but God's plan required Joseph's release to come another way.\n• Gill (on 40:14): asking for help wasn't a failure of faith; using lawful means while depending on God is right.",
+            "In Scripture remembering is more than recall; it moves someone to act. The cupbearer remembered Joseph only when it served Pharaoh, while every time God \"remembers\" in Genesis, something happens. Day Four's warning applies here too: comfort makes people forget (Deuteronomy 6:12).\nTo consider: Now that some hard season is behind you, what did God do in it that you could easily forget, and how could you mark it so you remember?"
+          ],
+          "refs": [
+            [
+              "Genesis 40:14",
+              "Genesis 40:23",
+              "Genesis 41:9"
+            ],
+            [
+              "Genesis 40:23",
+              "Genesis 40:14",
+              "Genesis 41:9"
+            ],
+            [
+              "Genesis 40:14",
+              "Genesis 40:23"
+            ],
+            [
+              "Genesis 8:1",
+              "Genesis 30:22",
+              "Genesis 41:9",
+              "Judges 16:28",
+              "Psalm 25:7"
+            ],
+            [
+              "Genesis 40:14"
+            ],
+            [
+              "Deuteronomy 6:12"
+            ]
+          ]
+        },
+        {
+          "word": "Successful / prosper",
+          "verse": "Genesis 39:2",
+          "hebrew": "צָלַח",
+          "translit": "tsalach",
+          "strongs": "H6743",
+          "gloss": "to advance, succeed, prosper; also to rush",
+          "answers": [
+            "It's the most repeated key word in Genesis 39: Joseph \"became a successful man\" (Genesis 39:2), the LORD made all he did succeed (39:3), and again in prison (39:23). Day One introduced its meaning; a full word study shows how the rest of the Old Testament uses it, including a surprising second sense.",
+            "צָלַח, tsalach (tsaw-LAKH), Strong's H6743. In Genesis 39:2 it appears as מַצְלִיחַ (matsliach) under \"successful.\" It is a causative form, and in 39:23 the same form has the LORD as its subject: the LORD \"was making successful\" whatever Joseph did.\nGloss: to advance, succeed, prosper.",
+            "Lexical Summary: to prosper, succeed, advance, thrive. Strong's: \"to push forward,\" in many senses. Brown-Driver-Briggs lists two meanings: (1) \"rush,\" used of the Spirit of the LORD rushing on Samson, Saul and David; (2) \"advance, prosper,\" and in the causative \"make prosperous, bring to a successful issue,\" with Genesis 39:3, 23 listed there. KJV renders it break out, come mightily, be profitable, prosper. About 65 uses.\n• Synonym: sakal (H7919), \"act wisely, have success,\" the word in Deuteronomy 29:9 and Joshua 1:7; Joshua 1:8 uses both\n• Antonyms: fail, wither (Psalm 1:3), \"not succeed\" (Numbers 14:41)",
+            "• Genesis 24:21, 56: Abraham's servant watches to see whether the LORD has made his journey succeed, then says the LORD has prospered his way.\n• Judges 14:6: The Spirit of the LORD rushes on Samson, the same verb.\n• Psalm 1:3: The person rooted in God's word is a fruitful tree; whatever he does prospers.\n• Jeremiah 12:1: Jeremiah asks why the wicked prosper; the word alone doesn't mean God approves.\n• Isaiah 53:10: The LORD's will prospers in the hand of the suffering Servant.\nInsight: Tsalach is a path reaching its goal by God's hand, and in Joseph and the Servant, that success comes through suffering, not around it.",
+            "• Benson: those who separated Joseph from his family couldn't take away God's presence, and that presence is what makes our work prosper. He also notes Joseph didn't try to escape but served faithfully where God put him.\n• Keil & Delitzsch: \"a man of prosperity\" means one whom God causes to succeed in everything he undertakes, and Potiphar's trust grew as he saw it.\n• Cambridge Bible: \"the LORD was with Joseph\" is the theme of the whole section, in trouble and success alike.",
+            "In Genesis 39 Joseph does the work, but the LORD is the one \"making successful.\" That is why it can happen in a slave's job or a prison, without his circumstances improving first.\nTo consider: What work is in your hands right now that you could give to God to make succeed, measuring success by his purpose instead of by visible results?"
+          ],
+          "refs": [
+            [
+              "Genesis 39:2",
+              "Genesis 39:3",
+              "Genesis 39:23"
+            ],
+            [
+              "Genesis 39:2",
+              "Genesis 39:23"
+            ],
+            [
+              "Genesis 39:3",
+              "Genesis 39:23",
+              "Deuteronomy 29:9",
+              "Joshua 1:7",
+              "Joshua 1:8",
+              "Psalm 1:3",
+              "Numbers 14:41"
+            ],
+            [
+              "Genesis 24:21",
+              "Judges 14:6",
+              "Psalm 1:3",
+              "Jeremiah 12:1",
+              "Isaiah 53:10"
+            ],
+            [],
+            []
+          ]
+        },
+        {
+          "word": "Integrity",
+          "verse": "Psalm 25:21",
+          "hebrew": "תֹּם",
+          "translit": "tom",
+          "strongs": "H8537",
+          "gloss": "completeness, wholeness, integrity",
+          "answers": [
+            "Day One asked how Joseph showed integrity, and Psalm 25:21 asks for integrity as a guard while waiting for God. That is Joseph's situation exactly. Genesis 39 never uses the word, which makes it worth tracing elsewhere.",
+            "תֹּם, tom (rhymes with \"home\"), Strong's H8537. In Psalm 25:21 it's the first word of the verse, under \"integrity,\" paired with yosher (H3476), \"uprightness.\" Note: Proverbs 11:3, from Day One, uses a related form, tummah (H8538), which is also the word in Job 2:3.\nGloss: completeness, wholeness, integrity.",
+            "Lexical Summary: integrity, completeness, innocence, simplicity, uprightness. Strong's traces it to tamam, \"to be complete, finished.\" Brown-Driver-Briggs lists three senses: (1) completeness, fullness; (2) innocence or simplicity, even \"at random\" for a soldier who drew his bow without a target (1 Kings 22:34); (3) integrity of heart or way. Its plural is the \"Thummim\" on the high priest's breastplate. 24 uses.\n• Synonyms: yosher (uprightness), tamim (blameless), tsedeq (righteousness)\n• Antonyms: crookedness, perversity, a divided or double heart (Proverbs 10:9; 11:3)",
+            "• Genesis 20:5-6: Abimelech claims integrity of heart, and God agrees; integrity starts with the heart's intent.\n• 1 Kings 9:4: God tells Solomon to walk in integrity of heart and uprightness, as David did.\n• Psalm 78:72: David shepherded Israel with integrity of heart and skillful hands, character and competence together, like Joseph in Potiphar's house.\n• Psalm 41:12: God upholds the psalmist in his integrity and sets him in his presence.\n• Proverbs 10:9: Whoever walks in integrity walks securely.\nInsight: Tom means a life all of one piece, and the Old Testament keeps tying it to security. It keeps a person steady; it doesn't mean they are flawless.",
+            "• Keil & Delitzsch: tom is devotion that fills the whole person, not half-hearted or hypocritical. David wants integrity and uprightness as guards because his danger comes from his own sin as well as his enemies.\n• Pulpit Commentary: David has just confessed great iniquity (v. 11), so he is probably not claiming his own integrity but asking for one he hopes to grow into by God's grace.\n• Barnes: the word properly means \"perfection\"; he leans toward reading the verse as a plea that God would show himself upright in protecting someone who has been wronged.",
+            "In Psalm 25:21 integrity is something David asks for while he waits, not a badge he already has. Joseph's integrity looked like that: he was the same man alone with Potiphar's wife as he was in front of his master.\nTo consider: Where is there a gap right now between who you are in private and who you are in public, and what would wholeness look like there?"
+          ],
+          "refs": [
+            [
+              "Psalm 25:21"
+            ],
+            [
+              "Psalm 25:21",
+              "Proverbs 11:3",
+              "Job 2:3"
+            ],
+            [
+              "1 Kings 22:34",
+              "Proverbs 10:9",
+              "Proverbs 11:3"
+            ],
+            [
+              "Genesis 20:5-6",
+              "1 Kings 9:4",
+              "Psalm 78:72",
+              "Psalm 41:12",
+              "Proverbs 10:9"
+            ],
+            [
+              "Psalm 25:11"
+            ],
+            [
+              "Psalm 25:21"
+            ]
+          ]
+        }
+      ]
+    },
+    {
       "id": "9B-1",
       "lesson": "9B",
       "day": "Day One",
@@ -2830,6 +3404,303 @@
           "from": 5,
           "refs": [
             "Genesis 44:13"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "9B-6",
+      "lesson": "9B",
+      "day": "Day Six",
+      "summary": "Four words to study from Genesis 41–43: rûaḥ “Spirit” (Pharaoh sees God's Spirit in Joseph), bîn “discerning” (shared with Solomon in 1 Kings 3), ʾāšēm “guilty” (the brothers' confession), and ʿārab “pledge” (Judah stands surety for Benjamin).",
+      "readings": [
+        {
+          "ref": "Genesis 41:38",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 41:33",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 42:21",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 43:9",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "text": "From your reading this week, choose ONE WORD to research. Is there a word that is repeated? Is there a word that strikes you as especially significant or “jumps out” at you? Is there a word that intrigues or puzzles you? Your Word of the Week:",
+          "wordStudy": 1,
+          "section": "Optional Word Study",
+          "refs": []
+        },
+        {
+          "text": "Type in your verse reference at biblehub.com. Click the Interlinear tab (“Int” on a mobile device) at the top in order to find the word in the original language. Click the link to the Strong’s number to view the Lexical Summary. What is the Hebrew word and the Strong’s #?",
+          "wordStudy": 2,
+          "refs": []
+        },
+        {
+          "text": "What are the range of meanings you find when search the Strong’s definitions? What are synonyms or antonyms?",
+          "wordStudy": 3,
+          "refs": []
+        },
+        {
+          "text": "From the column on the right, find several other places in the Old Testament where this word is used. Click on the link to read the verse. What insight does this give you?",
+          "wordStudy": 4,
+          "refs": []
+        },
+        {
+          "text": "Now, type in your verse reference again at biblehub.com, but this time click the Commentaries tab. Browse through these to see if you can gain any additional helpful information.",
+          "wordStudy": 5,
+          "refs": []
+        },
+        {
+          "text": "What has your study taught you? Have you been able to find a point of application? As you have spent time meditating on the meaning of this word in this passage, has God given you any insight into why this word stood out to you today?",
+          "wordStudy": 6,
+          "refs": []
+        },
+        {
+          "text": "Which of God’s attributes were most clear to you this week?",
+          "answer": "• God knows and governs the future: he showed Pharaoh what he was about to do and had fixed it (Genesis 41:25, 32)\n• God gives more than we ask: Solomon asked for wisdom and received riches and honor too (1 Kings 3:13; Ephesians 3:20)\n• God sees hidden sin: “God has found out the guilt of your servants” (Genesis 44:16)\n• God cleanses and does not condemn those in Christ (Hebrews 9:14; Romans 8:1)\nTo consider: Which of these is hardest for you to believe right now?",
+          "n": 1,
+          "section": "Weekly Review",
+          "refs": [
+            "Genesis 41:25",
+            "Genesis 41:32",
+            "1 Kings 3:13",
+            "Ephesians 3:20",
+            "Genesis 44:16",
+            "Hebrews 9:14",
+            "Romans 8:1"
+          ]
+        },
+        {
+          "text": "Which passages or insights were most meaningful to you this week? Explain.",
+          "answer": "• Genesis 42:21: more than twenty years later, the brothers name their guilt to each other, and Joseph turns away to weep. Their consciences had never let it go.\n• Genesis 44:33: Judah, who proposed selling Joseph, asks to be a slave in Benjamin's place, the clearest picture in Genesis of a changed heart.\n• Romans 8:1 with 2 Corinthians 7:10: conviction names a specific sin and leads to repentance and relief; condemnation stays vague and keeps accusing.\nTo consider: Which of these do you want to remember the next time guilt shows up?",
+          "n": 2,
+          "refs": [
+            "Genesis 42:21",
+            "Genesis 44:33",
+            "Romans 8:1",
+            "2 Corinthians 7:10"
+          ]
+        },
+        {
+          "text": "How have you applied what you’ve discovered this week about God, others, or yourself?",
+          "answer": "This week's application is honesty before God: name real sin specifically, confess it, and then stop paying for what Christ has already covered (1 John 1:9; Romans 8:1). Judah adds a second step. A changed heart takes responsibility for others (Genesis 44:33).\nTo consider: What one specific thing did God bring to mind this week, and what have you done about it?",
+          "n": 3,
+          "refs": [
+            "1 John 1:9",
+            "Romans 8:1",
+            "Genesis 44:33"
+          ]
+        }
+      ],
+      "words": [
+        {
+          "word": "Spirit",
+          "verse": "Genesis 41:38",
+          "hebrew": "רוּחַ",
+          "translit": "rûaḥ",
+          "strongs": "H7307",
+          "gloss": "spirit, wind, breath",
+          "answers": [
+            "Pharaoh, who worshiped other gods, looked at Joseph and saw “the Spirit of God” in him (Genesis 41:38). The same word shows up earlier in the chapter, when Pharaoh's own spirit was troubled by his dreams (Genesis 41:8). A troubled spirit and God's Spirit in one chapter make it worth tracing.",
+            "Hebrew: רוּחַ (rûaḥ), Strong's H7307. In the interlinear it sits under “the Spirit” in the phrase rûaḥ ʾĕlōhîm, “the Spirit of God.”\nGloss: spirit, wind, breath.",
+            "Strong's gives a wide range: wind, breath, life, mind, temper or courage, and spirit, including the Spirit of God. The NASB translates it “wind” 98 times, “breath” 31 times, and “spirit/Spirit” over 200 times. Context decides, and sometimes the overlap is the point: the breath that gives life and the Spirit who gives life share one word.\n• Related: nᵉšāmâ, “breath” (H5397), paired with rûaḥ in Genesis 7:22\n• Contrast: bāśār, “flesh” (H1320), human frailty set against God's Spirit (Genesis 6:3)",
+            "• Genesis 1:2: the Spirit of God hovering over the waters at creation\n• Genesis 41:8: Pharaoh's spirit is troubled; he has power but no answer\n• Genesis 45:27: Jacob's spirit revives when he hears Joseph is alive\n• Numbers 27:18: Joshua is chosen as “a man in whom is the Spirit,” almost Pharaoh's exact phrase\n• Exodus 31:3: Bezalel is filled with the Spirit of God for skill and understanding\nInsight: In the Old Testament the Spirit equips particular people for particular work, and Joseph is the first person in the Bible described as having the Spirit of God in him.",
+            "• Ellicott: Pharaoh came to see Joseph as the instrument God had spoken through, and noticed that the interpretation came with wise, practical counsel.\n• Keil & Delitzsch: “the Spirit of Elohim” here means a spirit of supernatural insight and wisdom.\n• Cambridge Bible: Belshazzar says nearly the same thing about Daniel (Daniel 5:14); in the Old Testament the Spirit explains wisdom or strength beyond ordinary human capacity (Exodus 31:3; Numbers 27:18).",
+            "Pharaoh saw the Spirit in Joseph through how he handled a crisis: humble about the source (Genesis 41:16), clear about the facts, practical about what to do next. God's presence showed up as wisdom and honesty in front of someone who didn't share Joseph's faith.\nTo consider: What would someone who doesn't know God see in the way you handle the next problem you can't solve on your own?"
+          ],
+          "refs": [
+            [
+              "Genesis 41:38",
+              "Genesis 41:8"
+            ],
+            [],
+            [
+              "Genesis 7:22",
+              "Genesis 6:3"
+            ],
+            [
+              "Genesis 1:2",
+              "Genesis 41:8",
+              "Genesis 45:27",
+              "Numbers 27:18",
+              "Exodus 31:3"
+            ],
+            [
+              "Daniel 5:14",
+              "Exodus 31:3",
+              "Numbers 27:18"
+            ],
+            [
+              "Genesis 41:16"
+            ]
+          ]
+        },
+        {
+          "word": "Discerning",
+          "verse": "Genesis 41:33",
+          "hebrew": "נָבוֹן (from בִּין)",
+          "translit": "nāḇôn (root bîn)",
+          "strongs": "H995",
+          "gloss": "to discern, understand, distinguish",
+          "answers": [
+            "“Discerning and wise” appears twice within a few verses: Joseph tells Pharaoh to find such a man (Genesis 41:33), and Pharaoh decides no one fits it like Joseph (Genesis 41:39). The same pair turns up in this week's cross-reference, when God gives Solomon “a wise and discerning mind” (1 Kings 3:12).",
+            "Hebrew: נָבוֹן (nāḇôn), a participle of the verb בִּין (bîn), Strong's H995. In the interlinear it sits under “discerning” in both Genesis 41:33 and 41:39, right beside חָכָם (ḥāḵām, “wise,” H2450).\nGloss: to discern, understand, distinguish.",
+            "Strong's says the root idea is “to separate mentally,” to tell one thing from another. From there it covers perceive, consider, pay attention, understand, be prudent, and teach. The NASB uses “understand” most often, then “discern/discerning.” The emphasis is less on cleverness than on seeing what is really there.\n• Synonyms: ḥāḵām, “wise” (H2450); yāḏaʿ, “know” (H3045); śāḵal, “have insight, act wisely” (H7919)\n• Antonym: kᵉsîl, “fool” (H3684)",
+            "• 1 Kings 3:9: Solomon asks for an understanding mind to discern between good and evil\n• 1 Kings 3:12: God gives him a wise and discerning mind, the same pair used of Joseph\n• Psalm 19:12: “Who can discern his errors?” Our own faults are the hardest thing to see\n• Psalm 139:2: God discerns our thoughts from afar\n• Deuteronomy 32:29: Israel failed to discern where its path was heading\nInsight: Discernment starts with God, who discerns us completely, and he gives it to those who ask, as Solomon did and as Joseph acknowledged (Genesis 41:16).",
+            "• Pulpit Commentary: nāḇôn is a Niphal participle of bîn, meaning intelligent or discerning.\n• Benson: Joseph wasn't angling for the job. He had just come out of prison and was urging Pharaoh to make practical use of what God had revealed.\n• Barnes: Pharaoh approved the plan and chose Joseph himself as the “discreet and wise” man Joseph had described, acknowledging that his gift came from God.",
+            "Joseph's discernment came from God (Genesis 41:39), and it was practical: it saw a famine coming and turned that into a plan to store grain. Solomon's request (1 Kings 3:9) and David's prayer about hidden faults (Psalm 19:12) show the same gift turned inward as well as outward.\nTo consider: Where do you most need God's discernment right now, to see a situation clearly or to see something in yourself?"
+          ],
+          "refs": [
+            [
+              "Genesis 41:33",
+              "Genesis 41:39",
+              "1 Kings 3:12"
+            ],
+            [
+              "Genesis 41:33",
+              "Genesis 41:39"
+            ],
+            [],
+            [
+              "1 Kings 3:9",
+              "1 Kings 3:12",
+              "Psalm 19:12",
+              "Psalm 139:2",
+              "Deuteronomy 32:29",
+              "Genesis 41:16"
+            ],
+            [],
+            [
+              "Genesis 41:39",
+              "1 Kings 3:9",
+              "Psalm 19:12"
+            ]
+          ]
+        },
+        {
+          "word": "Guilty",
+          "verse": "Genesis 42:21",
+          "hebrew": "אָשֵׁם",
+          "translit": "ʾāšēm",
+          "strongs": "H818",
+          "gloss": "guilty, liable for a wrong",
+          "answers": [
+            "It's the brothers' first admission of what they did to Joseph, spoken to one another more than twenty years later (Genesis 42:21). The same verse repeats “distress” (ṣārâ, H6869) twice: Joseph's distress then, theirs now. Guilt runs through the whole week, from the brothers' consciences to Day Four's questions about conviction and condemnation.",
+            "Hebrew: אָשֵׁם (ʾāšēm), Strong's H818. In the interlinear it appears as the plural אֲשֵׁמִים (ʾăšēmîm) under “guilty,” right after אֲבָל (ʾăḇāl, “truly”).\nGloss: guilty, liable for a wrong.",
+            "Strong's defines it as guilty, and so obligated to bring a guilt offering. It comes from the verb ʾāšam (H816, to be guilty, incur guilt) and is related to the noun ʾāšām (H817, guilt, guilt offering). The word describes a real standing before God, not just a feeling: something is owed and has to be dealt with.\n• Synonyms: ʿāwōn, “iniquity, guilt” (H5771); ḥāṭāʾ, “to sin” (H2398), the verb behind Judah's “bear the blame” in Genesis 43:9\n• Antonyms: nāqî, “innocent” (H5355); ṣaddîq, “righteous” (H6662)",
+            "H818 appears only three times, so include its root family:\n• 2 Samuel 14:13: the woman of Tekoa tells David he is acting guilty by not bringing his banished son home\n• Ezra 10:19: men who had sinned offer a ram for their guilt\n• Hosea 5:15 (verb, H816): God waits until his people acknowledge their guilt and seek his face\n• Isaiah 53:10 (noun, H817): the Servant makes his soul an offering for guilt\n• Psalm 34:22 (verb, H816): none who take refuge in the Lord will be condemned\nInsight: Guilt is real and must be answered, and God provides the answer himself: an offering for guilt that ends in “no condemnation” (Romans 8:1).",
+            "• Ellicott: the brothers were suffering unjustly this time, yet their minds went straight to their old sin. That it was still so fresh is a sign real repentance was beginning.\n• Matthew Henry: when the sin was new they sat down to eat; years later, trouble woke their conscience. Affliction often brings sin back to memory.\n• Cambridge Bible: “distress” is used for Joseph's agony in the pit and for their present trouble, distress for distress, and Joseph's treatment was working (Hosea 5:15).",
+            "The brothers' guilt was real, and it took years and a crisis to surface. Their honest “we are guilty” was the beginning of their restoration, and Joseph wept when he heard it (Genesis 42:24). Real guilt names something specific and leads toward God, unlike the vague accusing voice Day Four called condemnation.\nTo consider: Is there something specific God keeps bringing to mind that needs to be confessed, or something already confessed that you need to stop carrying (Romans 8:1)?"
+          ],
+          "refs": [
+            [
+              "Genesis 42:21"
+            ],
+            [],
+            [
+              "Genesis 43:9"
+            ],
+            [
+              "2 Samuel 14:13",
+              "Ezra 10:19",
+              "Hosea 5:15",
+              "Isaiah 53:10",
+              "Psalm 34:22",
+              "Romans 8:1"
+            ],
+            [
+              "Hosea 5:15"
+            ],
+            [
+              "Genesis 42:24",
+              "Romans 8:1"
+            ]
+          ]
+        },
+        {
+          "word": "Pledge (Surety)",
+          "verse": "Genesis 43:9",
+          "hebrew": "עָרַב",
+          "translit": "ʿārab",
+          "strongs": "H6148",
+          "gloss": "to pledge, become surety, guarantee",
+          "answers": [
+            "Judah uses it twice: when he persuades Jacob to let Benjamin go (Genesis 43:9) and when he pleads with Joseph to keep him instead of Benjamin (Genesis 44:32). It's a guarantor's word, someone who stands liable for another person, and it carries Judah's whole change: the brother who sold Joseph now puts himself up as security for Rachel's other son.",
+            "Hebrew: עָרַב (ʿārab), Strong's H6148. In Genesis 43:9 the interlinear shows אֶעֶרְבֶנּוּ (ʾeʿerbennû), “I myself will guarantee him”; in Genesis 44:32 it is עָרַב (ʿārab), “guaranteed.”\nGloss: to pledge, become surety, guarantee.",
+            "Strong's gives two strands: (1) to pledge, give security, stand as guarantor, mortgage, or exchange in trade; and (2) to mix or intermingle, including to associate with or share in. The common thread is becoming bound up with someone else's fate. Brown-Driver-Briggs places Genesis 43:9 under going surety for a person's safety.\n• Related: ʿērāḇôn, “pledge” (H6162), from the same root, the pledge Judah handed Tamar (Genesis 38:17–18)\n• Synonym: “strike hands,” the gesture of sealing a guarantee (Proverbs 6:1; 17:18)\n• Opposite: washing your hands of someone, as the brothers did with Joseph (Genesis 37:26–27)",
+            "• Proverbs 6:1: a warning about putting up security for a neighbor, since you become liable for his debt\n• Nehemiah 5:3: in a famine, people mortgage their fields to get grain\n• Job 17:3: Job asks who will put up security for him, and looks to God\n• Psalm 119:122: the psalmist asks God himself to be his pledge of good\n• Isaiah 38:14: Hezekiah, near death, prays, “be my pledge of safety!”\nInsight: Proverbs treats standing surety as costly and risky, which is what makes Judah's offer remarkable, and the psalms and prophets look to God as the guarantor no one else can be (Hebrews 7:22).",
+            "• Ellicott: Judah's offer was more persuasive than Reuben's pledge of his sons' lives (Genesis 42:37) because it was real; he would stand guilty before his father the rest of his life.\n• Benson: Judah's conscience had recently struck him over Joseph, and taking responsibility for Benjamin was evidence his repentance was genuine, a kind of restitution.\n• Matthew Henry (on 44:18–34): Christ came from Judah (Hebrews 7:14), and he not only intercedes for transgressors but becomes their surety.",
+            "Judah went from selling a brother for silver (Genesis 37:26–27) to offering himself as a slave so that brother's full brother could go home (Genesis 44:33). A surety stands in someone else's place and takes the cost, which is the shape of what Christ has done for us (Hebrews 7:22).\nTo consider: Who in your life needs you to stand with them at some cost to yourself, rather than at a safe distance?"
+          ],
+          "refs": [
+            [
+              "Genesis 43:9",
+              "Genesis 44:32"
+            ],
+            [
+              "Genesis 43:9",
+              "Genesis 44:32"
+            ],
+            [
+              "Genesis 43:9",
+              "Genesis 38:17-18",
+              "Proverbs 6:1",
+              "Proverbs 17:18",
+              "Genesis 37:26-27"
+            ],
+            [
+              "Proverbs 6:1",
+              "Nehemiah 5:3",
+              "Job 17:3",
+              "Psalm 119:122",
+              "Isaiah 38:14",
+              "Hebrews 7:22"
+            ],
+            [
+              "Genesis 42:37",
+              "Hebrews 7:14"
+            ],
+            [
+              "Genesis 37:26-27",
+              "Genesis 44:33",
+              "Hebrews 7:22"
+            ]
           ]
         }
       ]
@@ -4041,6 +4912,311 @@
           "from": 4,
           "refs": [
             "Genesis 50:16-17"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "10B-6",
+      "lesson": "10B",
+      "day": "Day Six",
+      "summary": "Four word-study options from Genesis 48–50: chashab (“meant,” 50:20), raʿah (“shepherd,” 48:15), gaʾal (“redeemed,” 48:16), and paqad (“visit,” 50:24), tracing God’s purpose, care, rescue, and faithfulness to his promise.",
+      "readings": [
+        {
+          "ref": "Genesis 50:20",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 48:15",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 48:16",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "ref": "Genesis 50:24",
+          "for": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "text": "From your reading this week, choose ONE WORD to research. Is there a word that is repeated? Is there a word that strikes you as especially significant or “jumps out” at you? Is there a word that intrigues or puzzles you? Your Word of the Week:",
+          "wordStudy": 1,
+          "section": "Optional Word Study",
+          "refs": []
+        },
+        {
+          "text": "Type in your verse reference at biblehub.com. Click the Interlinear tab (“Int” on a mobile device) at the top in order to find the word in the original language. Click the link to the Strong’s number to view the Lexical Summary. What is the Hebrew word and the Strong’s #?",
+          "wordStudy": 2,
+          "refs": []
+        },
+        {
+          "text": "What are the range of meanings you find when search the Strong’s definitions? What are synonyms or antonyms?",
+          "wordStudy": 3,
+          "refs": []
+        },
+        {
+          "text": "From the column on the right, find several other places in the Old Testament where this word is used. Click on the link to read the verse. What insight does this give you?",
+          "wordStudy": 4,
+          "refs": []
+        },
+        {
+          "text": "Now, type in your verse reference again at biblehub.com, but this time click the Commentaries tab. Browse through these to see if you can gain any additional helpful information.",
+          "wordStudy": 5,
+          "refs": []
+        },
+        {
+          "text": "What has your study taught you? Have you been able to find a point of application? As you have spent time meditating on the meaning of this word in this passage, has God given you any insight into why this word stood out to you today?",
+          "wordStudy": 6,
+          "refs": []
+        },
+        {
+          "text": "Which of God’s attributes were most clear to you this week?",
+          "answer": "• Sovereign over human choices: he turned the brothers’ evil plan to good (Genesis 50:20)\n• Shepherd: he led and fed Jacob all his life (Genesis 48:15; Psalm 23:1)\n• Forgiving and compassionate: he does not deal with us according to our sins (Psalm 103:10)\n• Faithful to his promises: he would surely visit Israel and bring them to the land (Genesis 50:24)\nTo consider: Which of these do you find hardest to believe about God right now, and why?",
+          "n": 1,
+          "section": "Weekly Review",
+          "refs": [
+            "Genesis 50:20",
+            "Genesis 48:15",
+            "Psalm 23:1",
+            "Psalm 103:10",
+            "Genesis 50:24"
+          ]
+        },
+        {
+          "text": "Which passages or insights were most meaningful to you this week? Explain.",
+          "answer": "• Genesis 45:5-8: Joseph says three times that God sent him before he says anything about what his brothers did.\n• Genesis 48:15-16: the man who told Pharaoh his days were “few and evil” (Genesis 47:9) now calls God his shepherd and redeemer all his life.\n• Genesis 50:15-21: seventeen years after Joseph forgave them, the brothers still feared payback, and he wept. Forgiveness can be given and still go unreceived.\nTo consider: Which of these three scenes reads most like your own story this week?",
+          "n": 2,
+          "refs": [
+            "Genesis 45:5-8",
+            "Genesis 48:15-16",
+            "Genesis 47:9"
+          ]
+        },
+        {
+          "text": "How have you applied what you’ve discovered this week about God, others, or yourself?",
+          "answer": "Joseph applied what he knew about God in how he treated people who had wronged him: he “comforted them and spoke kindly to them” (Genesis 50:21). Psalm 103 asks for a parallel response toward God: receiving his forgiveness instead of waiting to be punished (Psalm 103:3, 9-10).\nTo consider: Who is one person you could speak kindly to this week specifically because of how God has dealt with you?",
+          "n": 3,
+          "refs": [
+            "Genesis 50:21",
+            "Psalm 103:3",
+            "Psalm 103:9-10"
+          ]
+        }
+      ],
+      "words": [
+        {
+          "word": "Meant",
+          "verse": "Genesis 50:20",
+          "hebrew": "חָשַׁב",
+          "translit": "chashab",
+          "strongs": "H2803",
+          "gloss": "to think, plan, devise, reckon",
+          "answers": [
+            "Joseph uses the same verb twice in one sentence: his brothers “meant” evil against him, and God “meant” it for good (Genesis 50:20). The whole Joseph story turns on that word and on whose plan wins.",
+            "חָשַׁב (chashab), Strong’s H2803: to think, plan, devise, reckon. The interlinear shows it under both halves of Genesis 50:20, ḥă·šaḇ·tem (“you intended”) and ḥă·šā·ḇāh (“he intended it”). BibleHub’s interlinear glosses it “intended,” where the ESV has “meant.”",
+            "• Think, consider, regard, value (Isaiah 53:4)\n• Count or credit to someone’s account (Genesis 15:6)\n• Plan, devise, plot, often in a bad sense (Micah 2:1)\n• Design skilled work as a weaver or craftsman (Exodus 35:35)\nStrong’s gives the root idea as to plait or weave, then to fabricate or contrive. Synonyms: yaʿats (H3289, to counsel, plan) and zamam (H2161, to devise, purpose). The related noun machashabah (H4284) means a thought or plan. For an opposite, Psalm 32:2 negates the same verb: the Lord does not count iniquity against the forgiven.",
+            "• Genesis 15:6: God “counted” Abram’s faith as righteousness; his reckoning is a gift\n• Exodus 35:35: craftsmen who “design” for the tabernacle; the word can describe careful, skilled work\n• Psalm 32:2: blessed is the one whose iniquity the Lord does not count\n• Micah 2:1: people who “devise” wickedness on their beds; the same skill aimed at harm\n• Jeremiah 29:11: “the plans I have for you” pairs this verb with its noun\nInsight: Chashab covers both skilled design and evil plotting, and in Genesis 50:20 both kinds of planning work on the same event. God’s plan is the one that holds.",
+            "• Ellicott: the Hebrew verb is the same in both halves of the verse, setting man’s purpose against God’s; Joseph had already said this in Genesis 45:7.\n• Pulpit Commentary: literally, “you were thinking evil against me; God was thinking it for good,” meaning God intended the very thing they did to turn out well.\n• Gill: God is not the author of their sin, yet the act fell under his purpose and he brought good from it; Gill compares the crucifixion.\nBenson and Matthew Henry add that Joseph returned good for evil and spoke kindly to them (Genesis 50:21).",
+            "The brothers’ plan was real and it was evil, and Joseph never pretends otherwise. But it wasn’t the only plan at work in that pit and that sale. Because Joseph could see God’s plan, he could forgive without calling the wrong harmless.\nTo consider: What harm done to you are you still reading only through the other person’s intent, and what would change if you asked what God meant in it?"
+          ],
+          "refs": [
+            [
+              "Genesis 50:20"
+            ],
+            [
+              "Genesis 50:20"
+            ],
+            [
+              "Isaiah 53:4",
+              "Genesis 15:6",
+              "Micah 2:1",
+              "Exodus 35:35",
+              "Psalm 32:2"
+            ],
+            [
+              "Genesis 15:6",
+              "Exodus 35:35",
+              "Psalm 32:2",
+              "Micah 2:1",
+              "Jeremiah 29:11",
+              "Genesis 50:20"
+            ],
+            [
+              "Genesis 45:7",
+              "Genesis 50:21"
+            ],
+            []
+          ]
+        },
+        {
+          "word": "Shepherd",
+          "verse": "Genesis 48:15",
+          "hebrew": "רָעָה",
+          "translit": "raʿah",
+          "strongs": "H7462",
+          "gloss": "to shepherd, tend, pasture, feed",
+          "answers": [
+            "The word runs through the week. Jacob’s sons tell Pharaoh they are shepherds (Genesis 46:32; 47:3), a trade Egyptians despised (Genesis 46:34). Then the dying Jacob calls God “the God who has been my shepherd all my life long to this day” (Genesis 48:15), the first place Scripture pictures God as a shepherd. Psalm 23 and John 10 build on it.",
+            "רָעָה (raʿah), Strong’s H7462: to shepherd, tend, pasture, feed. In Genesis 48:15 it is a participle, hā·rō·ʿeh, “who has been shepherd,” meaning the one shepherding me. Psalm 23:1 uses the same word: “The LORD is my shepherd” (rō·ʿî).",
+            "Strong’s: to tend a flock, to graze, to rule, and by extension to keep company with as a friend. KJV renders it feed, keep sheep, shepherd, pastor, herdman, companion. Brown-Driver-Briggs: pasture, tend, graze. The Topical Lexicon notes it covers feeding, guiding, protecting, and seeking the lost, and that Israel’s kings were called to “shepherd” the people (2 Samuel 5:2). Synonym: nahal (H5095), to lead to rest (Psalm 23:2). Opposite: puts (H6327), to scatter (Jeremiah 23:2). Don’t confuse it with raʿah, “evil” (H7451), spelled with the same letters in Genesis 50:20.",
+            "• Genesis 37:2: seventeen-year-old Joseph “was pasturing the flock with his brothers”\n• Genesis 49:24: Jacob calls God “the Shepherd, the Stone of Israel” in Joseph’s blessing\n• Psalm 80:1: “O Shepherd of Israel, you who lead Joseph like a flock”\n• Isaiah 40:11: he tends his flock and gathers the lambs in his arms\n• Ezekiel 34:23: God promises one shepherd, “my servant David,” to feed his people\nInsight: The word starts as the family trade and becomes Jacob’s name for God. The prophets then point it toward a coming shepherd-king, which Jesus claims in John 10.",
+            "• Ellicott: Jacob names God three ways in verses 15–16: the God his fathers walked before, the God who as a shepherd watched over him all his life, and the redeeming Angel.\n• Keil & Delitzsch: “fed me” means led and provided for with a shepherd’s faithfulness, and they point to Psalm 23:1.\n• MacLaren: Jacob told Pharaoh his days were “few and evil” (Genesis 47:9), but on his deathbed he saw them as one long shepherding by God. The difference is whether God is in the picture.",
+            "Jacob spent his working life with sheep, so he knew what a shepherd does on ordinary days: finding water and grass, moving the flock, staying with the weak ones. Looking back, he saw God had done that for him every day, including the years he had called “few and evil” (Genesis 47:9).\nTo consider: If you summed up your life the way Jacob did in Genesis 48:15, which season would you have to reread?"
+          ],
+          "refs": [
+            [
+              "Genesis 46:32",
+              "Genesis 47:3",
+              "Genesis 46:34",
+              "Genesis 48:15"
+            ],
+            [
+              "Genesis 48:15",
+              "Psalm 23:1"
+            ],
+            [
+              "2 Samuel 5:2",
+              "Psalm 23:2",
+              "Jeremiah 23:2",
+              "Genesis 50:20"
+            ],
+            [
+              "Genesis 37:2",
+              "Genesis 49:24",
+              "Psalm 80:1",
+              "Isaiah 40:11",
+              "Ezekiel 34:23"
+            ],
+            [
+              "Genesis 48:15-16",
+              "Psalm 23:1",
+              "Genesis 47:9"
+            ],
+            [
+              "Genesis 47:9",
+              "Genesis 48:15"
+            ]
+          ]
+        },
+        {
+          "word": "Redeemed",
+          "verse": "Genesis 48:16",
+          "hebrew": "גָּאַל",
+          "translit": "gaʾal",
+          "strongs": "H1350",
+          "gloss": "to redeem, act as kinsman-redeemer",
+          "answers": [
+            "Jacob calls God “the angel who has redeemed me from all evil” (Genesis 48:16). This is the first time gaʾal appears in the Bible, and it returns in this week’s Psalm: “who redeems your life from the pit” (Psalm 103:4).",
+            "גָּאַל (gaʾal), Strong’s H1350: to redeem, act as kinsman-redeemer, avenge, ransom. In Genesis 48:16 it is the participle hag·gō·ʾêl, “who has redeemed,” the same form Psalm 103:4 uses (hag·gō·w·ʾêl).",
+            "Strong’s: to redeem according to the law of kinship; to be the next of kin and buy back a relative’s property or marry his widow; in justice, to act as avenger. KJV: redeem, redeemer, kinsman, deliver, ransom, purchase, avenger. The participle gōʾēl is the kinsman-redeemer (Ruth 3:12). Synonym: padah (H6299), to ransom or rescue. Opposite: makar (H4376), to sell, the word Joseph uses for “you sold me” (Genesis 45:5). Leviticus 25:25 puts the two together: a poor brother sells, and his nearest redeemer buys it back.",
+            "• Exodus 6:6: “I will redeem you with an outstretched arm,” God’s promise to bring Israel out of Egypt\n• Leviticus 25:25: the nearest relative buys back what a poor brother has sold\n• Ruth 4:4: Boaz offers the closer relative the right to redeem the family land\n• Job 19:25: “I know that my Redeemer lives”\n• Isaiah 43:1: “Fear not, for I have redeemed you; I have called you by name”\nInsight: A redeemer is family who pays to get you back. Jacob was saying God had acted as his next of kin, and Exodus 6:6 shows God doing the same for the whole family Jacob brought to Egypt.",
+            "• Cambridge Bible: to redeem is to play the kinsman’s part (Leviticus 25:48-49; Ruth 3:13). Here the rescue is from calamity, and “the angel” is indistinguishable from the God of Jacob, likely the one he met at Peniel (Genesis 32:30).\n• Benson (also Gill and Poole): this is no created angel but Christ, since he redeems from all evil and Jacob prays to him for the blessing.\n• Matthew Henry: Jacob knew plenty of hardship, but God kept him from the evil of his troubles.\nEllicott, on the verse 15 page, notes this is the word’s first use in Scripture.",
+            "Jacob was not spared trouble. He was cheated by Laban, buried Rachel on the road, and mourned Joseph for years. He still called God the relative who stepped in and bought him back, and Psalm 103:4 makes the same claim for everyone who belongs to God.\nTo consider: Where are you still trying to buy yourself back from a failure or loss that God has already paid to redeem?"
+          ],
+          "refs": [
+            [
+              "Genesis 48:16",
+              "Psalm 103:4"
+            ],
+            [
+              "Genesis 48:16",
+              "Psalm 103:4"
+            ],
+            [
+              "Ruth 3:12",
+              "Genesis 45:5",
+              "Leviticus 25:25"
+            ],
+            [
+              "Exodus 6:6",
+              "Leviticus 25:25",
+              "Ruth 4:4",
+              "Job 19:25",
+              "Isaiah 43:1"
+            ],
+            [
+              "Leviticus 25:48-49",
+              "Ruth 3:13",
+              "Genesis 32:30",
+              "Genesis 48:15"
+            ],
+            [
+              "Psalm 103:4"
+            ]
+          ]
+        },
+        {
+          "word": "Visit",
+          "verse": "Genesis 50:24",
+          "hebrew": "פָּקַד",
+          "translit": "paqad",
+          "strongs": "H6485",
+          "gloss": "to visit, attend to, take note of, appoint",
+          "answers": [
+            "Joseph’s last words use this verb four times in two verses: “God will surely visit you” (Genesis 50:24-25). Translations puzzle over it (ESV “visit,” NIV “come to your aid,” NASB “take care of you”), and Moses quotes the phrase when he carries out Joseph’s bones (Exodus 13:19).",
+            "פָּקַד (paqad), Strong’s H6485: to visit, attend to, take note of, appoint, muster. The interlinear shows it twice in a row in Genesis 50:24, pā·qōḏ yip̄·qōḏ, literally “attending, he will attend.” Doubling a verb this way is how Hebrew says “surely.”",
+            "Strong’s: to visit, with friendly or hostile intent, and by extension to oversee, muster, take charge of, care for, miss, or deposit. KJV renders it visit, appoint, number, punish, remember, oversee, and more. Brown-Driver-Briggs gives the basic sense as “attend to, pay attention to.” It appears 302 times. God’s visit can bring help (Genesis 21:1) or judgment (Exodus 34:7). Synonym: zakar (H2142), to remember (Genesis 30:22). Opposite: shakach (H7911), to forget (Psalm 103:2).",
+            "• Genesis 21:1: the Lord “visited” Sarah as he had said, and she bore Isaac\n• Exodus 3:16: God tells Moses, “I have observed you,” with the same doubled verb Joseph used\n• Exodus 4:31: the people heard that the Lord had “visited” Israel, believed, and worshiped\n• Exodus 13:19: Moses takes Joseph’s bones, quoting his oath word for word\n• Jeremiah 23:2: the shepherds did not “attend to” the flock, so God will “attend to” them for their evil\nInsight: When God visits, he comes to act on what he has said, in rescue or in reckoning. Joseph’s phrase came back generations later as the sign that the exodus had begun.",
+            "• Pulpit Commentary: literally “visiting he will visit you,” in line with God’s promise to Jacob in Genesis 46:4; Hebrews 11:22 counts this as Joseph’s act of faith.\n• Ellicott: these words show Joseph’s faith and prepare for the book of Exodus, tying the two books together.\n• Matthew Henry: leaving his bones unburied kept Israel expecting to leave Egypt and kept Canaan in their minds.\nKeil & Delitzsch add that the coffin stayed in Egypt until the exodus and was buried at Shechem (Joshua 24:32).",
+            "Joseph died with the promise still unkept and staked his burial on it. Every Israelite who passed his coffin in Egypt had a reminder that God would come. Paqad says God pays attention and shows up to act, even when the wait runs past a lifetime.\nTo consider: What promise of God are you waiting on, and what reminder could you keep in front of you that he will come?"
+          ],
+          "refs": [
+            [
+              "Genesis 50:24-25",
+              "Exodus 13:19"
+            ],
+            [
+              "Genesis 50:24"
+            ],
+            [
+              "Genesis 21:1",
+              "Exodus 34:7",
+              "Genesis 30:22",
+              "Psalm 103:2"
+            ],
+            [
+              "Genesis 21:1",
+              "Exodus 3:16",
+              "Exodus 4:31",
+              "Exodus 13:19",
+              "Jeremiah 23:2"
+            ],
+            [
+              "Genesis 46:4",
+              "Hebrews 11:22",
+              "Joshua 24:32"
+            ],
+            []
           ]
         }
       ]

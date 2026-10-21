@@ -11,6 +11,7 @@ struct Progress: Codable {
     var timerSecs = 0
     var pick: String?                  // a day chosen from the list instead of the next one
     var quiz: [String: [Int]]?         // study day id → chosen answer per quiz item (-1 = not yet)
+    var words: [String: Int]?          // Day Six: study day id → chosen Word of the Week
 }
 
 @MainActor @Observable
@@ -139,6 +140,18 @@ final class AppModel {
         var all = progress.quiz ?? [:]
         all[day.id] = picks
         progress.quiz = all
+        save()
+    }
+
+    func chosenWord(_ day: StudyDay) -> WordOption? {
+        guard let i = progress.words?[day.id], let words = day.words, words.indices.contains(i) else { return nil }
+        return words[i]
+    }
+
+    func chooseWord(_ day: StudyDay, _ index: Int) {
+        var all = progress.words ?? [:]
+        all[day.id] = index
+        progress.words = all
         save()
     }
 

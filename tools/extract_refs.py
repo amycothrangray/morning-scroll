@@ -78,6 +78,10 @@ def main(path="study.json"):
         for i, q in enumerate(day["questions"]):
             book, chapter = default_context(day, i + 1)
             q["refs"] = refs_in(q.get("answer", ""), book, chapter, study["title"])
+        for w in day.get("words") or []:   # Day Six word study: each word has its own answers
+            m = re.match(rf"({book_re})\s+(\d+)", w["verse"])
+            book, chapter = (m.group(1), int(m.group(2))) if m else (study["title"], None)
+            w["refs"] = [refs_in(a, book, chapter, study["title"]) for a in w["answers"]]
         for z in day.get("quiz") or []:
             book, chapter = default_context(day, 1)
             z["refs"] = refs_in(z.get("why", ""), book, chapter, study["title"])

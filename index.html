@@ -137,6 +137,14 @@
   .answer .body { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.6; color: #d6cbc6; white-space: pre-line; }
   .ask { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; text-decoration: none; }
 
+  .words { display: grid; gap: 10px; margin-top: 16px; }
+  .word-option { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+  .word-option.chosen { border-color: var(--rose-deep); background: #2e2424; }
+  .word-option .w-en { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * .85); }
+  .word-option .w-he { font-size: calc(var(--fs) * .85); color: var(--rose); grid-row: span 2; align-self: center; }
+  .word-option .w-meta { font-size: 14px; color: var(--muted); }
+  .hub { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .hub a { font-size: 14px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; color: var(--text); background: var(--bg); }
   .quiz { margin-top: 12vh; }
   .quiz h2 { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * 1.15); margin: 0 0 4px; }
   .qz { padding: 22px 0; border-top: 1px solid var(--line); }
@@ -559,12 +567,16 @@
 
     h.push(`<section class="section" id="questions">`);
     d.questions.forEach((q, qi) => {
+      const answer = q.wordStudy
+        ? `${q.wordStudy === 1 ? wordChooser(d) : ""}<div class="ws-answer" data-ws="${q.wordStudy}"></div>`
+        : q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div>${quotesBox(q.refs)}</div>`
+        : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`;
       h.push(`<div class="q f">
-        ${qi === 0 ? `<h2>Questions</h2>` : ""}
-        <div class="num">Question ${qi + 1}</div>
+        ${q.section ? `<h2>${esc(q.section)}</h2>` : qi === 0 ? `<h2>Questions</h2>` : ""}
+        <div class="num">Question ${q.n || qi + 1}</div>
         <div class="text">${esc(q.text)}</div>
         ${q.items ? `<ul>${q.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-        ${q.answer ? `<div class="answer"><div class="label">Answer</div><div class="body">${esc(q.answer)}</div>${quotesBox(q.refs)}</div>` : `<a class="ask" href="${claudeURL(d, qi)}" target="_blank" rel="noopener">✦ Ask Claude</a>`}
+        ${answer}
       </div>`);
     });
     h.push(`</section>`);
@@ -585,6 +597,7 @@
     $("scroller").scrollTop = 0;
     focusables = [...$("column").querySelectorAll(".f")];
     (state.quiz?.[d.id] || []).forEach((c, zi) => { if (c != null) showQuizAnswer(zi, c); });
+    fillWordStudy(d);
     loadQuotes(d);
     renderFinish();
     updateFocus();
@@ -770,22 +783,72 @@
   // Every verse an answer or quiz explanation cites is quoted below it, in the reader's translation.
   const quotesBox = (refs) => refs && refs.length ? `<div class="quotes" data-refs="${esc(refs.join("|"))}"></div>` : "";
 
+  const quoteText = {};
   async function loadQuotes(day) {
     const boxes = [...$("column").querySelectorAll(".quotes")];
     const refs = [...new Set(boxes.flatMap((b) => b.dataset.refs.split("|")))];
-    const text = {};
+    const text = quoteText;
     for (const ref of refs) {
       if (readerDay !== day || $("reader").hidden) return; // she left the reading
+      if (text[ref]) { fillQuotes(boxes, ref, text); continue; }
       try {
         const p = await getPassage(ref);
         text[ref] = p.verses.map((v) => v.text.replace(/\s*\n\s*/g, " ")).join(" ");
       } catch { continue; }
-      for (const b of boxes) {
-        const want = b.dataset.refs.split("|");
-        if (!want.includes(ref)) continue;
-        b.innerHTML = want.filter((r) => text[r]).map((r) => `<div class="vquote"><span class="qref">${esc(r)}</span>“${esc(text[r])}”</div>`).join("");
-      }
+      fillQuotes(boxes, ref, text);
       if (!usingESV()) await new Promise((r) => setTimeout(r, 2100)); // the free fallback allows ~15 requests per 30 seconds
+    }
+  }
+
+  // ---------- Day Six word study ----------
+  // Each week offers a few Hebrew words; the answers to questions 2-6 follow whichever word she picks.
+  const bookSlug = (ref) => ref.replace(/\s+\d+(:.*)?$/, "").toLowerCase().replace(/^psalm$/, "psalms").replace(/\s+/g, "_");
+  const verseSlug = (ref) => { const m = ref.match(/(\d+):(\d+)/); return m ? `${m[1]}-${m[2]}` : ""; };
+  const hub = {
+    interlinear: (ref) => `https://biblehub.com/interlinear/${bookSlug(ref)}/${verseSlug(ref)}.htm`,
+    strongs: (num) => `https://biblehub.com/hebrew/${String(num).replace(/\D/g, "")}.htm`,
+    commentaries: (ref) => `https://biblehub.com/commentaries/${bookSlug(ref)}/${verseSlug(ref)}.htm`,
+  };
+
+  function wordChooser(d) {
+    return `<div class="words">${(d.words || []).map((w, wi) => `
+      <button class="word-option" data-w="${wi}">
+        <span class="w-en">${esc(w.word)}</span>
+        <span class="w-he" lang="he" dir="rtl">${esc(w.hebrew)}</span>
+        <span class="w-meta">${esc(w.translit)} · ${esc(w.strongs)} · ${esc(w.verse)}</span>
+      </button>`).join("")}</div>`;
+  }
+
+  function fillWordStudy(d) {
+    if (!d.words) return;
+    const chosen = state.word?.[d.id];
+    const w = chosen != null ? d.words[chosen] : null;
+    $("column").querySelectorAll(".word-option").forEach((b) => b.classList.toggle("chosen", +b.dataset.w === chosen));
+    $("column").querySelectorAll(".ws-answer").forEach((box) => {
+      const i = +box.dataset.ws - 1;
+      if (!w) { box.innerHTML = i === 0 ? "" : `<div class="answer"><div class="body">Pick a word in Question 1 to see this answer.</div></div>`; return; }
+      const links = i === 1 ? `<a href="${hub.interlinear(w.verse)}" target="_blank" rel="noopener">Interlinear</a><a href="${hub.strongs(w.strongs)}" target="_blank" rel="noopener">Strong’s ${esc(w.strongs)}</a>`
+        : i === 3 ? `<a href="${hub.strongs(w.strongs)}" target="_blank" rel="noopener">All uses on BibleHub</a>`
+        : i === 4 ? `<a href="${hub.commentaries(w.verse)}" target="_blank" rel="noopener">Commentaries</a>` : "";
+      box.innerHTML = `<div class="answer"><div class="label">Answer · ${esc(w.word)}</div><div class="body">${esc(w.answers[i])}</div>${quotesBox(w.refs?.[i])}${links ? `<div class="hub">${links}</div>` : ""}</div>`;
+    });
+  }
+
+  $("column").addEventListener("click", (e) => {
+    const b = e.target.closest(".word-option");
+    if (!b) return;
+    state.word = state.word || {};
+    state.word[readerDay.id] = +b.dataset.w;
+    save();
+    fillWordStudy(readerDay);
+    loadQuotes(readerDay);
+  });
+
+  function fillQuotes(boxes, ref, text) {
+    for (const b of boxes) {
+      const want = b.dataset.refs.split("|");
+      if (!want.includes(ref)) continue;
+      b.innerHTML = want.filter((r) => text[r]).map((r) => `<div class="vquote"><span class="qref">${esc(r)}</span>“${esc(text[r])}”</div>`).join("");
     }
   }
 

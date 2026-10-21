@@ -15,6 +15,7 @@ struct StudyDay: Codable, Identifiable, Hashable {
     let readings: [Reading]
     let questions: [Question]
     let quiz: [QuizItem]?
+    let words: [WordOption]?   // Day Six: Word of the Week choices
 
     var title: String { "Lesson \(lesson) · \(day)" }
 }
@@ -27,6 +28,18 @@ struct Reading: Codable, Hashable {
         case ref
         case forQuestions = "for"
     }
+}
+
+/// A Hebrew word offered for the Day Six word study, with its own answers to questions 1-6.
+struct WordOption: Codable, Hashable {
+    let word: String
+    let verse: String
+    let hebrew: String
+    let translit: String
+    let strongs: String
+    let gloss: String?
+    let answers: [String]
+    let refs: [[String]]?   // verses cited in each answer
 }
 
 struct QuizItem: Codable, Hashable {
@@ -43,10 +56,27 @@ struct Question: Codable, Hashable {
     let items: [String]?
     let answer: String?
     let refs: [String]?   // verses cited in the answer, quoted under it
+    let wordStudy: Int?   // Day Six: the answer comes from the chosen word's answers[wordStudy - 1]
+    let section: String?  // heading shown above this question ("Weekly Review")
+    let n: Int?           // number shown, when it restarts within a section
 }
 
 /// Gail's study lives in study.json on the website, so new lessons show up without reinstalling the app.
 /// The copy bundled with the app (or the last one downloaded) is used when offline.
+/// Links that follow the study's own BibleHub steps.
+enum BibleHub {
+    private static func parts(_ ref: String) -> (book: String, verse: String) {
+        let book = ref.replacing(try! Regex(#"\s+\d+(:.*)?$"#), with: "").lowercased()
+            .replacingOccurrences(of: " ", with: "_")
+        let m = ref.firstMatch(of: try! Regex(#"(\d+):(\d+)"#))
+        let verse = m.map { "\($0.output[1].substring ?? "")-\($0.output[2].substring ?? "")" } ?? ""
+        return (book == "psalm" ? "psalms" : book, verse)
+    }
+    static func interlinear(_ ref: String) -> URL { let p = parts(ref); return URL(string: "https://biblehub.com/interlinear/\(p.book)/\(p.verse).htm")! }
+    static func commentaries(_ ref: String) -> URL { let p = parts(ref); return URL(string: "https://biblehub.com/commentaries/\(p.book)/\(p.verse).htm")! }
+    static func strongs(_ num: String) -> URL { URL(string: "https://biblehub.com/hebrew/\(num.filter(\.isNumber)).htm")! }
+}
+
 enum StudyLoader {
     static let remoteURL = URL(string: "https://amycothrangray.github.io/morning-scroll/study.json")!
 
