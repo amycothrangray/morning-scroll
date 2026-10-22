@@ -127,6 +127,7 @@ struct ReaderView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, geo.size.height / 2)
                     .coordinateSpace(.named(Self.space))
+                    .background(ScrollViewFinder { snap.scrollView = $0; snap.updateDeceleration(at: focus.index) })
                 }
                 .scrollIndicators(.hidden)
                 .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { _, offset in
@@ -136,6 +137,7 @@ struct ReaderView: View {
                     let now = snap.index(at: offset + geo.size.height / 2)
                     if now != focus.index {
                         focus.index = now
+                        snap.updateDeceleration(at: now)
                         if speaker.isOn && focus.label == nil { speakCurrent() }
                     }
                     // The end counts as soon as the finish card is on screen.
@@ -648,6 +650,13 @@ final class SnapLayout {
     var count = 0
     var height: CGFloat = 800
     var firstFree = Int.max   // from here on (questions and answers) scrolling is free
+    weak var scrollView: UIScrollView?
+
+    /// Verses stop briskly after a flick, like the website; long answers keep the normal glide.
+    func updateDeceleration(at index: Int) {
+        let rate: UIScrollView.DecelerationRate = index < firstFree ? .fast : .normal
+        if let sv = scrollView, sv.decelerationRate != rate { sv.decelerationRate = rate }
+    }
 
     /// The item under content position y (items touch, so this is almost always exact).
     func index(at y: CGFloat) -> Int {
@@ -702,5 +711,32 @@ struct OneAtATime: ScrollTargetBehavior {
             y = snap.offset(for: next, height: h, fromBelow: !down) ?? natural
         }
         target.rect.origin.y = min(max(y, 0), maxOffset)
+    }
+}
+
+/// Hands back the UIKit scroll view behind a SwiftUI ScrollView, for the one setting SwiftUI doesn't expose.
+private struct ScrollViewFinder: UIViewRepresentable {
+    let found: (UIScrollView) -> Void
+
+    func makeUIView(context: Context) -> FinderView { FinderView(found: found) }
+    func updateUIView(_ view: FinderView, context: Context) {}
+
+    final class FinderView: UIView {
+        let found: (UIScrollView) -> Void
+        init(found: @escaping (UIScrollView) -> Void) {
+            self.found = found
+            super.init(frame: .zero)
+            isUserInteractionEnabled = false
+        }
+        required init?(coder: NSCoder) { nil }
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            var view = superview
+            while let v = view {
+                if let sv = v as? UIScrollView { found(sv); return }
+                view = v.superview
+            }
+        }
     }
 }
