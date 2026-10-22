@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Morning Scroll</title>
 <meta name="theme-color" content="#181414">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -308,7 +309,9 @@
 
 <script>
 (async () => {
-  const STUDY = await fetch("study.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json());
+  // study.dat is study.json in base64, so the study's text isn't picked up by search engines.
+  const STUDY = await fetch("study.dat?t=" + Date.now(), { cache: "no-store" }).then((r) => r.text())
+    .then((b64) => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s+/g, "")), (c) => c.charCodeAt(0)))));
   const GOAL = 5 * 60; // seconds of reading required to unlock
   const KEY = "morningScroll.v1";
   const READ_LINE = 0.5; // the item crossing the middle of the screen is the one in focus

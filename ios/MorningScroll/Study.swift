@@ -78,19 +78,26 @@ enum BibleHub {
 }
 
 enum StudyLoader {
-    static let remoteURL = URL(string: "https://amycothrangray.github.io/morning-scroll/study.json")!
+    // study.dat is study.json in base64, so the study's text isn't picked up by search engines.
+    static let remoteURL = URL(string: "https://amycothrangray.github.io/morning-scroll/study.dat")!
+
+    static func decode(_ data: Data) -> Study? {
+        let text = String(decoding: data, as: UTF8.self).filter { !$0.isWhitespace }
+        guard let json = Data(base64Encoded: text) else { return nil }
+        return try? JSONDecoder().decode(Study.self, from: json)
+    }
 
     private static var cacheURL: URL {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("study.json")
+        return dir.appendingPathComponent("study.dat")
     }
 
     /// The newer of the bundled copy and the last download.
     static func local() -> Study {
-        let url = Bundle.main.url(forResource: "study", withExtension: "json")!
-        let bundled = try! JSONDecoder().decode(Study.self, from: Data(contentsOf: url))
-        if let data = try? Data(contentsOf: cacheURL), let cached = try? JSONDecoder().decode(Study.self, from: data),
+        let url = Bundle.main.url(forResource: "study", withExtension: "dat")!
+        let bundled = decode(try! Data(contentsOf: url))!
+        if let data = try? Data(contentsOf: cacheURL), let cached = decode(data),
            (cached.version ?? 0) >= (bundled.version ?? 0) {
             return cached
         }
@@ -105,7 +112,7 @@ enum StudyLoader {
         request.cachePolicy = .reloadIgnoringLocalCacheData
         guard let (data, response) = try? await URLSession.shared.data(for: request),
               (response as? HTTPURLResponse)?.statusCode == 200,
-              let study = try? JSONDecoder().decode(Study.self, from: data) else { return nil }
+              let study = decode(data) else { return nil }
         try? data.write(to: cacheURL)
         return study
     }
