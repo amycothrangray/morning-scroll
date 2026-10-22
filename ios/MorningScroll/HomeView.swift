@@ -14,6 +14,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     topBar
+                    if model.shelfNames.count > 1 { bookTabs.padding(.top, 18) }
                     Spacer(minLength: 40)
                     hero
                     Spacer(minLength: 40)
@@ -94,22 +95,48 @@ struct HomeView: View {
         .padding(.top, 8)
     }
 
+    /// Which book: Gail's study, or the devotional read while the study is on break.
+    private var bookTabs: some View {
+        HStack(spacing: 8) {
+            ForEach(model.shelfNames, id: \.self) { name in
+                let on = name == model.activeBookName
+                Button { withAnimation(.easeOut(duration: 0.2)) { model.choose(book: name) } } label: {
+                    Text(model.books[name].map { $0.short ?? $0.title } ?? name)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(on ? Theme.roseInk : Theme.muted)
+                        .padding(.horizontal, 16).padding(.vertical, 9)
+                        .background(on ? Theme.roseDeep : Theme.surface, in: Capsule())
+                        .overlay(Capsule().stroke(on ? Theme.roseDeep : Theme.line))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
     @ViewBuilder private var hero: some View {
         VStack(spacing: 0) {
             HaloBook().padding(.bottom, 26)
             if let day = model.activeDay {
                 Text(greeting).font(Theme.display(23, weight: 500, italic: true)).foregroundStyle(Theme.rose)
                     .padding(.bottom, 6)
-                Text("\(model.study.title) · Lesson \(day.lesson)".uppercased())
-                    .font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.muted)
-                Text(day.day).font(Theme.display(46)).padding(.top, 6).padding(.bottom, 10)
-                Text(day.readings.map(\.ref).joined(separator: " · "))
-                    .font(.system(size: 17)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                if day.isMeditation {
+                    Text("\(model.study.title) · \(day.day)".uppercased())
+                        .font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.muted)
+                    Text(day.title ?? day.day).font(Theme.display(40)).multilineTextAlignment(.center).padding(.top, 6).padding(.bottom, 10)
+                    Text([day.lesson, day.key].compactMap { $0 }.joined(separator: " · "))
+                        .font(.system(size: 17)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                } else {
+                    Text("\(model.study.title) · Lesson \(day.lesson)".uppercased())
+                        .font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.muted)
+                    Text(day.day).font(Theme.display(46)).padding(.top, 6).padding(.bottom, 10)
+                    Text(day.readings.map(\.ref).joined(separator: " · "))
+                        .font(.system(size: 17)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                }
             } else {
                 Text("Daily reading complete!").font(Theme.display(40)).multilineTextAlignment(.center).padding(.bottom, 10)
                 Text("Enjoy your day with peace of mind.")
                     .font(Theme.read(20)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
-                Text(model.upNext.map { "Tomorrow: \($0.title)" } ?? "You've finished every day in this study.")
+                Text(model.upNext.map { "Tomorrow: \($0.label)" } ?? "You've finished every day in \(model.study.title).")
                     .font(.system(size: 17)).foregroundStyle(Theme.muted).padding(.top, 12)
             }
         }
@@ -174,7 +201,7 @@ struct HomeView: View {
     private var daysList: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button { withAnimation { showDays.toggle() } } label: {
-                Text(showDays ? "All lessons ⌄" : "All lessons ›").font(.system(size: 16)).foregroundStyle(Theme.muted)
+                Text(showDays ? "\(listTitle) ⌄" : "\(listTitle) ›").font(.system(size: 16)).foregroundStyle(Theme.muted)
                     .padding(.vertical, 10).padding(.horizontal, 4)
             }
             if showDays {
@@ -191,7 +218,7 @@ struct HomeView: View {
                                 }
                             }
                             .frame(width: 24, height: 24)
-                            Text(day.title).foregroundStyle(current ? Theme.rose : Theme.text)
+                            Text(day.label).foregroundStyle(current ? Theme.rose : Theme.text)
                             Spacer()
                             Text(done.map(shortDate) ?? (current ? "Up next" : ""))
                                 .font(.system(size: 14)).foregroundStyle(Theme.faint)
@@ -206,6 +233,8 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 26)
     }
+
+    private var listTitle: String { model.study.isDevotional ? "All meditations" : "All lessons" }
 
     private var isResuming: Bool {
         guard let day = model.activeDay else { return false }

@@ -1,23 +1,50 @@
 import Foundation
 
+/// A book the app reads through: Gail's Genesis study, or a devotional for the weeks the study is on break.
 struct Study: Codable {
-    let version: Int?   // bump in study.json whenever lessons, answers or quizzes change
+    let version: Int?   // bump in the JSON whenever the content changes
+    let kind: String?   // "devotional": a book of meditations rather than a study with questions
     let title: String
+    let short: String?  // the name on Home's book switcher
+    let author: String?
     let days: [StudyDay]
+
+    var isDevotional: Bool { kind == "devotional" }
 }
 
 struct StudyDay: Codable, Identifiable, Hashable {
     let id: String
-    let lesson: String
+    let lesson: String       // a meditation: the part of the book it belongs to
     let day: String
+    let title: String?       // a meditation's title
     let key: String?
     let summary: String?
-    let readings: [Reading]
-    let questions: [Question]
+    private let readingList: [Reading]?
+    private let questionList: [Question]?
     let quiz: [QuizItem]?
     let words: [WordOption]?   // Day Six: Word of the Week choices
+    let body: [String]?        // a meditation, paragraph by paragraph
+    let truth: String?         // the book's truth to hold on to
+    let prayer: String?
+    let wildflower: Wildflower?
 
-    var title: String { "Lesson \(lesson) · \(day)" }
+    var readings: [Reading] { readingList ?? [] }
+    var questions: [Question] { questionList ?? [] }
+    var isMeditation: Bool { body != nil }
+    /// The line in the day list: "Lesson 7 · Day Four", or "Day 3 · <title>" for a meditation.
+    var label: String { title.map { "\(day) · \($0)" } ?? "Lesson \(lesson) · \(day)" }
+
+    enum CodingKeys: String, CodingKey {
+        case id, lesson, day, title, key, summary, quiz, words, body, truth, prayer, wildflower
+        case readingList = "readings"
+        case questionList = "questions"
+    }
+}
+
+/// The wildflower each meditation in The Way of the Wildflower is drawn from.
+struct Wildflower: Codable, Hashable {
+    let name: String
+    let fact: String
 }
 
 struct Reading: Codable, Hashable {
@@ -61,8 +88,6 @@ struct Question: Codable, Hashable {
     let n: Int?           // number shown, when it restarts within a section
 }
 
-/// Gail's study lives in study.json on the website, so new lessons show up without reinstalling the app.
-/// The copy bundled with the app (or the last one downloaded) is used when offline.
 /// Links that follow the study's own BibleHub steps.
 enum BibleHub {
     private static func parts(_ ref: String) -> (book: String, verse: String) {
@@ -77,9 +102,13 @@ enum BibleHub {
     static func strongs(_ num: String) -> URL { URL(string: "https://biblehub.com/hebrew/\(num.filter(\.isNumber)).htm")! }
 }
 
+/// The books live on the website as <name>.dat (their JSON in base64, so the text isn't picked up by search
+/// engines), so new lessons and meditations show up without reinstalling the app. The copy bundled with the
+/// app, or the last one downloaded, is used when offline.
 enum StudyLoader {
-    // study.dat is study.json in base64, so the study's text isn't picked up by search engines.
-    static let remoteURL = URL(string: "https://amycothrangray.github.io/morning-scroll/study.dat")!
+    /// Every book, in the order Home offers them: Gail's study, then the devotional for weeks the study is on break.
+    static let names = ["study", "wildflower"]
+    static let site = URL(string: "https://amycothrangray.github.io/morning-scroll/")!
 
     static func decode(_ data: Data) -> Study? {
         let text = String(decoding: data, as: UTF8.self).filter { !$0.isWhitespace }
@@ -87,33 +116,31 @@ enum StudyLoader {
         return try? JSONDecoder().decode(Study.self, from: json)
     }
 
-    private static var cacheURL: URL {
+    private static func cacheURL(_ name: String) -> URL {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("study.dat")
+        return dir.appendingPathComponent("\(name).dat")
     }
 
-    /// The newer of the bundled copy and the last download.
-    static func local() -> Study {
-        let url = Bundle.main.url(forResource: "study", withExtension: "dat")!
-        let bundled = decode(try! Data(contentsOf: url))!
-        if let data = try? Data(contentsOf: cacheURL), let cached = decode(data),
-           (cached.version ?? 0) >= (bundled.version ?? 0) {
-            return cached
-        }
+    /// The newer of the bundled copy and the last download; nil for a book the app doesn't have yet.
+    static func local(_ name: String) -> Study? {
+        let bundled = Bundle.main.url(forResource: name, withExtension: "dat").flatMap { try? Data(contentsOf: $0) }.flatMap(decode)
+        let cached = (try? Data(contentsOf: cacheURL(name))).flatMap(decode)
+        guard let bundled else { return cached }
+        if let cached, (cached.version ?? 0) >= (bundled.version ?? 0) { return cached }
         return bundled
     }
 
-    static func fetchLatest() async -> Study? {
+    static func fetchLatest(_ name: String) async -> Study? {
         // A unique query skips GitHub's 10-minute cache so new lessons show up right away.
-        var c = URLComponents(url: remoteURL, resolvingAgainstBaseURL: false)!
+        var c = URLComponents(url: site.appendingPathComponent("\(name).dat"), resolvingAgainstBaseURL: false)!
         c.queryItems = [.init(name: "t", value: String(Int(Date().timeIntervalSince1970)))]
         var request = URLRequest(url: c.url!)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         guard let (data, response) = try? await URLSession.shared.data(for: request),
               (response as? HTTPURLResponse)?.statusCode == 200,
               let study = decode(data) else { return nil }
-        try? data.write(to: cacheURL)
+        try? data.write(to: cacheURL(name))
         return study
     }
 }

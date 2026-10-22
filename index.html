@@ -73,6 +73,12 @@
   .tag.unlocked { background: #233032; color: var(--sage); }
   .translation-note { margin-top: 16px; font-size: 14px; color: var(--faint); text-align: center; line-height: 1.5; }
 
+  /* Which book: Gail's study, or the devotional read while the study is on break. */
+  .books { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+  .book-tab { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 15px; font-weight: 500; }
+  .book-tab.on { background: var(--rose-deep); border-color: var(--rose-deep); color: var(--rose-ink); }
+  .today h1.med { font-size: 38px; }
+
   .days { margin-top: 26px; }
   .days summary { list-style: none; color: var(--muted); font-size: 16px; padding: 10px 4px; cursor: pointer; }
   .days summary::-webkit-details-marker { display: none; }
@@ -107,8 +113,8 @@
   .f { opacity: .26; transition: opacity .45s ease; }
   /* Each flick moves exactly one item and centers it. */
   .snap { scroll-snap-align: center; scroll-snap-stop: always; }
-  /* One last stop at the Questions heading; from there the answers scroll freely. */
-  #questions { scroll-snap-align: start; scroll-snap-stop: always; scroll-margin-top: 80px; }
+  /* One last stop at the Questions heading (or a meditation's first words); from there everything scrolls freely. */
+  .section { scroll-snap-align: start; scroll-snap-stop: always; scroll-margin-top: 80px; }
   .f.focus { opacity: 1; }
 
   .votd { text-align: center; padding: 6vh 0 4vh; }
@@ -118,6 +124,7 @@
 
   .today-block h2, .section h2 { font-family: var(--display); font-weight: 600; font-size: calc(var(--fs) * 1.15); margin: 0 0 4px; line-height: 1.15; }
   .today-block .ref-line { color: var(--rose); font-size: 16px; margin-bottom: 14px; line-height: 1.5; }
+  .today-block .eyebrow { margin-bottom: 10px; }
   .today-block .summary { font-family: var(--read); font-style: italic; color: var(--muted); font-size: calc(var(--fs) * .68); line-height: 1.6; margin: 0; }
 
   .passage-head { margin: 0 0 3vh; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
@@ -137,6 +144,11 @@
   .answer .label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; }
   .answer .body { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.6; color: #d6cbc6; white-space: pre-line; }
   .ask { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 500; text-decoration: none; }
+
+  /* A meditation: paragraphs scroll freely like answers, then the book's truth, prayer and wildflower note in cards. */
+  .para p { font-family: var(--read); font-size: calc(var(--fs) * .8); line-height: 1.6; margin: 0; padding: .5em 0; white-space: pre-line; }
+  .meditation .answer { margin-top: 28px; }
+  .answer.prayer .body { font-style: italic; }
 
   .words { display: grid; gap: 10px; margin-top: 16px; }
   .word-option { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
@@ -208,6 +220,7 @@
     </button>
   </div>
 
+  <div class="books" id="books" hidden></div>
   <section class="today" id="today"></section>
 
   <div class="action-card">
@@ -220,7 +233,7 @@
   </div>
 
   <details class="days">
-    <summary>All lessons ›</summary>
+    <summary id="days-summary">All lessons ›</summary>
     <div id="day-list"></div>
   </details>
 </main>
@@ -309,9 +322,19 @@
 
 <script>
 (async () => {
-  // study.dat is study.json in base64, so the study's text isn't picked up by search engines.
-  const STUDY = await fetch("study.dat?t=" + Date.now(), { cache: "no-store" }).then((r) => r.text())
-    .then((b64) => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s+/g, "")), (c) => c.charCodeAt(0)))));
+  // Each book is its JSON in base64, so the text isn't picked up by search engines.
+  // study.dat is Gail's Genesis study; wildflower.dat is a devotional for the weeks the study is on break.
+  const decode = (b64) => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s+/g, "")), (c) => c.charCodeAt(0))));
+  const loadBook = (file) => fetch(file + ".dat?t=" + Date.now(), { cache: "no-store" })
+    .then((r) => (r.ok ? r.text() : Promise.reject(new Error(r.status))))
+    .then((b64) => Object.assign(decode(b64), { file }))
+    .catch(() => null);
+  // A book with nothing in it yet stays hidden.
+  const BOOKS = (await Promise.all(["study", "wildflower"].map(loadBook))).filter((b) => b && b.days.length);
+  if (!BOOKS.length) {
+    document.getElementById("today").innerHTML = "<p>Couldn’t load the reading. Check your connection and reload.</p>";
+    return;
+  }
   const GOAL = 5 * 60; // seconds of reading required to unlock
   const KEY = "morningScroll.v1";
   const READ_LINE = 0.5; // the item crossing the middle of the screen is the one in focus
@@ -322,7 +345,7 @@
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   // ---------- state ----------
-  const defaults = { name: "", done: {}, fontSize: 30, esvKey: "", shortcutName: "Bible Done", timer: null, pick: null };
+  const defaults = { name: "", done: {}, fontSize: 30, esvKey: "", shortcutName: "Bible Done", timer: null, pick: null, book: "study" };
   let state;
   try { state = Object.assign({}, defaults, JSON.parse(localStorage.getItem(KEY) || "{}")); }
   catch { state = { ...defaults }; }
@@ -330,8 +353,12 @@
 
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const today = () => iso(new Date());
-  const dayById = (id) => STUDY.days.find((d) => d.id === id);
-  const nextDay = () => STUDY.days.find((d) => !state.done[d.id]) || STUDY.days[STUDY.days.length - 1];
+  // The book she's reading: Gail's study unless she switched to the devotional on Home.
+  const book = () => BOOKS.find((b) => b.file === state.book) || BOOKS[0];
+  const isMeditation = (d) => Array.isArray(d.body);
+  const rowLabel = (d) => (isMeditation(d) ? `${d.day} · ${d.title}` : `Lesson ${d.lesson} · ${d.day}`);
+  const dayById = (id) => book().days.find((d) => d.id === id);
+  const nextDay = () => book().days.find((d) => !state.done[d.id]) || book().days[book().days.length - 1];
   const finishedToday = () => Object.values(state.done).includes(today());
   const activeDay = () => (state.pick && dayById(state.pick)) || (finishedToday() ? null : nextDay());
 
@@ -422,8 +449,13 @@
 
   // ---------- Claude prompts ----------
   const qText = (q, i) => `Question ${i + 1}: ${q.text}${q.items ? "\n" + q.items.map((x) => "  - " + x).join("\n") : ""}`;
-  const dayTitle = (d) => `${STUDY.title} Lesson ${d.lesson}, ${d.day}`;
+  const dayTitle = (d) => `${book().title} Lesson ${d.lesson}, ${d.day}`;
   function claudeURL(day, qIndex) {
+    if (isMeditation(day)) {
+      const b = book();
+      const body = `I'm reading "${day.title}" (${day.day}) in ${b.title}${b.author ? " by " + b.author : ""}. The verse is ${day.key || day.readings.map((r) => r.ref).join("; ")}.\n\nHelp me sit with this verse this morning: what it says about God, what it says to an anxious heart, and one concrete way to carry it into today. Keep it short and warm, and quote the ESV.`;
+      return "https://claude.ai/new?q=" + encodeURIComponent(body);
+    }
     const head = `I'm working through a Bible study on ${dayTitle(day)}. Today's passages: ${day.readings.map((r) => r.ref).join("; ")}.`;
     const ask = "Answer from the ESV and cite verse numbers. Keep each answer to a short paragraph. For personal reflection questions, give me something to think about rather than answering for me.";
     const body = qIndex == null
@@ -452,25 +484,37 @@
     const day = activeDay();
     const t = $("today");
 
+    const b = book();
+    $("books").hidden = BOOKS.length < 2;
+    $("books").innerHTML = BOOKS.map((x) => `<button class="book-tab ${x === b ? "on" : ""}" data-book="${esc(x.file)}">${esc(x.short || x.title)}</button>`).join("");
+
     if (!day) {
-      const last = STUDY.days.filter((d) => state.done[d.id] === today()).pop();
-      const upNext = STUDY.days.find((d) => !state.done[d.id]);
+      const last = b.days.filter((d) => state.done[d.id] === today()).pop();
+      const upNext = b.days.find((d) => !state.done[d.id]);
       t.innerHTML = `
         <div class="halo">${bookIcon(56)}</div>
         <h1>Daily reading complete!</h1>
         <p>Enjoy your day with peace of mind.</p>
-        <div class="refs">${upNext ? `Tomorrow: Lesson ${esc(upNext.lesson)} · ${esc(upNext.day)}` : "You've finished every day in this study."}</div>`;
+        <div class="refs">${upNext ? `Tomorrow: ${esc(rowLabel(upNext))}` : `You've finished every day in ${esc(b.title)}.`}</div>`;
       $("open-reading").textContent = "Read again";
       $("ask-day").hidden = !last;
-      if (last) $("ask-day").href = claudeURL(last);
+      if (last) {
+        $("ask-day").href = claudeURL(last);
+        $("ask-day").textContent = isMeditation(last) ? "Ask Claude about today's verse" : "Ask Claude about today's questions";
+      }
     } else {
       const resuming = state.timer && state.timer.dayId === day.id && state.timer.date === today();
+      const hero = isMeditation(day)
+        ? `<div class="eyebrow">${esc(b.title)} · ${esc(day.day)}</div>
+        <h1 class="med">${esc(day.title)}</h1>
+        <div class="refs">${esc(day.lesson)}${day.key ? ` · ${esc(day.key)}` : ""}</div>`
+        : `<div class="eyebrow">${esc(b.title)} · Lesson ${esc(day.lesson)}</div>
+        <h1>${esc(day.day)}</h1>
+        <div class="refs">${day.readings.map((r) => esc(r.ref)).join(" · ")}</div>`;
       t.innerHTML = `
         <div class="halo">${bookIcon(56)}</div>
         <div class="greeting">${esc(greeting())}</div>
-        <div class="eyebrow">${esc(STUDY.title)} · Lesson ${esc(day.lesson)}</div>
-        <h1>${esc(day.day)}</h1>
-        <div class="refs">${day.readings.map((r) => esc(r.ref)).join(" · ")}</div>`;
+        ${hero}`;
       $("open-reading").textContent = resuming ? "Continue Daily Reading" : "Open Daily Reading";
       $("ask-day").hidden = true;
     }
@@ -485,11 +529,12 @@
     const addKey = $("add-key");
     if (addKey) addKey.onclick = (e) => { e.preventDefault(); openSettings(); };
 
-    const cur = STUDY.days.find((d) => !state.done[d.id]);
-    $("day-list").innerHTML = STUDY.days.map((d) => `
+    $("days-summary").textContent = b.kind === "devotional" ? "All meditations ›" : "All lessons ›";
+    const cur = b.days.find((d) => !state.done[d.id]);
+    $("day-list").innerHTML = b.days.map((d) => `
       <button class="day-row ${state.done[d.id] ? "done" : ""} ${d === cur ? "current" : ""}" data-id="${d.id}">
         <span class="mark">${state.done[d.id] ? "✓" : ""}</span>
-        Lesson ${esc(d.lesson)} · ${esc(d.day)}
+        ${esc(rowLabel(d))}
         <small>${state.done[d.id] ? esc(fmtDate(state.done[d.id])) : d === cur ? "Up next" : ""}</small>
       </button>`).join("");
   }
@@ -500,9 +545,15 @@
     state.pick = row.dataset.id; save();
     openReader();
   });
+  $("books").addEventListener("click", (e) => {
+    const tab = e.target.closest(".book-tab");
+    if (!tab || tab.dataset.book === book().file) return;
+    state.book = tab.dataset.book; state.pick = null; save();
+    renderHome();
+  });
   $("open-reading").onclick = () => {
     if (!activeDay()) {
-      const last = STUDY.days.filter((d) => state.done[d.id] === today()).pop();
+      const last = book().days.filter((d) => state.done[d.id] === today()).pop();
       state.pick = (last || nextDay()).id; save();
     }
     openReader();
@@ -528,7 +579,7 @@
     updateTimer();
     $("progress").style.width = "0";
     $("scroller").scrollTop = 0;
-    $("column").innerHTML = `<div class="state">Opening ${esc(readerDay.readings[0].ref)}…</div>`;
+    $("column").innerHTML = `<div class="state">Opening ${esc(readerDay.key || (readerDay.readings[0] || {}).ref || readerDay.title)}…</div>`;
     requestWake();
     startTick();
 
@@ -555,9 +606,18 @@
         <div class="quote">${esc(key.verses.map((v) => v.text).join(" "))}</div>
       </section><hr class="rule">`);
     }
-    h.push(`<section class="today-block f snap">
+    const med = isMeditation(d);
+    const refs = d.readings.map((r) => esc(r.ref)).join(" · ");
+    h.push(med
+      ? `<section class="today-block f snap">
+      <div class="eyebrow">${esc(d.day)} · ${esc(d.lesson)}</div>
+      <h2>${esc(d.title)}</h2>
+      ${refs ? `<div class="ref-line">${refs}</div>` : ""}
+      ${d.summary ? `<p class="summary">${esc(d.summary)}</p>` : ""}
+    </section>`
+      : `<section class="today-block f snap">
       <h2>Today’s Reading</h2>
-      <div class="ref-line">Lesson ${esc(d.lesson)} · ${esc(d.day)}<br>${d.readings.map((r) => esc(r.ref)).join(" · ")}</div>
+      <div class="ref-line">Lesson ${esc(d.lesson)} · ${esc(d.day)}<br>${refs}</div>
       ${d.summary ? `<p class="summary">${esc(d.summary)}</p>` : ""}
     </section>`);
 
@@ -568,6 +628,16 @@
       p.verses.forEach((v, vi) => h.push(`<div class="f snap ${vi === 0 ? "passage-start" : ""}">${vi === 0 ? head : ""}<p class="v" aria-label="${esc(v.label)}"><sup>${v.num}</sup>${esc(v.text)}</p></div>`));
     });
 
+    if (med) {
+      // The meditation scrolls freely, a paragraph at a time, then the book's truth, prayer and wildflower note.
+      h.push(`<section class="section meditation" id="meditation">`);
+      d.body.forEach((p) => h.push(`<div class="para f"><p>${esc(p)}</p></div>`));
+      const card = (cls, label, text) => h.push(`<div class="answer f ${cls}"><div class="label">${esc(label)}</div><div class="body">${esc(text)}</div></div>`);
+      if (d.truth) card("truth", "Truth to hold on to", d.truth);
+      if (d.prayer) card("prayer", "Prayer", d.prayer);
+      if (d.wildflower) card("flower", `Wildflower · ${d.wildflower.name}`, d.wildflower.fact);
+      h.push(`</section>`);
+    } else {
     h.push(`<section class="section" id="questions">`);
     d.questions.forEach((q, qi) => {
       const answer = q.wordStudy
@@ -593,6 +663,7 @@
         <div hidden class="why-quotes">${quotesBox(z.refs)}</div>
       </div>`));
       h.push(`<div class="score" id="quiz-score" hidden></div></section>`);
+    }
     }
     h.push(`<section class="finish f" id="finish"></section>`);
 
@@ -664,9 +735,13 @@
   function itemLabel(el) {
     if (!el) return "";
     if (el.classList.contains("votd")) return "Verse of the Day";
-    if (el.classList.contains("today-block")) return "Today’s Reading";
+    if (el.classList.contains("today-block")) return isMeditation(readerDay) ? readerDay.title : "Today’s Reading";
     const v = el.querySelector(".v");
     if (v) return v.getAttribute("aria-label");
+    if (el.classList.contains("para")) return `Paragraph ${[...el.parentNode.querySelectorAll(".para")].indexOf(el) + 1}`;
+    if (el.classList.contains("truth")) return "Truth";
+    if (el.classList.contains("prayer")) return "Prayer";
+    if (el.classList.contains("flower")) return "Wildflower";
     if (el.classList.contains("q")) return el.querySelector(".num").innerText.replace(/^Q/, "Q").replace(/QUESTION/i, "Question");
     if (el.closest(".quiz")) return "Quiz";
     if (el.id === "finish") return "The end";
@@ -732,7 +807,9 @@
     if (!el || el.closest(".quiz") || el.id === "finish") return null;
     const t = (sel) => [...el.querySelectorAll(sel)].map((n) => n.innerText.trim()).join(" ");
     if (el.classList.contains("votd")) return "Verse of the day. " + t(".ref-line") + ". " + t(".quote");
-    if (el.classList.contains("today-block")) return "Today's reading. " + t(".summary");
+    if (el.classList.contains("today-block")) return isMeditation(readerDay) ? `${t(".eyebrow")}. ${t("h2")}. ${t(".summary")}` : "Today's reading. " + t(".summary");
+    if (el.classList.contains("para")) return t("p");
+    if (el.classList.contains("answer")) return t(".label") + ". " + t(".body"); // a meditation's truth, prayer and wildflower cards
     if (el.classList.contains("q")) {
       const v = el.querySelector(".answer .body");
       // Parenthetical references read badly aloud; the quotes below the answer cover them.

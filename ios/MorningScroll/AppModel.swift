@@ -25,11 +25,22 @@ struct ReadingTimer {
 final class AppModel {
     static let goal = 5 * 60
 
-    var study: Study = StudyLoader.local()
+    /// Every book the app has (bundled or downloaded), by file name.
+    var books: [String: Study]
+    /// The book she's reading: Gail's study unless she switched to the devotional on Home.
+    var bookName: String {
+        didSet { UserDefaults.standard.set(bookName, forKey: "book") }
+    }
     var progress: Progress
     var timer: ReadingTimer
     var readingDay: StudyDay?
     var authError: String?
+
+    var study: Study { books[activeBookName]! }
+    /// `bookName`, unless that book is missing or empty; the study is always bundled.
+    var activeBookName: String { books[bookName]?.days.isEmpty == false ? bookName : "study" }
+    /// The books with something in them, in order, for Home's switcher.
+    var shelfNames: [String] { StudyLoader.names.filter { books[$0]?.days.isEmpty == false } }
 
     /// First name for the greeting; asked for on first launch.
     var name: String {
@@ -59,6 +70,8 @@ final class AppModel {
     init() {
         let d = UserDefaults.standard
         let saved = (d.data(forKey: "progress")).flatMap { try? JSONDecoder().decode(Progress.self, from: $0) } ?? Progress()
+        books = Dictionary(uniqueKeysWithValues: StudyLoader.names.compactMap { name in StudyLoader.local(name).map { (name, $0) } })
+        bookName = d.string(forKey: "book") ?? "study"
         progress = saved
         timer = ReadingTimer(day: saved.timerDay, date: saved.timerDate, secs: saved.timerSecs)
         name = d.string(forKey: "name") ?? ""
@@ -108,6 +121,13 @@ final class AppModel {
     private func startTimer(_ day: StudyDay) {
         guard timer.day != day.id || timer.date != today else { return }
         timer = ReadingTimer(day: day.id, date: today, secs: 0)
+        save()
+    }
+
+    func choose(book name: String) {
+        guard name != bookName else { return }
+        bookName = name
+        progress.pick = nil
         save()
     }
 
@@ -222,6 +242,8 @@ final class AppModel {
     }
 
     func refreshStudy() async {
-        if let latest = await StudyLoader.fetchLatest(), (latest.version ?? 0) >= (study.version ?? 0) { study = latest }
+        for name in StudyLoader.names {
+            if let latest = await StudyLoader.fetchLatest(name), (latest.version ?? 0) >= (books[name]?.version ?? 0) { books[name] = latest }
+        }
     }
 }

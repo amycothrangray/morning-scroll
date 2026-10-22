@@ -85,6 +85,10 @@ struct ReaderView: View {
         case verse(passage: Int, verse: Verse, first: Bool)
         case question(Int)
         case quiz(Int)
+        case paragraph(Int)   // a meditation, one paragraph per stop
+        case truth
+        case prayer
+        case wildflower
         case finish
     }
 
@@ -95,8 +99,15 @@ struct ReaderView: View {
         for (pi, p) in passages.enumerated() {
             for (vi, v) in p.verses.enumerated() { out.append(.verse(passage: pi, verse: v, first: vi == 0)) }
         }
-        out += day.questions.indices.map { .question($0) }
-        out += (day.quiz ?? []).indices.map { .quiz($0) }
+        if day.isMeditation {
+            out += (day.body ?? []).indices.map { .paragraph($0) }
+            if day.truth != nil { out.append(.truth) }
+            if day.prayer != nil { out.append(.prayer) }
+            if day.wildflower != nil { out.append(.wildflower) }
+        } else {
+            out += day.questions.indices.map { .question($0) }
+            out += (day.quiz ?? []).indices.map { .quiz($0) }
+        }
         out.append(.finish)
         return out
     }
@@ -147,8 +158,8 @@ struct ReaderView: View {
                     }
                 }
                 .scrollTargetBehavior(OneAtATime(snap: snap))
-                .onAppear { focus.proxy = proxy; snap.count = list.count; snap.firstFree = firstQuestionIndex(list) }
-                .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstQuestionIndex(list) }
+                .onAppear { focus.proxy = proxy; snap.count = list.count; snap.firstFree = firstFreeIndex(list) }
+                .onChange(of: list.count) { _, n in snap.count = n; snap.firstFree = firstFreeIndex(list) }
             }
         }
         .ignoresSafeArea()
@@ -170,13 +181,17 @@ struct ReaderView: View {
     private func itemLabel(_ item: Item) -> String {
         switch item {
         case .verseOfTheDay: return "Verse of the Day"
-        case .todaysReading: return "Today’s Reading"
+        case .todaysReading: return day.title ?? "Today’s Reading"
         case let .verse(pi, v, _):
             let ref = passages[pi].ref
             if let colon = ref.firstIndex(of: ":") { return "\(ref[..<colon]):\(v.num)" }
             return ref.replacing(try! Regex(#"\s\d+$"#), with: "") + " \(v.num)" // one-chapter books like 3 John
         case .question(let i): return "Question \(i + 1)"
         case .quiz: return "Quiz"
+        case .paragraph(let i): return "Paragraph \(i + 1)"
+        case .truth: return "Truth"
+        case .prayer: return "Prayer"
+        case .wildflower: return "Wildflower"
         case .finish: return "The end"
         }
     }
@@ -298,7 +313,16 @@ struct ReaderView: View {
             guard let keyVerse, let ref = day.key else { return nil }
             return "Verse of the day. \(ref.replacingOccurrences(of: ":", with: ", verse ")). " + keyVerse.verses.map(\.text).joined(separator: " ")
         case .todaysReading:
+            if day.isMeditation { return "\(day.day), \(day.lesson). \(day.title ?? ""). \(day.summary ?? "")" }
             return "Today's reading. " + (day.summary ?? "")
+        case .paragraph(let i):
+            return day.body?[safe: i]
+        case .truth:
+            return day.truth.map { "Truth to hold on to. " + $0 }
+        case .prayer:
+            return day.prayer.map { "Prayer. " + $0 }
+        case .wildflower:
+            return day.wildflower.map { "\($0.name). \($0.fact)" }
         case let .verse(pi, v, first):
             return (first ? chapterOf(passages[pi].ref) + ". " : "") + v.text
         case .question(let i):
@@ -322,8 +346,9 @@ struct ReaderView: View {
         }
     }
 
-    private func firstQuestionIndex(_ list: [Item]) -> Int {
-        list.firstIndex { if case .question = $0 { return true } else { return false } } ?? Int.max
+    /// Where one-flick snapping ends: the questions, or a meditation's first paragraph.
+    private func firstFreeIndex(_ list: [Item]) -> Int {
+        list.firstIndex { switch $0 { case .question, .paragraph: return true; default: return false } } ?? Int.max
     }
 
     @ViewBuilder private func itemView(_ item: Item) -> some View {
@@ -341,9 +366,32 @@ struct ReaderView: View {
             question(day.questions[i], index: i)
         case .quiz(let i):
             quizItem(i)
+        case .paragraph(let i):
+            Text(day.body?[safe: i] ?? "").font(Theme.read(fs * 0.8)).lineSpacing(fs * 0.3)
+                .padding(.top, i == 0 ? 0 : 6)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        case .truth:
+            meditationCard("TRUTH TO HOLD ON TO", day.truth ?? "")
+        case .prayer:
+            meditationCard("PRAYER", day.prayer ?? "", italic: true)
+        case .wildflower:
+            meditationCard("WILDFLOWER · \(day.wildflower?.name.uppercased() ?? "")", day.wildflower?.fact ?? "")
         case .finish:
             FinishCard(day: day, close: { dismiss() })
         }
+    }
+
+    /// A meditation's truth, prayer and wildflower note, each in a card like an answer.
+    private func meditationCard(_ label: String, _ text: String, italic: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label).font(.system(size: 12, weight: .medium)).tracking(1.8).foregroundStyle(Theme.sage)
+            Text(text).font(Theme.read(fs * 0.7, italic: italic)).foregroundStyle(Color(hex: 0xD6CBC6)).lineSpacing(fs * 0.28)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.line))
+        .padding(.top, 12)
     }
 
     private func verseOfTheDay(_ p: Passage, ref: String) -> some View {
@@ -358,9 +406,19 @@ struct ReaderView: View {
 
     private var todaysReading: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Today’s Reading").font(Theme.display(fs * 1.15))
-            Text("\(day.title)\n\(day.readings.map(\.ref).joined(separator: " · "))")
-                .font(.system(size: 16)).foregroundStyle(Theme.rose).lineSpacing(3).padding(.bottom, 10)
+            if day.isMeditation {
+                Text("\(day.day) · \(day.lesson)".uppercased())
+                    .font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.muted).padding(.bottom, 10)
+                Text(day.title ?? "").font(Theme.display(fs * 1.15))
+                if !day.readings.isEmpty {
+                    Text(day.readings.map(\.ref).joined(separator: " · "))
+                        .font(.system(size: 16)).foregroundStyle(Theme.rose).lineSpacing(3).padding(.bottom, 10)
+                }
+            } else {
+                Text("Today’s Reading").font(Theme.display(fs * 1.15))
+                Text("\(day.label)\n\(day.readings.map(\.ref).joined(separator: " · "))")
+                    .font(.system(size: 16)).foregroundStyle(Theme.rose).lineSpacing(3).padding(.bottom, 10)
+            }
             if let s = day.summary {
                 Text(s).font(Theme.read(fs * 0.68, italic: true)).foregroundStyle(Theme.muted).lineSpacing(fs * 0.25)
             }
@@ -416,7 +474,7 @@ struct ReaderView: View {
                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.line))
                 .padding(.top, 18)
             } else {
-                Link(destination: ClaudeLink.url(for: day, study: model.study.title, question: index)) {
+                Link(destination: ClaudeLink.url(for: day, in: model.study, question: index)) {
                     Text("✦  Ask Claude").font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.text)
                         .padding(.horizontal, 18).padding(.vertical, 11)
                         .background(Theme.surface, in: Capsule()).overlay(Capsule().stroke(Theme.line))
@@ -614,7 +672,7 @@ private struct FinishCard: View {
                     .font(Theme.read(19)).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.bottom, 28)
                 Button("Unlock in \(clock(model.secondsLeft(day)))") {}.buttonStyle(PrimaryButtonStyle()).disabled(true)
             }
-            Link(destination: ClaudeLink.url(for: day, study: model.study.title)) {
+            Link(destination: ClaudeLink.url(for: day, in: model.study)) {
                 Text("Ask Claude a follow-up")
             }
             .buttonStyle(GhostButtonStyle())

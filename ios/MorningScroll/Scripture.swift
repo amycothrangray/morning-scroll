@@ -111,8 +111,16 @@ actor Scripture {
 }
 
 enum ClaudeLink {
-    static func url(for day: StudyDay, study: String, question index: Int? = nil) -> URL {
-        let head = "I'm working through a Bible study on \(study) Lesson \(day.lesson), \(day.day). Today's passages: \(day.readings.map(\.ref).joined(separator: "; "))."
+    static func url(for day: StudyDay, in study: Study, question index: Int? = nil) -> URL {
+        if day.isMeditation {
+            let from = study.title + (study.author.map { " by \($0)" } ?? "")
+            let verse = day.key ?? day.readings.map(\.ref).joined(separator: "; ")
+            let body = "I'm reading \"\(day.title ?? day.day)\" (\(day.day)) in \(from). The verse is \(verse).\n\nHelp me sit with this verse this morning: what it says about God, what it says to an anxious heart, and one concrete way to carry it into today. Keep it short and warm, and quote the ESV."
+            var c = URLComponents(string: "https://claude.ai/new")!
+            c.queryItems = [.init(name: "q", value: body)]
+            return c.url!
+        }
+        let head = "I'm working through a Bible study on \(study.title) Lesson \(day.lesson), \(day.day). Today's passages: \(day.readings.map(\.ref).joined(separator: "; "))."
         let ask = "Answer from the ESV and cite verse numbers. Keep each answer to a short paragraph. For personal reflection questions, give me something to think about rather than answering for me."
         func text(_ q: Question, _ i: Int) -> String {
             "Question \(i + 1): \(q.text)" + (q.items.map { "\n" + $0.map { "  - \($0)" }.joined(separator: "\n") } ?? "")
