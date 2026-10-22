@@ -328,6 +328,7 @@
   const loadBook = (file) => fetch(file + ".dat?t=" + Date.now(), { cache: "no-store" })
     .then((r) => (r.ok ? r.text() : Promise.reject(new Error(r.status))))
     .then((b64) => Object.assign(decode(b64), { file }))
+    .then((b) => { b.days.forEach((d) => { d.readings = d.readings || []; d.questions = d.questions || []; }); return b; }) // a meditation may have neither
     .catch(() => null);
   // A book with nothing in it yet stays hidden.
   const BOOKS = (await Promise.all(["study", "wildflower"].map(loadBook))).filter((b) => b && b.days.length);
