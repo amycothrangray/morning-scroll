@@ -32,7 +32,7 @@ struct HomeView: View {
         .foregroundStyle(Theme.text)
         .sheet(isPresented: $showSettings) { SettingsView() }
         .familyActivityPicker(isPresented: $showPicker, selection: $model.selection)
-        .fullScreenCover(item: $model.readingDay) { day in ReaderView(day: day) }
+        .fullScreenCover(isPresented: $model.readerOpen) { ReaderHost() }
         .sheet(isPresented: Binding(get: { !model.askedName }, set: { _ in })) { welcome }
     }
 
@@ -116,7 +116,16 @@ struct HomeView: View {
     @ViewBuilder private var hero: some View {
         VStack(spacing: 0) {
             HaloBook().padding(.bottom, 26)
-            if let day = model.activeDay {
+            if case .review(let r)? = model.activePage {
+                Text(greeting).font(Theme.display(23, weight: 500, italic: true)).foregroundStyle(Theme.rose)
+                    .padding(.bottom, 6)
+                Text("\(model.study.title) · Lesson \(r.lesson)".uppercased())
+                    .font(.system(size: 13, weight: .medium)).tracking(1.8).foregroundStyle(Theme.muted)
+                Text(r.part == 2 ? "Review 4–6" : "Review 1–3").font(Theme.display(46)).padding(.top, 6).padding(.bottom, 10)
+                if let summary = r.summary {
+                    Text(summary).font(.system(size: 17)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                }
+            } else if let day = model.activeDay {
                 Text(greeting).font(Theme.display(23, weight: 500, italic: true)).foregroundStyle(Theme.rose)
                     .padding(.bottom, 6)
                 if day.isMeditation {
@@ -155,9 +164,9 @@ struct HomeView: View {
                         Text(err).font(.system(size: 14)).foregroundStyle(Theme.rose)
                     }
                 }
-                Button(model.activeDay == nil ? "Read again" : (isResuming ? "Continue Daily Reading" : "Open Daily Reading")) {
-                    if let day = model.activeDay {
-                        model.open(day)
+                Button(model.activePage == nil ? "Read again" : (isResuming ? "Continue Daily Reading" : (model.activePage?.isReview == true ? "Start the review" : "Open Daily Reading"))) {
+                    if let page = model.activePage {
+                        model.open(page)
                     } else if let last = model.study.days.last(where: { model.progress.done[$0.id] == model.today }) {
                         model.pick(last)
                     } else {
@@ -205,10 +214,15 @@ struct HomeView: View {
                     .padding(.vertical, 10).padding(.horizontal, 4)
             }
             if showDays {
-                ForEach(model.study.days) { day in
-                    let done = model.progress.done[day.id]
-                    let current = day == model.upNext
-                    Button { model.pick(day) } label: {
+                ForEach(model.allEntries) { entry in
+                    let done = model.progress.done[entry.id]
+                    let current: Bool = { if case .day(let d) = entry { return d == model.upNext } else { return false } }()
+                    Button {
+                        switch entry {
+                        case .day(let d): model.pick(d)
+                        case .review(let r): model.pick(r)
+                        }
+                    } label: {
                         HStack(spacing: 12) {
                             ZStack {
                                 Circle().stroke(done != nil ? Theme.sage : Theme.line, lineWidth: 2)
@@ -218,7 +232,7 @@ struct HomeView: View {
                                 }
                             }
                             .frame(width: 24, height: 24)
-                            Text(day.label).foregroundStyle(current ? Theme.rose : Theme.text)
+                            Text(entry.isReview ? "★ \(entry.label)" : entry.label).foregroundStyle(current ? Theme.rose : Theme.text)
                             Spacer()
                             Text(done.map(shortDate) ?? (current ? "Up next" : ""))
                                 .font(.system(size: 14)).foregroundStyle(Theme.faint)
@@ -237,8 +251,9 @@ struct HomeView: View {
     private var listTitle: String { model.study.isDevotional ? "All meditations" : "All lessons" }
 
     private var isResuming: Bool {
-        guard let day = model.activeDay else { return false }
-        return model.secondsRead(day) > 0
+        guard model.activePage != nil else { return false }
+        let s = model.secondsToday
+        return s > 0 && s < AppModel.goal
     }
 
     private var greeting: String {

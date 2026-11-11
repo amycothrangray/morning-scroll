@@ -16,7 +16,7 @@ struct Progress: Codable {
 
 /// Seconds read today. Kept apart from `progress` so the once-a-second tick only redraws the timer.
 struct ReadingTimer {
-    var day: String?
+    var day: String?   // the page she started on; the five minutes count across every page she switches to
     var date: String?
     var secs = 0
 }
@@ -33,7 +33,9 @@ final class AppModel {
     }
     var progress: Progress
     var timer: ReadingTimer
-    var readingDay: StudyDay?
+    /// What the full-screen reader shows. Switching pages keeps the reader (and the timer) open.
+    var page: ReaderPage?
+    var readerOpen = false
     var authError: String?
 
     var study: Study { books[activeBookName]! }
@@ -98,7 +100,21 @@ final class AppModel {
     /// The day Home offers: a picked day, else the next unfinished one (nil once today's reading is done).
     var activeDay: StudyDay? {
         if let pick = progress.pick, let d = study.days.first(where: { $0.id == pick }) { return d }
+
         return finishedToday ? nil : nextDay
+    }
+
+    /// Like `activeDay`, but a picked review counts too.
+    var activePage: ReaderPage? {
+        if let pick = progress.pick, let r = reviews.first(where: { $0.id == pick }) { return .review(r) }
+        return activeDay.map(ReaderPage.day)
+    }
+
+    func open(_ page: ReaderPage) {
+        switch page {
+        case .day(let d): open(d)
+        case .review(let r): open(r)
+        }
     }
 
     var streak: Int {
@@ -114,15 +130,46 @@ final class AppModel {
     }
 
     func open(_ day: StudyDay) {
-        startTimer(day)
-        readingDay = day
+        startTimer(day.id)
+        page = .day(day)
+        readerOpen = true
     }
 
-    private func startTimer(_ day: StudyDay) {
-        guard timer.day != day.id || timer.date != today else { return }
-        timer = ReadingTimer(day: day.id, date: today, secs: 0)
+    func open(_ review: ReviewBank) {
+        startTimer(review.id)
+        page = .review(review)
+        readerOpen = true
+    }
+
+    /// Moves the open reader to another day or review. The five-minute timer keeps going.
+    func switchTo(_ next: ReaderPage) {
+        guard next != page else { return }
+        progress.pick = next.id
+        save()
+        page = next
+    }
+
+    /// The timer is per day, not per page, so switching pages never resets it.
+    private func startTimer(_ id: String) {
+        guard timer.date != today else { return }
+        timer = ReadingTimer(day: id, date: today, secs: 0)
         save()
     }
+
+    var reviews: [ReviewBank] { study.reviews ?? [] }
+    /// The lessons in order, for the switcher.
+    var lessons: [String] {
+        var seen = Set<String>()
+        return study.days.map(\.lesson).filter { seen.insert($0).inserted }
+    }
+    /// A lesson's days, each followed by any review that ends on it.
+    func entries(_ lesson: String) -> [ReaderPage] {
+        study.days.filter { $0.lesson == lesson }.flatMap { d in
+            [ReaderPage.day(d)] + reviews.filter { $0.days.last == d.id }.map(ReaderPage.review)
+        }
+    }
+    /// Every day and review in order, for Home's list.
+    var allEntries: [ReaderPage] { lessons.flatMap(entries) }
 
     func choose(book name: String) {
         guard name != bookName else { return }
@@ -137,32 +184,45 @@ final class AppModel {
         open(day)
     }
 
-    func secondsRead(_ day: StudyDay) -> Int {
-        timer.day == day.id && timer.date == today ? timer.secs : 0
+    func pick(_ review: ReviewBank) {
+        progress.pick = review.id
+        save()
+        open(review)
     }
 
-    func secondsLeft(_ day: StudyDay) -> Int { max(0, Self.goal - secondsRead(day)) }
+    /// Seconds read today, across every day and review she's switched between.
+    var secondsToday: Int { timer.date == today ? timer.secs : 0 }
+    func secondsRead(_ day: StudyDay) -> Int { secondsToday }
+    var secondsLeftToday: Int { max(0, Self.goal - secondsToday) }
+    func secondsLeft(_ day: StudyDay) -> Int { secondsLeftToday }
 
-    func tick(_ day: StudyDay) {
-        startTimer(day)
+    func tick(_ day: StudyDay) { tick(id: day.id) }
+    func tick(id: String) {
+        startTimer(id)
         timer.secs += 1
         if timer.secs % 5 == 0 { save() }
     }
 
-    /// Unlocks the held-back apps once the five minutes are up.
-    func completeIfReady(_ day: StudyDay) {
-        guard secondsRead(day) >= Self.goal else { return }
+    /// Unlocks the held-back apps once the five minutes are up. The page she's on when the
+    /// timer runs out gets the check; later pages get one when she reaches their end.
+    func completeIfReady(_ day: StudyDay, reachedEnd: Bool = false) { completeIfReady(id: day.id, reachedEnd: reachedEnd) }
+    func completeIfReady(id: String, reachedEnd: Bool = false) {
+        guard secondsToday >= Self.goal else { return }
+        let first = !finishedToday
+        let check = progress.done[id] == nil && (first || reachedEnd)
         // Already recorded: don't touch `progress` again (every write redraws the reader).
-        if progress.done[day.id] != nil, progress.readDates.contains(today), progress.pick != day.id, Shared.readToday { return }
-        if progress.done[day.id] == nil { progress.done[day.id] = today }
-        if progress.pick == day.id { progress.pick = nil }
+        if !check, progress.readDates.contains(today), Shared.readToday { return }
+        if check {
+            progress.done[id] = today
+            if progress.pick == id { progress.pick = nil }
+        }
         progress.readDates.insert(today)
         save()
         Shared.doneDate = today
         Shared.unlock()
     }
 
-    func isComplete(_ day: StudyDay) -> Bool { secondsRead(day) >= Self.goal && Shared.readToday }
+    func isComplete(_ day: StudyDay) -> Bool { secondsToday >= Self.goal && Shared.readToday }
 
     func quizPicks(_ day: StudyDay) -> [Int] {
         let n = day.quiz?.count ?? 0
@@ -245,5 +305,28 @@ final class AppModel {
         for name in StudyLoader.names {
             if let latest = await StudyLoader.fetchLatest(name), (latest.version ?? 0) >= (books[name]?.version ?? 0) { books[name] = latest }
         }
+    }
+}
+
+/// One page the reader can show: a study day, or a review bank.
+enum ReaderPage: Hashable, Identifiable {
+    case day(StudyDay)
+    case review(ReviewBank)
+
+    var id: String {
+        switch self {
+        case .day(let d): d.id
+        case .review(let r): r.id
+        }
+    }
+    var label: String {
+        switch self {
+        case .day(let d): d.label
+        case .review(let r): r.label
+        }
+    }
+    var isReview: Bool {
+        if case .review = self { return true }
+        return false
     }
 }

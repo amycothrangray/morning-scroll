@@ -8,8 +8,23 @@ struct Study: Codable {
     let short: String?  // the name on Home's book switcher
     let author: String?
     let days: [StudyDay]
+    let reviews: [ReviewBank]?   // review games for each half of a lesson (played in the web page)
 
     var isDevotional: Bool { kind == "devotional" }
+}
+
+/// A bank of review questions for days 1–3 or 4–6 of a lesson. The questions themselves
+/// are played in the website's review page, so the app only needs to know the bank is there.
+struct ReviewBank: Codable, Identifiable, Hashable {
+    let id: String
+    let lesson: String
+    let part: Int?
+    let title: String
+    let days: [String]
+    let summary: String?
+
+    /// "Lesson 8B · Review 1–3"
+    var label: String { "Lesson \(lesson) · Review \(part == 2 ? "4–6" : "1–3")" }
 }
 
 struct StudyDay: Codable, Identifiable, Hashable {

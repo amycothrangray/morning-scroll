@@ -17,6 +17,16 @@ Paste the new lesson pages into Claude and ask to add them to `study.json`, then
 
 Scripture text is never stored here. It's fetched live from the ESV API (with Amy's key, saved only on her phone) or, without a key, from the World English Bible.
 
+## Review banks
+
+Each lesson has two review banks in `study.json`'s top-level `reviews` list: one for Days One–Three (`part: 1`) and one for Days Four–Six (`part: 2`). Each bank has `id` like `"8B-R1"`, `lesson`, `part`, `title`, `days` (the day ids it covers), `summary`, and `items`, the questions. Item types: `mc`, `tf`, `whosaid`, `blank`, `order`, `sequence`, `match`, `refmatch` and `memory`. Any item can carry `ref` so the verse is fetched and shown written out. Scripture is still never stored: a `blank` or `order` game builds itself from the fetched verse.
+
+A review shows in the day list right after its last day. Switching days or reviews from the reader's top bar keeps the five-minute timer running; the page she's on when it runs out gets the check.
+
+If `study.json` isn't on this machine, `python3 tools/unpack.py` rebuilds it from `study.dat` (add `--force` to overwrite one that's there). Run `pack.py` afterwards as usual.
+
+On the iPhone, a review opens the website's review page inside the app (`index.html?embed=1&review=<id>`), so the website has to be live with the review games before the iPhone can show them.
+
 ## Adding a meditation from The Way of the Wildflower
 
 Paste the meditation (or photos of its pages) into Claude and ask to add it to `wildflower.json`, then run `python3 tools/pack.py`. Each day needs:

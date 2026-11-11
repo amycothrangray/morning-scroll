@@ -46,7 +46,7 @@ struct ReaderView: View {
         .onReceive(ticker) { _ in
             guard phase == .active else { return }
             model.tick(day)
-            model.completeIfReady(day) // five minutes unlocks, wherever she is in the reading
+            model.completeIfReady(day, reachedEnd: reachedEnd) // five minutes unlocks, wherever she is in the reading
         }
         .onAppear { UIApplication.shared.isIdleTimerDisabled = true }
         .onDisappear {
@@ -154,7 +154,7 @@ struct ReaderView: View {
                     // The end counts as soon as the finish card is on screen.
                     if !reachedEnd, let finish = snap.frames[list.count - 1], offset + geo.size.height > finish.minY + 80 {
                         reachedEnd = true
-                        model.completeIfReady(day)
+                        model.completeIfReady(day, reachedEnd: true)
                     }
                 }
                 .scrollTargetBehavior(OneAtATime(snap: snap))
@@ -542,7 +542,7 @@ struct ReaderView: View {
 
 }
 
-private func clock(_ s: Int) -> String { String(format: "%d:%02d", s / 60, s % 60) }
+func clock(_ s: Int) -> String { String(format: "%d:%02d", s / 60, s % 60) }
 
 /// Which item is on the reading line, and the label shown while dragging the progress bar.
 /// Only the progress bar reads this, so scrolling never redraws the reading itself.
@@ -574,6 +574,7 @@ private struct ReaderTopBar: View {
             Text(left > 0 ? "Your apps unlock when the timer ends" : (model.hasBlockedApps ? "Apps unlocked. Read on as long as you like." : "Time’s up. Read on as long as you like."))
                 .font(.system(size: 14)).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
             Spacer(minLength: 4)
+            SwitchMenu(current: day.id)
             Button(action: toggleSpeech) {
                 Image(systemName: speaker.isOn ? "speaker.wave.2.fill" : "speaker.wave.2")
                     .font(.system(size: 15, weight: .semibold))
