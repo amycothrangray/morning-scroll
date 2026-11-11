@@ -95,6 +95,22 @@
   .reader-bar button.note { font: inherit; font-size: 15px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px 8px 12px; min-width: 0; max-width: 62vw; }
   .reader-bar button.note #switch-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .reader-bar button.note .caret { color: var(--rose); font-size: 12px; }
+  .teach { margin-top: 10vh; padding: 22px 18px; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); }
+  .teach .ref-line { margin-top: 4px; }
+  .tdots { display: flex; gap: 6px; margin: 14px 0 6px; }
+  .tdots span { flex: 1; height: 5px; border-radius: 999px; background: var(--line); }
+  .tdots span.on { background: var(--rose); }
+  .tdots span.done { background: var(--sage); }
+  .tstep { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--rose); margin: 12px 0 6px; }
+  .teach .hint { color: var(--muted); font-size: 15px; margin: 0 0 10px; }
+  .tverse { font-family: var(--read); font-size: calc(var(--fs) * .8); line-height: 1.6; margin: 0 0 16px; }
+  .tblank { color: var(--muted); letter-spacing: .05em; }
+  .tblank.next { color: var(--rose); }
+  .tfill { color: var(--sage); }
+  .tw { font: inherit; color: var(--rose); background: none; border: 0; padding: 0 1px; }
+  .tw.open { color: var(--text); }
+  .teach .chips { margin-bottom: 4px; }
+  body.embed .teach { margin-top: 2vh; }
   body.embed .reader-bar { display: none; }
   .reader-bar .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--rose); box-shadow: 0 0 10px var(--rose); }
   .reader-bar .note.met .dot { background: var(--sage); box-shadow: 0 0 10px var(--sage); }
@@ -427,6 +443,7 @@
   // Inside the iPhone app a review page opens on its own: ?embed=1&review=<id>, with her ESV key after #key=.
   const QS = new URLSearchParams(location.search);
   const EMBED = QS.get("embed") === "1";
+  const TEACH = EMBED && QS.get("teach"); // the iPhone app opens just the verse teacher: ?embed=1&teach=<day id>
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   // ---------- state ----------
@@ -698,7 +715,7 @@
     try {
       // One at a time keeps the free fallback API from rate-limiting us.
       if (readerDay.key) key = await getPassage(readerDay.key);
-      for (const r of readerDay.readings) passages.push(await getPassage(r.ref));
+      if (!TEACH) for (const r of readerDay.readings) passages.push(await getPassage(r.ref));
     } catch (err) {
       if (readerDay !== opening) return; // she switched while it was loading
       $("column").innerHTML = `<div class="state">${esc(err.message)}<br><br><button class="btn ghost small" id="retry">Try again</button></div>`;
@@ -712,6 +729,14 @@
   function buildReader(key, passages) {
     const d = readerDay;
     const h = [];
+    teachText = key && key.verses.length ? key.verses.map((v) => v.text.replace(/\s*\n\s*/g, " ")).join(" ").trim() : "";
+    if (TEACH) {
+      $("column").innerHTML = teachText ? `<section class="teach" id="teach"></section><section class="finish f" id="finish"></section>`
+        : `<div class="state">This day has no verse of the day to learn.</div><section class="finish f" id="finish"></section>`;
+      renderTeach();
+      afterBuild();
+      return;
+    }
     if (key && key.verses.length) {
       h.push(`<section class="votd f snap">
         <div class="eyebrow">Verse of the Day</div>
@@ -778,9 +803,11 @@
       h.push(`<div class="score" id="quiz-score" hidden></div></section>`);
     }
     }
+    if (teachText) h.push(`<section class="teach f" id="teach"></section>`);
     h.push(`<section class="finish f" id="finish"></section>`);
 
     $("column").innerHTML = h.join("");
+    renderTeach();
     (state.quiz?.[d.id] || []).forEach((c, zi) => { if (c != null) showQuizAnswer(zi, c); });
     fillWordStudy(d);
     loadQuotes(d);
@@ -1405,8 +1432,9 @@
   }
 
   // A verse in four to six phrases, split at its own punctuation where it can be.
-  function chunksFor(it) {
-    const words = verseOf(it.ref).split(/\s+/).filter(Boolean);
+  const chunksFor = (it) => chunksOfText(verseOf(it.ref));
+  function chunksOfText(text) {
+    const words = text.split(/\s+/).filter(Boolean);
     let parts = [], cur = [];
     words.forEach((w) => { cur.push(w); if (/[,;:.!?”’)]$/.test(w) && cur.length >= 2) { parts.push(cur); cur = []; } });
     if (cur.length) parts.push(cur);
@@ -1427,6 +1455,121 @@
   }
 
   const firstLetters = (text) => text.split(/\s+/).map((w) => { const m = w.match(/^([^A-Za-z]*)([A-Za-z])[A-Za-z'’-]*(.*)$/); return m ? m[1] + m[2] + m[3] : w; }).join(" ");
+
+  // ---- Verse teacher: learn the verse of the day by heart, one step at a time ----
+  const TEACH_STEPS = ["Read it", "Fill in a few", "Fill in more", "First letters", "Build it", "From memory"];
+  let teachText = "";
+  const tlive = { day: null };
+  function teachState(d) {
+    state.teach = state.teach || {};
+    return (state.teach[d.id] = state.teach[d.id] || { step: 0, learned: null });
+  }
+  const splitWord = (w) => { const m = w.match(/^([^A-Za-z]*)([A-Za-z][A-Za-z'’-]*)(.*)$/); return m ? [m[1], m[2], m[3]] : [w, "", ""]; };
+  const teachWords = () => teachText.split(/\s+/).filter(Boolean);
+  // Which words are blank: every fourth main word at first, then every other one.
+  function teachSlots(level) {
+    const ws = teachWords();
+    const main = ws.map((w, i) => [norm(splitWord(w)[1]), i]).filter(([n]) => n.length > 2 && !STOP.has(n)).map(([, i]) => i);
+    const every = level === 1 ? 4 : 2, off = Math.floor(seeded(readerDay.id + level)() * every);
+    let slots = main.filter((_, k) => k % every === off);
+    if (!slots.length && main.length) slots = [main[0]];
+    return slots;
+  }
+  const teachChunks = () => chunksOfText(teachText);
+  function resetLive(step) {
+    tlive.day = readerDay.id; tlive.step = step;
+    tlive.filled = []; tlive.bad = null; tlive.used = []; tlive.peek = []; tlive.placed = []; tlive.wrong = false; tlive.shown = false;
+  }
+
+  function renderTeach() {
+    const box = $("teach");
+    if (!box) return;
+    const d = readerDay, st = teachState(d);
+    if (tlive.day !== d.id || tlive.step !== st.step) resetLive(st.step);
+    const step = st.step;
+    const dots = TEACH_STEPS.map((_, k) => `<span class="${k < step || step === 6 ? "done" : k === step ? "on" : ""}"></span>`).join("");
+    const head = `<div class="eyebrow">Verse teacher</div><div class="ref-line">${esc(d.key)}</div><div class="tdots">${dots}</div>`;
+    if (!teachText) { box.innerHTML = head + `<p class="muted">Opening the verse…</p>`; return; }
+    const ws = teachWords();
+    const next = (label = "Next step") => `<button class="btn primary small" data-act="tnext">${label}</button>`;
+    let body = "";
+    if (step === 6) {
+      body = `<div class="tstep">Learned ${st.learned ? "on " + esc(st.learned) : ""}</div>
+        <p class="tverse">${esc(teachText)}</p>
+        <p class="why"><b>You know ${esc(d.key)} by heart.</b> Say it again tomorrow to keep it.</p>
+        <button class="btn ghost small" data-act="tagain">Practice again</button>`;
+    } else {
+      body = `<div class="tstep">Step ${step + 1} of 6 · ${TEACH_STEPS[step]}</div>`;
+      if (step === 0) {
+        body += `<p class="hint">Read it out loud twice, slowly. Notice the words that carry it.</p><p class="tverse">${esc(teachText)}</p>${next("I read it")}`;
+      } else if (step === 1 || step === 2) {
+        const slots = teachSlots(step);
+        const bank = shuffled(slots.map((i) => splitWord(ws[i])[1]), d.id + ":bank" + step, true);
+        const line = ws.map((w, i) => {
+          const n = slots.indexOf(i);
+          if (n < 0) return esc(w);
+          const [a, core, b] = splitWord(w);
+          return n < tlive.filled.length ? `${esc(a)}<span class="tfill">${esc(core)}</span>${esc(b)}`
+            : `${esc(a)}<span class="tblank ${n === tlive.filled.length ? "next" : ""}">${"_".repeat(Math.min(core.length, 8))}</span>${esc(b)}`;
+        }).join(" ");
+        const done = tlive.filled.length === slots.length;
+        body += `<p class="hint">${done ? "Every gap filled." : "Tap the missing words in order."}</p><p class="tverse">${line}</p>
+          ${done ? next() : `<div class="chips">${bank.map((w, k) => tlive.used.includes(k) ? "" : `<button class="chip ${tlive.bad === k ? "wrong" : ""}" data-act="tword" data-k="${k}">${esc(w)}</button>`).join("")}</div>`}`;
+      } else if (step === 3) {
+        const line = ws.map((w, i) => {
+          if (tlive.peek.includes(i)) return `<button class="tw open" data-act="tpeek" data-w="${i}">${esc(w)}</button>`;
+          const [a, core, b] = splitWord(w);
+          return `<button class="tw" data-act="tpeek" data-w="${i}">${esc(a + core.charAt(0) + b)}</button>`;
+        }).join(" ");
+        body += `<p class="hint">Say the whole verse from just the first letters. Tap a letter if you need a peek.</p><p class="tverse letters">${line}</p>${next("I said it")}`;
+      } else if (step === 4) {
+        const chunks = teachChunks();
+        const order = shuffled(chunks.map((_, k) => k), d.id + ":build", true);
+        const pool = order.filter((k) => !tlive.placed.includes(k));
+        const full = tlive.placed.length === chunks.length;
+        const ok = full && tlive.placed.every((k, n) => chunks[k] === chunks[n]);
+        body += `<p class="hint">${ok ? "That’s the verse." : full ? "Not quite. Tap a phrase to take it back out." : "Tap the phrases in order."}</p>
+          <div class="built">${tlive.placed.map((k) => `<button class="chip ${ok ? "right" : "on"}" data-act="tunplace" data-k="${k}" ${ok ? "disabled" : ""}>${esc(chunks[k])}</button>`).join("") || `<span class="muted">Your verse appears here</span>`}</div>
+          ${ok ? next() : `<div class="chips">${pool.map((k) => `<button class="chip" data-act="tplace" data-k="${k}">${esc(chunks[k])}</button>`).join("")}</div>`}`;
+      } else if (step === 5) {
+        body += `<p class="hint">Say ${esc(d.key)} out loud from memory, then check yourself.</p>
+          ${tlive.shown
+            ? `<p class="tverse">${esc(teachText)}</p><div class="chips"><button class="chip" data-act="tknew">I knew it</button><button class="chip" data-act="tlearning">Still learning</button></div>`
+            : `<button class="btn ghost small" data-act="tshow">Show the verse</button>`}`;
+      }
+    }
+    box.innerHTML = head + body;
+  }
+
+  function teachGo(step) {
+    const st = teachState(readerDay);
+    st.step = step;
+    save();
+    renderTeach();
+  }
+
+  $("column").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-act]");
+    if (!b || b.disabled || !b.closest("#teach")) return;
+    const st = teachState(readerDay), act = b.dataset.act;
+    if (act === "tnext") return teachGo(st.step + 1);
+    if (act === "tagain") return teachGo(0);
+    if (act === "tword") {
+      const k = +b.dataset.k, slots = teachSlots(st.step), ws = teachWords();
+      const bank = shuffled(slots.map((i) => splitWord(ws[i])[1]), readerDay.id + ":bank" + st.step, true);
+      const want = splitWord(ws[slots[tlive.filled.length]])[1];
+      if (norm(bank[k]) === norm(want)) { tlive.filled.push(k); tlive.used.push(k); tlive.bad = null; }
+      else tlive.bad = k;
+    } else if (act === "tpeek") {
+      const w = +b.dataset.w;
+      tlive.peek = tlive.peek.includes(w) ? tlive.peek.filter((x) => x !== w) : [...tlive.peek, w];
+    } else if (act === "tplace") tlive.placed.push(+b.dataset.k);
+    else if (act === "tunplace") tlive.placed = tlive.placed.filter((x) => x !== +b.dataset.k);
+    else if (act === "tshow") tlive.shown = true;
+    else if (act === "tknew") { st.learned = today(); return teachGo(6); }
+    else if (act === "tlearning") return teachGo(3);
+    renderTeach();
+  });
 
   const failedRefs = new Set();
   async function loadReviewText(r, order) {
@@ -1591,7 +1734,8 @@
     const key = new URLSearchParams(location.hash.slice(1)).get("key");
     if (key) state.esvKey = key;
     history.replaceState(null, "", location.pathname + location.search);
-    state.pick = QS.get("review");
+    if (BOOKS.some((b) => b.file === QS.get("book"))) state.book = QS.get("book");
+    state.pick = QS.get("review") || TEACH;
     $("welcome").hidden = true;
     openReader();
   } else renderHome();
