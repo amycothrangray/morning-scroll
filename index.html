@@ -1494,7 +1494,7 @@
     const next = (label = "Next step") => `<button class="btn primary small" data-act="tnext">${label}</button>`;
     let body = "";
     if (step === 6) {
-      body = `<div class="tstep">Learned ${st.learned ? "on " + esc(st.learned) : ""}</div>
+      body = `<div class="tstep">Learned${st.learned ? " " + esc(new Date(st.learned + "T12:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })) : ""}</div>
         <p class="tverse">${esc(teachText)}</p>
         <p class="why"><b>You know ${esc(d.key)} by heart.</b> Say it again tomorrow to keep it.</p>
         <button class="btn ghost small" data-act="tagain">Practice again</button>`;

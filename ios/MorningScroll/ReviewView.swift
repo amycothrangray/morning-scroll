@@ -124,7 +124,8 @@ private struct ReviewTopBar: View {
     }
 }
 
-private struct ReviewWeb: UIViewRepresentable {
+/// A web page from the Morning Scroll site, shown inside the app.
+struct ReviewWeb: UIViewRepresentable {
     let url: URL
 
     func makeUIView(context: Context) -> WKWebView {

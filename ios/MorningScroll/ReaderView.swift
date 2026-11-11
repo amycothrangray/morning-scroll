@@ -658,6 +658,7 @@ private struct FinishCard: View {
     let day: StudyDay
     let close: () -> Void
     @Environment(AppModel.self) private var model
+    @State private var teaching = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -673,6 +674,11 @@ private struct FinishCard: View {
                     .font(Theme.read(19)).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.bottom, 28)
                 Button("Unlock in \(clock(model.secondsLeft(day)))") {}.buttonStyle(PrimaryButtonStyle()).disabled(true)
             }
+            if day.key != nil {
+                Button("Verse teacher") { teaching = true }
+                    .buttonStyle(GhostButtonStyle())
+                    .padding(.top, 10)
+            }
             Link(destination: ClaudeLink.url(for: day, in: model.study)) {
                 Text("Ask Claude a follow-up")
             }
@@ -684,6 +690,7 @@ private struct FinishCard: View {
                 .font(.system(size: 12)).foregroundStyle(Theme.faint).multilineTextAlignment(.center).padding(.top, 26)
         }
         .frame(maxWidth: .infinity)
+        .sheet(isPresented: $teaching) { VerseTeacherView(day: day) }
     }
 }
 
