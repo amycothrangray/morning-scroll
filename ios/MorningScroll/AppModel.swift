@@ -169,7 +169,7 @@ final class AppModel {
         }
     }
     /// Every day and review in order, for Home's list.
-    var allEntries: [ReaderPage] { lessons.flatMap(entries) }
+    var allEntries: [ReaderPage] { lessons.flatMap { entries($0) } }
 
     func choose(book name: String) {
         guard name != bookName else { return }

@@ -164,7 +164,7 @@ struct HomeView: View {
                         Text(err).font(.system(size: 14)).foregroundStyle(Theme.rose)
                     }
                 }
-                Button(model.activePage == nil ? "Read again" : (isResuming ? "Continue Daily Reading" : (model.activePage?.isReview == true ? "Start the review" : "Open Daily Reading"))) {
+                Button(readButtonTitle) {
                     if let page = model.activePage {
                         model.open(page)
                     } else if let last = model.study.days.last(where: { model.progress.done[$0.id] == model.today }) {
@@ -216,7 +216,7 @@ struct HomeView: View {
             if showDays {
                 ForEach(model.allEntries) { entry in
                     let done = model.progress.done[entry.id]
-                    let current: Bool = { if case .day(let d) = entry { return d == model.upNext } else { return false } }()
+                    let current = isUpNext(entry)
                     Button {
                         switch entry {
                         case .day(let d): model.pick(d)
@@ -249,6 +249,17 @@ struct HomeView: View {
     }
 
     private var listTitle: String { model.study.isDevotional ? "All meditations" : "All lessons" }
+
+    private var readButtonTitle: String {
+        guard let page = model.activePage else { return "Read again" }
+        if isResuming { return "Continue Daily Reading" }
+        return page.isReview ? "Start the review" : "Open Daily Reading"
+    }
+
+    private func isUpNext(_ entry: ReaderPage) -> Bool {
+        guard case .day(let d) = entry, let next = model.upNext else { return false }
+        return d == next
+    }
 
     private var isResuming: Bool {
         guard model.activePage != nil else { return false }
