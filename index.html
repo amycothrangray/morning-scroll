@@ -92,6 +92,10 @@
   #reader { position: fixed; inset: 0; background: var(--bg); z-index: 10; }
   .reader-bar { position: absolute; top: 0; left: 0; right: 0; z-index: 3; padding: calc(var(--safe-top) + 8px) 14px 22px; display: flex; align-items: center; gap: 10px; background: linear-gradient(var(--bg) 62%, rgba(24,20,20,0)); }
   .reader-bar .note { margin-right: auto; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+  .reader-bar button.note { font: inherit; font-size: 15px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px 8px 12px; min-width: 0; max-width: 62vw; }
+  .reader-bar button.note #switch-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .reader-bar button.note .caret { color: var(--rose); font-size: 12px; }
+  body.embed .reader-bar { display: none; }
   .reader-bar .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--rose); box-shadow: 0 0 10px var(--rose); }
   .reader-bar .note.met .dot { background: var(--sage); box-shadow: 0 0 10px var(--sage); }
   .timer { font-variant-numeric: tabular-nums; }
@@ -183,7 +187,7 @@
   .state { text-align: center; color: var(--muted); font-size: 18px; line-height: 1.6; padding-top: 20vh; }
 
   /* ---------- Settings ---------- */
-  #welcome, #settings { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
+  #welcome, #settings, #switcher { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
   .sheet { width: 100%; max-width: 560px; max-height: 92dvh; overflow-y: auto; background: var(--surface); border-radius: 22px 22px 0 0; border: 1px solid var(--line); padding: 18px 16px calc(var(--safe-bottom) + 28px); }
   .sheet h3 { font-family: var(--display); font-weight: 600; font-size: 28px; margin: 4px 0 18px; display: flex; align-items: center; }
   .sheet h3 button { margin-left: auto; }
@@ -202,6 +206,60 @@
   details.steps ol { padding-left: 1.2em; line-height: 1.6; font-size: 15px; }
   details.steps li { margin-bottom: 8px; }
   details.steps code { background: var(--bg); padding: 1px 6px; border-radius: 6px; font-size: 14px; word-break: break-all; }
+  /* ---------- Switcher ---------- */
+  #switcher .sheet h3 { gap: 6px; }
+  #switcher .sheet h3 #sw-title { flex: 1; text-align: center; }
+  #switcher .sheet h3 button { margin-left: 0; }
+  #switcher .icon-btn:disabled { opacity: .3; }
+  .sw-clock { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 15px; margin: -6px 4px 10px; }
+  .sw-clock .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--rose); box-shadow: 0 0 10px var(--rose); flex: none; }
+  .sw-clock .dot.met { background: var(--sage); box-shadow: 0 0 10px var(--sage); }
+  .day-row.review { color: var(--sage); }
+  .day-row.review .mark { border-color: var(--sage); color: var(--sage); font-size: 12px; }
+  .day-row.review.done .mark { color: var(--rose-ink); }
+  .day-row.review.current, .day-row.current { color: var(--rose); }
+
+  /* ---------- Review games ---------- */
+  .review-head .rv-tally { margin: 18px 0 4px; color: var(--muted); font-size: 15px; }
+  .rv-lightning { margin-top: 14px; }
+  .review .qz .num { color: var(--sage); }
+  .opt { display: block; width: 100%; text-align: left; margin-top: 10px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-family: var(--read); font-size: calc(var(--fs) * .68); line-height: 1.4; }
+  .opt:disabled { color: var(--text); opacity: 1; cursor: default; }
+  .opt.right, .chip.right { border-color: var(--sage); background: #233032; }
+  .opt.wrong, .chip.wrong { border-color: #8a4f4f; background: #3a2626; }
+  .opt.on, .chip.on { border-color: var(--rose); background: #3a2b2b; }
+  .opt .n, .chip .n { display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; margin-right: 10px; border-radius: 999px; background: var(--rose-deep); color: var(--rose-ink); font-family: var(--ui); font-size: .8em; font-style: normal; vertical-align: 1px; }
+  .opt.seq .n:empty { background: none; border: 1px solid var(--line); }
+  .opt.right .n, .chip.right .n { background: var(--sage); }
+  .opt.verse { font-style: italic; }
+  .opt .qref { display: block; font-family: var(--ui); font-style: normal; font-size: 13px; color: var(--sage); margin-bottom: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { font-family: var(--read); font-size: calc(var(--fs) * .62); line-height: 1.3; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); text-align: left; }
+  .chip:disabled { color: var(--text); opacity: 1; }
+  .chip.ghost { background: none; color: var(--rose); margin-top: 12px; }
+  .m-left .chip { font-family: var(--ui); font-size: 15px; }
+  .vquote.big { margin-top: 14px; font-size: calc(var(--fs) * .72); }
+  .gap { display: inline-block; min-width: 3.5em; border-bottom: 2px solid var(--rose); font-style: normal; color: var(--rose); text-align: center; }
+  .gap.right { color: var(--sage); border-color: var(--sage); }
+  .gap.wrong { color: #e8958a; border-color: #e8958a; }
+  .mask { color: var(--rose); font-style: normal; letter-spacing: -.1em; }
+  .letters { font-style: normal; letter-spacing: .04em; color: var(--rose); }
+  .built { margin-top: 14px; padding: 12px; border: 1px dashed var(--line); border-radius: 14px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 64px; align-items: center; }
+  .built .qref { width: 100%; font-size: 13px; color: var(--rose); }
+  .built .chip { font-style: italic; }
+  .seq-done { font-family: var(--read); font-size: calc(var(--fs) * .66); line-height: 1.5; padding-left: 1.3em; margin: 12px 0 0; }
+  .seq-done li { margin-bottom: 6px; }
+  .muted { color: var(--muted); }
+  #rv-again { margin-top: 18px; }
+
+  /* ---------- Lightning round ---------- */
+  #bolt { position: fixed; inset: 0; z-index: 25; background: var(--bg); overflow-y: auto; padding: calc(var(--safe-top) + 12px) 18px calc(var(--safe-bottom) + 30px); }
+  .bolt-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; max-width: 560px; margin: 0 auto; }
+  .bolt-time { margin-right: auto; font-family: var(--display); font-size: 28px; font-weight: 600; color: var(--rose); }
+  .bolt-track { width: 100%; height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .bolt-track i { display: block; height: 100%; width: 100%; background: var(--rose); transition: width .2s linear; }
+  .bolt-body { max-width: 560px; margin: 8vh auto 0; }
+  .bolt-body .text { font-family: var(--read); font-size: calc(var(--fs) * .85); line-height: 1.45; margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -240,7 +298,7 @@
 
 <div id="reader" hidden>
   <div class="reader-bar">
-    <span class="note" id="timer-note"><span class="dot"></span><span id="timer-text">Your apps unlock when the timer ends</span></span>
+    <button class="note" id="timer-note" aria-label="Switch days"><span class="dot"></span><span id="switch-label"></span><span class="caret">▼</span></button>
     <button class="icon-btn" id="read-aloud" aria-label="Read aloud" aria-pressed="false">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
     </button>
@@ -255,6 +313,29 @@
     </div>
   </div>
   <div class="scroller" id="scroller"><div class="column" id="column"></div></div>
+</div>
+
+<div id="switcher" hidden>
+  <div class="sheet" role="dialog" aria-label="Switch days">
+    <h3><button class="icon-btn" id="sw-prev" aria-label="Previous lesson">‹</button><span id="sw-title">Lesson</span><button class="icon-btn" id="sw-next" aria-label="Next lesson">›</button>
+      <button class="icon-btn" id="sw-close" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button></h3>
+    <div class="sw-clock" id="sw-clock"></div>
+    <div id="sw-list"></div>
+  </div>
+</div>
+
+<div id="bolt" hidden>
+  <div class="bolt-top">
+    <span class="pill" id="bolt-score">⚡ 0</span>
+    <span class="bolt-time" id="bolt-time">60s</span>
+    <button class="icon-btn" id="bolt-close" aria-label="Stop the lightning round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="bolt-track"><i id="bolt-bar"></i></div>
+  </div>
+  <div class="bolt-body" id="bolt-body"></div>
 </div>
 
 <div id="welcome" class="overlay" hidden>
@@ -343,6 +424,9 @@
   const ESV_NOTICE = "Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard Version®), © 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.";
 
   const $ = (id) => document.getElementById(id);
+  // Inside the iPhone app a review page opens on its own: ?embed=1&review=<id>, with her ESV key after #key=.
+  const QS = new URLSearchParams(location.search);
+  const EMBED = QS.get("embed") === "1";
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   // ---------- state ----------
@@ -359,9 +443,24 @@
   const isMeditation = (d) => Array.isArray(d.body);
   const rowLabel = (d) => (isMeditation(d) ? `${d.day} · ${d.title}` : `Lesson ${d.lesson} · ${d.day}`);
   const dayById = (id) => book().days.find((d) => d.id === id);
+  // Review banks: two per lesson (Days One–Three and Days Four–Six), kept beside the days, never mixed into them.
+  const reviews = () => book().reviews || [];
+  const isReview = (d) => !!(d && d.items);
+  const entryById = (id) => dayById(id) || reviews().find((r) => r.id === id);
+  const entryLabel = (d) => (isReview(d) ? `Lesson ${d.lesson} · ${d.title}` : rowLabel(d));
+  // Everything in one lesson, in reading order: its days with each review right after the days it covers.
+  function lessonEntries(lesson) {
+    const out = [];
+    for (const d of book().days.filter((x) => x.lesson === lesson)) {
+      out.push(d);
+      out.push(...reviews().filter((r) => r.days[r.days.length - 1] === d.id));
+    }
+    return out;
+  }
+  const lessons = () => [...new Set(book().days.map((d) => d.lesson))];
   const nextDay = () => book().days.find((d) => !state.done[d.id]) || book().days[book().days.length - 1];
   const finishedToday = () => Object.values(state.done).includes(today());
-  const activeDay = () => (state.pick && dayById(state.pick)) || (finishedToday() ? null : nextDay());
+  const activeDay = () => (state.pick && entryById(state.pick)) || (finishedToday() ? null : nextDay());
 
   function streak() {
     const dates = new Set(Object.values(state.done));
@@ -452,6 +551,12 @@
   const qText = (q, i) => `Question ${i + 1}: ${q.text}${q.items ? "\n" + q.items.map((x) => "  - " + x).join("\n") : ""}`;
   const dayTitle = (d) => `${book().title} Lesson ${d.lesson}, ${d.day}`;
   function claudeURL(day, qIndex) {
+    if (day && day.items) {
+      const covered = day.days.map((id) => dayById(id)).filter(Boolean);
+      const refs = [...new Set(covered.flatMap((d) => d.readings.map((r) => r.ref)))];
+      const body = `I'm reviewing ${book().title} Lesson ${day.lesson}, ${covered.map((d) => d.day).join(", ")}. The passages: ${refs.join("; ")}.\n\nQuiz me with five more questions on these chapters, one at a time, and wait for my answer before the next. Mix in a verse to finish from memory. Quote the ESV and cite verse numbers when you explain an answer.`;
+      return "https://claude.ai/new?q=" + encodeURIComponent(body);
+    }
     if (isMeditation(day)) {
       const b = book();
       const body = `I'm reading "${day.title}" (${day.day}) in ${b.title}${b.author ? " by " + b.author : ""}. The verse is ${day.key || day.readings.map((r) => r.ref).join("; ")}.\n\nHelp me sit with this verse this morning: what it says about God, what it says to an anxious heart, and one concrete way to carry it into today. Keep it short and warm, and quote the ESV.`;
@@ -504,8 +609,12 @@
         $("ask-day").textContent = isMeditation(last) ? "Ask Claude about today's verse" : "Ask Claude about today's questions";
       }
     } else {
-      const resuming = state.timer && state.timer.dayId === day.id && state.timer.date === today();
-      const hero = isMeditation(day)
+      const resuming = !!timerSecs() && timerSecs() < GOAL;
+      const hero = isReview(day)
+        ? `<div class="eyebrow">${esc(b.title)} · Lesson ${esc(day.lesson)}</div>
+        <h1 class="med">${esc(day.title)}</h1>
+        <div class="refs">${day.items.length} questions and games</div>`
+        : isMeditation(day)
         ? `<div class="eyebrow">${esc(b.title)} · ${esc(day.day)}</div>
         <h1 class="med">${esc(day.title)}</h1>
         <div class="refs">${esc(day.lesson)}${day.key ? ` · ${esc(day.key)}` : ""}</div>`
@@ -532,10 +641,10 @@
 
     $("days-summary").textContent = b.kind === "devotional" ? "All meditations ›" : "All lessons ›";
     const cur = b.days.find((d) => !state.done[d.id]);
-    $("day-list").innerHTML = b.days.map((d) => `
-      <button class="day-row ${state.done[d.id] ? "done" : ""} ${d === cur ? "current" : ""}" data-id="${d.id}">
-        <span class="mark">${state.done[d.id] ? "✓" : ""}</span>
-        ${esc(rowLabel(d))}
+    $("day-list").innerHTML = lessons().flatMap(lessonEntries).map((d) => `
+      <button class="day-row ${isReview(d) ? "review" : ""} ${state.done[d.id] ? "done" : ""} ${d === cur ? "current" : ""}" data-id="${d.id}">
+        <span class="mark">${state.done[d.id] ? "✓" : isReview(d) ? "★" : ""}</span>
+        ${esc(entryLabel(d))}
         <small>${state.done[d.id] ? esc(fmtDate(state.done[d.id])) : d === cur ? "Up next" : ""}</small>
       </button>`).join("");
   }
@@ -563,26 +672,27 @@
   // ---------- reader ----------
   let readerDay = null, tickHandle = null, wakeLock = null, endObserver = null, reachedEnd = false, focusables = [];
 
-  const timerSecs = () => {
-    const t = state.timer;
-    return t && readerDay && t.dayId === readerDay.id && t.date === today() ? t.secs : 0;
-  };
+  // One clock for the whole morning: switching days, or to a review, keeps it running.
+  const timerSecs = () => (state.timer && state.timer.date === today() ? state.timer.secs : 0);
 
   async function openReader() {
     readerDay = activeDay() || nextDay();
     reachedEnd = false;
-    if (!state.timer || state.timer.dayId !== readerDay.id || state.timer.date !== today()) {
-      state.timer = { dayId: readerDay.id, date: today(), secs: 0 };
+    if (!state.timer || state.timer.date !== today()) {
+      state.timer = { date: today(), secs: 0 };
       save();
     }
     $("home").hidden = true;
     $("reader").hidden = false;
+    $("switch-label").textContent = barLabel(readerDay);
     updateTimer();
     $("progress").style.width = "0";
     $("scroller").scrollTop = 0;
-    $("column").innerHTML = `<div class="state">Opening ${esc(readerDay.key || (readerDay.readings[0] || {}).ref || readerDay.title)}…</div>`;
     requestWake();
     startTick();
+    if (isReview(readerDay)) { buildReview(); afterBuild(); return; }
+    $("column").innerHTML = `<div class="state">Opening ${esc(readerDay.key || (readerDay.readings[0] || {}).ref || readerDay.title)}…</div>`;
+    const opening = readerDay;
 
     let key, passages = [];
     try {
@@ -590,10 +700,12 @@
       if (readerDay.key) key = await getPassage(readerDay.key);
       for (const r of readerDay.readings) passages.push(await getPassage(r.ref));
     } catch (err) {
+      if (readerDay !== opening) return; // she switched while it was loading
       $("column").innerHTML = `<div class="state">${esc(err.message)}<br><br><button class="btn ghost small" id="retry">Try again</button></div>`;
       $("retry").onclick = openReader;
       return;
     }
+    if (readerDay !== opening || $("reader").hidden) return;
     buildReader(key, passages);
   }
 
@@ -669,11 +781,15 @@
     h.push(`<section class="finish f" id="finish"></section>`);
 
     $("column").innerHTML = h.join("");
-    $("scroller").scrollTop = 0;
-    focusables = [...$("column").querySelectorAll(".f")];
     (state.quiz?.[d.id] || []).forEach((c, zi) => { if (c != null) showQuizAnswer(zi, c); });
     fillWordStudy(d);
     loadQuotes(d);
+    afterBuild();
+  }
+
+  function afterBuild() {
+    $("scroller").scrollTop = 0;
+    focusables = [...$("column").querySelectorAll(".f")];
     renderFinish();
     updateFocus();
 
@@ -972,7 +1088,8 @@
     const fb = $("finish");
     if (!fb) return;
     const left = Math.max(0, GOAL - timerSecs());
-    const ask = `<a class="btn ghost small" href="${claudeURL(readerDay)}" target="_blank" rel="noopener">Ask Claude a follow-up</a>`;
+    const ask = `<a class="btn ghost small" href="${claudeURL(readerDay)}" target="_blank" rel="noopener">${isReview(readerDay) ? "Quiz me more with Claude" : "Ask Claude a follow-up"}</a>`;
+    if (EMBED) { fb.innerHTML = `<div class="copyright">${usingESV() ? esc(ESV_NOTICE) : "Scripture from the World English Bible (public domain)."}</div>`; return; }
     const notice = `<div class="copyright">${usingESV() ? esc(ESV_NOTICE) : "Scripture from the World English Bible (public domain)."}</div>`;
     if (left > 0) {
       fb.innerHTML = `<div class="halo">${bookIcon(56)}</div>
@@ -993,7 +1110,9 @@
   }
 
   function maybeComplete() {
-    if (timerSecs() >= GOAL && !state.done[readerDay.id]) { // five minutes is enough, wherever she is
+    if (EMBED) return;
+    const first = !finishedToday(); // the day she's on when the five minutes run out gets the check
+    if (timerSecs() >= GOAL && !state.done[readerDay.id] && (first || reachedEnd)) { // five minutes is enough, wherever she is
       state.done[readerDay.id] = today();
       if (state.pick === readerDay.id) state.pick = null;
       save();
@@ -1011,12 +1130,12 @@
   function updateTimer() {
     const left = Math.max(0, GOAL - timerSecs());
     $("timer").textContent = left > 0 ? fmtClock(left) : "Done";
-    $("timer-text").textContent = left > 0 ? "Your apps unlock when the timer ends" : "Time’s up. Finish at your own pace.";
     $("timer-note").classList.toggle("met", left === 0);
   }
 
   function startTick() {
     stopTick();
+    if (EMBED) return; // inside the iPhone app, the app keeps the clock
     tickHandle = setInterval(() => {
       if (document.visibilityState !== "visible" || $("reader").hidden) return;
       state.timer.secs++;
@@ -1046,6 +1165,375 @@
     renderHome();
   }
   $("close-reader").onclick = closeReader;
+
+  // ---------- switching days without leaving the reader ----------
+  const barLabel = (d) => (isReview(d) ? `Lesson ${d.lesson} · Review ${d.part === 1 ? "1–3" : "4–6"}` : isMeditation(d) ? d.day : `Lesson ${d.lesson} · ${d.day}`);
+  let swLesson = null;
+  function openSwitcher() {
+    swLesson = readerDay.lesson;
+    renderSwitcher();
+    $("switcher").hidden = false;
+  }
+  function renderSwitcher() {
+    const all = lessons(), at = all.indexOf(swLesson);
+    $("sw-title").textContent = book().kind === "devotional" ? swLesson : `Lesson ${swLesson}`;
+    $("sw-prev").disabled = at <= 0;
+    $("sw-next").disabled = at >= all.length - 1;
+    const left = Math.max(0, GOAL - timerSecs());
+    $("sw-clock").innerHTML = left > 0
+      ? `<span class="dot"></span>Your timer keeps going: ${fmtClock(left)} left.`
+      : `<span class="dot met"></span>Your five minutes are done. Read anything you like.`;
+    $("sw-list").innerHTML = lessonEntries(swLesson).map((d) => `
+      <button class="day-row ${isReview(d) ? "review" : ""} ${state.done[d.id] ? "done" : ""} ${d === readerDay ? "current" : ""}" data-id="${d.id}">
+        <span class="mark">${state.done[d.id] ? "✓" : isReview(d) ? "★" : ""}</span>
+        ${esc(isReview(d) ? d.title : isMeditation(d) ? `${d.day} · ${d.title}` : d.day)}
+        <small>${d === readerDay ? "Reading now" : isReview(d) ? `${d.items.length} games` : ""}</small>
+      </button>`).join("");
+  }
+  $("timer-note").onclick = openSwitcher;
+  $("sw-close").onclick = () => { $("switcher").hidden = true; };
+  $("switcher").addEventListener("click", (e) => { if (e.target.id === "switcher") $("switcher").hidden = true; });
+  $("sw-prev").onclick = () => { const all = lessons(); swLesson = all[Math.max(0, all.indexOf(swLesson) - 1)]; renderSwitcher(); };
+  $("sw-next").onclick = () => { const all = lessons(); swLesson = all[Math.min(all.length - 1, all.indexOf(swLesson) + 1)]; renderSwitcher(); };
+  $("sw-list").addEventListener("click", (e) => {
+    const row = e.target.closest(".day-row");
+    if (!row) return;
+    $("switcher").hidden = true;
+    if (row.dataset.id === readerDay.id) return;
+    stopReading();
+    if (bolt) boltEnd(true);
+    state.pick = row.dataset.id;
+    save();
+    openReader(); // the clock carries on from where it was
+  });
+
+  // ---------- review banks ----------
+  // Each lesson has two review banks: Days One–Three and Days Four–Six. Lots of small games; every verse is
+  // fetched live in her translation (never stored), and the verses behind an answer appear once she answers.
+  const TYPE_LABEL = { mc: "Pick one", tf: "True or false", blank: "Fill in the blank", order: "Verse builder", whosaid: "Who said it?",
+    match: "Match it up", refmatch: "Verse ↔ reference", sequence: "Put it in order", memory: "Memory verse" };
+  const STOP = new Set("the and of to a in that for his he him was is be it with as on they you your i me my not but all by so this from at were who have had her she their them will what when then there which said unto shall are or an we us our".split(" "));
+  const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const norm = (s) => s.toLowerCase().replace(/[^a-z']/g, "");
+  // A repeatable shuffle, so a round keeps its order when she comes back to it.
+  function seeded(seed) { let h = 2166136261; for (const c of String(seed)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909), (h ^= h >>> 16) >>> 0) / 4294967296); }
+  function shuffled(list, seed, notSame) {
+    const rnd = seeded(seed), a = list.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    if (notSame && a.length > 1 && a.every((x, i) => x === list[i])) a.push(a.shift());
+    return a;
+  }
+  const verseOf = (ref) => quoteText[ref];
+  async function loadVerse(ref) {
+    if (quoteText[ref]) return quoteText[ref];
+    const p = await getPassage(ref);
+    return (quoteText[ref] = p.verses.map((v) => v.text.replace(/\s*\n\s*/g, " ")).join(" "));
+  }
+  const gameRefs = (it) => (it.type === "refmatch" ? it.refs : ["blank", "order", "whosaid", "memory"].includes(it.type) ? [it.ref] : []);
+  const shownRefs = (it) => [...gameRefs(it), ...(it.refs || [])].filter((r, i, a) => a.indexOf(r) === i);
+
+  function reviewState(r) {
+    state.review = state.review || {};
+    return (state.review[r.id] = state.review[r.id] || { round: 0, res: {}, best: 0 });
+  }
+  // Mixed up so the game types alternate instead of arriving in blocks.
+  const reviewOrder = (r) => shuffled(r.items.map((_, i) => i), r.id + ":" + reviewState(r).round);
+  const live = {}; // in-progress taps for the multi-step games (not saved)
+
+  function buildReview() {
+    const r = readerDay;
+    const order = reviewOrder(r);
+    const dayNames = r.days.map((id) => (dayById(id) || {}).day).filter(Boolean);
+    const h = [`<section class="today-block f snap review-head">
+      <div class="eyebrow">Lesson ${esc(r.lesson)} · Review</div>
+      <h2>${esc(r.title)}</h2>
+      <div class="ref-line">${dayNames.map(esc).join(" · ")}</div>
+      ${r.summary ? `<p class="summary">${esc(r.summary)}</p>` : ""}
+      <div class="rv-tally" id="rv-tally"></div>
+      <button class="btn primary small rv-lightning" id="lightning">⚡ Lightning round · 60 seconds</button>
+    </section>`, `<section class="section quiz review" id="review">`];
+    order.forEach((i, n) => h.push(`<div class="qz rv f" data-i="${i}">
+      <div class="num">${n + 1} of ${order.length} · ${esc(TYPE_LABEL[r.items[i].type] || "Question")}</div>
+      <div class="rv-body"></div></div>`));
+    h.push(`<div class="score" id="rv-score" hidden></div>
+      <button class="btn ghost small" id="rv-again" hidden>Shuffle and play again</button></section>`);
+    h.push(`<section class="finish f" id="finish"></section>`);
+    $("column").innerHTML = h.join("");
+    order.forEach(renderItem);
+    tally();
+    $("lightning").onclick = startLightning;
+    $("rv-again").onclick = () => {
+      const st = reviewState(r);
+      st.round++; st.res = {}; save();
+      Object.keys(live).forEach((k) => delete live[k]);
+      buildReview(); afterBuild();
+    };
+    loadReviewText(r, order);
+  }
+
+  function tally() {
+    const r = readerDay, res = reviewState(r).res;
+    const done = Object.values(res), right = done.filter((x) => x.ok).length;
+    $("rv-tally").innerHTML = done.length
+      ? `<span class="ok">✓ ${right}</span> · <span class="err">✗ ${done.length - right}</span> · ${r.items.length - done.length} to go`
+      : `${r.items.length} questions and games, mixed up`;
+    const sc = $("rv-score");
+    if (done.length === r.items.length) {
+      sc.innerHTML = `${right} of ${r.items.length}<small>${right === r.items.length ? "Every single one. Well studied!" : right >= r.items.length * 0.8 ? "Wonderful. You know these chapters." : "Good work. The verses under each miss are worth a second look."}</small>`;
+      sc.hidden = false; $("rv-again").hidden = false;
+    } else { sc.hidden = true; $("rv-again").hidden = true; }
+  }
+
+  function record(i, ok, pick) {
+    const st = reviewState(readerDay);
+    if (st.res[i]) return;
+    st.res[i] = { ok, pick };
+    save();
+    tally();
+  }
+
+  const verdict = (ok, why) => `<div class="why"><b class="${ok ? "" : "miss"}">${ok ? "That’s right." : "Not quite."}</b> ${why ? esc(why) : ""}</div>`;
+  const quoteBlock = (ref, html) => `<div class="vquote big"><span class="qref">${esc(ref)}</span>${html}</div>`;
+  const loadingVerse = (ref) => `<div class="vquote big"><span class="qref">${esc(ref)}</span><span class="muted">Opening the verse…</span></div>`;
+
+  function renderItem(i) {
+    const r = readerDay, it = r.items[i];
+    const box = $("column").querySelector(`.rv[data-i="${i}"] .rv-body`);
+    if (!box) return;
+    const res = reviewState(r).res[i];
+    const missing = gameRefs(it).filter((ref) => !verseOf(ref));
+    if (missing.length) {
+      const failed = missing.some((ref) => failedRefs.has(ref));
+      box.innerHTML = failed ? `<div class="why">Couldn’t open ${esc(missing.join(", "))}. Skip this one for now.</div>` : loadingVerse(missing[0]);
+      return;
+    }
+    const quotes = (show) => `<div ${show ? "" : "hidden"} class="why-quotes">${quotesBox((it.refs || []).filter((x) => !gameRefs(it).includes(x)))}</div>`;
+    const opts = (labels, answer, chosen) => labels.map((c, ci) => {
+      const cls = chosen == null ? "" : ci === answer ? "right" : ci === chosen ? "wrong" : "";
+      return `<button class="opt ${cls}" data-act="pick" data-c="${ci}" ${chosen != null ? "disabled" : ""}>${esc(c)}</button>`;
+    }).join("");
+
+    if (it.type === "mc" || it.type === "tf") {
+      const labels = it.type === "tf" ? ["True", "False"] : it.choices;
+      const answer = it.type === "tf" ? (it.answer ? 0 : 1) : it.answer;
+      box.innerHTML = `<div class="text">${esc(it.q)}</div>${opts(labels, answer, res?.pick)}${res ? verdict(res.ok, it.why) : ""}${quotes(!!res)}`;
+    } else if (it.type === "whosaid") {
+      const text = verseOf(it.ref);
+      const shown = res ? esc(text) : maskNames(text, it.choices);
+      box.innerHTML = `<div class="text">Who said these words?</div>${quoteBlock(it.ref, `“${shown}”`)}${opts(it.choices, it.answer, res?.pick)}${res ? verdict(res.ok, it.why) : ""}${quotes(!!res)}`;
+    } else if (it.type === "blank") {
+      const b = blankFor(it);
+      const pick = res?.pick;
+      const gap = res ? `<span class="gap ${res.ok ? "right" : "wrong"}">${esc(b.word)}</span>` : `<span class="gap">______</span>`;
+      box.innerHTML = `<div class="text">Which word fills the blank?</div>${quoteBlock(it.ref, `“${esc(b.before)}${gap}${esc(b.after)}”`)}
+        <div class="chips">${b.options.map((w, ci) => `<button class="chip ${res ? (norm(w) === norm(b.word) ? "right" : ci === pick ? "wrong" : "") : ""}" data-act="pick" data-c="${ci}" ${res ? "disabled" : ""}>${esc(w)}</button>`).join("")}</div>
+        ${res ? verdict(res.ok, res.ok ? "" : `The verse says “${b.word}.”`) : ""}`;
+    } else if (it.type === "order") {
+      const chunks = chunksFor(it);
+      const st = live[i] = live[i] || { placed: [] };
+      const pool = shuffled(chunks.map((_, k) => k), it.ref + reviewState(r).round, true).filter((k) => !st.placed.includes(k));
+      if (res && !st.retry) {
+        box.innerHTML = `<div class="text">Build the verse.${it.hint ? ` <span class="muted">${esc(it.hint)}</span>` : ""}</div>${quoteBlock(it.ref, `“${esc(verseOf(it.ref))}”`)}${verdict(res.ok, res.ok ? "Every phrase in its place." : "Here it is in order. Read it through once more.")}
+          <button class="chip ghost" data-act="retry">Try it again</button>`;
+      } else {
+        box.innerHTML = `<div class="text">Tap the phrases in order to build the verse.${it.hint ? ` <span class="muted">${esc(it.hint)}</span>` : ""}</div>
+          <div class="built"><span class="qref">${esc(it.ref)}</span>${st.placed.map((k) => `<button class="chip on" data-act="unplace" data-k="${k}">${esc(chunks[k])}</button>`).join("") || `<span class="muted">Your verse appears here</span>`}</div>
+          <div class="chips">${pool.map((k) => `<button class="chip" data-act="place" data-k="${k}">${esc(chunks[k])}</button>`).join("")}</div>
+          ${st.wrong ? `<div class="why"><b class="miss">Not quite yet.</b> Tap a phrase above to take it back out.</div>` : ""}`;
+      }
+    } else if (it.type === "sequence") {
+      const st = live[i] = live[i] || { taps: [] };
+      const order = shuffled(it.events.map((_, k) => k), it.prompt + reviewState(r).round, true);
+      if (res) {
+        box.innerHTML = `<div class="text">${esc(it.prompt || "Put these in order")}</div>
+          <ol class="seq-done">${it.events.map((e) => `<li>${esc(e)}</li>`).join("")}</ol>${verdict(res.ok, res.ok ? "Right in order." : "This is the order they happened in.")}${quotes(true)}`;
+      } else {
+        box.innerHTML = `<div class="text">${esc(it.prompt || "Put these in order")} <span class="muted">Tap them first to last.</span></div>
+          ${order.map((k) => { const n = st.taps.indexOf(k); return `<button class="opt seq ${n >= 0 ? "on" : ""}" data-act="seq" data-k="${k}"><span class="n">${n >= 0 ? n + 1 : ""}</span>${esc(it.events[k])}</button>`; }).join("")}
+          ${quotes(false)}`;
+      }
+    } else if (it.type === "match" || it.type === "refmatch") {
+      const pairs = it.type === "match" ? it.pairs : it.refs.map((ref) => [ref, verseOf(ref)]);
+      const st = live[i] = live[i] || { sel: null, got: [], miss: 0, bad: null };
+      const done = res || st.got.length === pairs.length;
+      const lefts = shuffled(pairs.map((_, k) => k), "L" + i + reviewState(r).round);
+      const rights = shuffled(pairs.map((_, k) => k), "R" + i + reviewState(r).round, true);
+      const gotAll = res ? pairs.map((_, k) => k) : st.got;
+      box.innerHTML = `<div class="text">${esc(it.type === "match" ? it.prompt || "Match them up" : "Match each verse to its reference.")} ${done ? "" : `<span class="muted">Tap one on top, then its partner.</span>`}</div>
+        <div class="chips m-left">${lefts.map((k) => `<button class="chip ${gotAll.includes(k) ? "right" : st.sel === k ? "on" : ""}" data-act="mleft" data-k="${k}" ${gotAll.includes(k) ? "disabled" : ""}>${gotAll.includes(k) ? `<span class="n">${gotAll.indexOf(k) + 1}</span>` : ""}${esc(pairs[k][0])}</button>`).join("")}</div>
+        ${rights.map((k) => {
+          const got = gotAll.includes(k);
+          const inner = it.type === "refmatch" ? `${got ? `<span class="qref">${esc(pairs[k][0])}</span>` : ""}“${esc(pairs[k][1])}”` : esc(pairs[k][1]);
+          return `<button class="opt m-right ${it.type === "refmatch" ? "verse" : ""} ${got ? "right" : st.bad === k ? "wrong" : ""}" data-act="mright" data-k="${k}" ${got ? "disabled" : ""}>${got ? `<span class="n">${gotAll.indexOf(k) + 1}</span>` : ""}${inner}</button>`;
+        }).join("")}
+        ${res ? verdict(res.ok, res.ok ? "A perfect match." : `All matched, with ${res.pick} wrong tap${res.pick === 1 ? "" : "s"} along the way.`) : ""}
+        ${it.type === "match" ? quotes(!!res) : ""}`;
+    } else if (it.type === "memory") {
+      const text = verseOf(it.ref);
+      const st = live[i] = live[i] || {};
+      const shown = res || st.peek;
+      box.innerHTML = `<div class="text">Say the verse from memory, using the first letters as hints.</div>
+        ${quoteBlock(it.ref, shown ? `“${esc(text)}”` : `<span class="letters">${esc(firstLetters(text))}</span>`)}
+        ${res ? verdict(res.ok, res.ok ? "Hidden in your heart." : "Keep at it. Try it again tomorrow.") : st.peek
+          ? `<div class="chips"><button class="chip" data-act="mem" data-c="1">I knew it</button><button class="chip" data-act="mem" data-c="0">Still learning</button></div>`
+          : `<button class="chip ghost" data-act="peek">Show the verse</button>`}`;
+    }
+    const quoteBoxes = [...box.querySelectorAll(".quotes")];
+    quoteBoxes.forEach((qb) => qb.dataset.refs.split("|").forEach((ref) => verseOf(ref) && fillQuotes([qb], ref, quoteText)));
+  }
+
+  function maskNames(text, names) {
+    let out = esc(text);
+    const words = names.flatMap((n) => n.split(/\s+/)).filter((w) => w.length > 2 && !STOP.has(w.toLowerCase()) && !/^(chief|king|lord)$/i.test(w));
+    for (const w of words) out = out.replace(new RegExp(`\\b${reEsc(esc(w))}\\b`, "gi"), `<span class="mask">▢▢▢</span>`);
+    return out;
+  }
+
+  function blankFor(it) {
+    const text = verseOf(it.ref);
+    const hit = (w) => text.match(new RegExp(`\\b${reEsc(w)}\\b`, "i"));
+    let m = (it.words || []).map(hit).find(Boolean);
+    if (!m) { // her translation words it differently: blank the longest word that isn't a little one
+      const cands = [...text.matchAll(/[A-Za-z']{4,}/g)].filter((x) => !STOP.has(x[0].toLowerCase()));
+      m = cands.sort((a, b) => b[0].length - a[0].length)[0] || [...text.matchAll(/[A-Za-z']+/g)][0];
+    }
+    const word = m[0];
+    const pool = [...(it.decoys || []), ...readerDay.items.filter((x) => x !== it && x.type === "blank").flatMap((x) => x.words || [])]
+      .filter((w, k, a) => !hit(w) && norm(w) !== norm(word) && a.findIndex((y) => norm(y) === norm(w)) === k).slice(0, 3);
+    return { word, before: text.slice(0, m.index), after: text.slice(m.index + word.length), options: shuffled([word, ...pool], it.ref) };
+  }
+
+  // A verse in four to six phrases, split at its own punctuation where it can be.
+  function chunksFor(it) {
+    const words = verseOf(it.ref).split(/\s+/).filter(Boolean);
+    let parts = [], cur = [];
+    words.forEach((w) => { cur.push(w); if (/[,;:.!?”’)]$/.test(w) && cur.length >= 2) { parts.push(cur); cur = []; } });
+    if (cur.length) parts.push(cur);
+    const maxLen = Math.max(4, Math.ceil(words.length / 4));
+    parts = parts.flatMap((p) => { const out = []; for (let k = 0; k < p.length; k += maxLen) out.push(p.slice(k, k + maxLen)); return out; });
+    while (parts.length > 6) {
+      let k = 0;
+      for (let j = 0; j < parts.length - 1; j++) if (parts[j].length + parts[j + 1].length < parts[k].length + parts[k + 1].length) k = j;
+      parts.splice(k, 2, parts[k].concat(parts[k + 1]));
+    }
+    while (parts.length < 4) {
+      const k = parts.reduce((b, p, j) => (p.length > parts[b].length ? j : b), 0);
+      if (parts[k].length < 2) break;
+      const mid = Math.ceil(parts[k].length / 2);
+      parts.splice(k, 1, parts[k].slice(0, mid), parts[k].slice(mid));
+    }
+    return parts.map((p) => p.join(" "));
+  }
+
+  const firstLetters = (text) => text.split(/\s+/).map((w) => { const m = w.match(/^([^A-Za-z]*)([A-Za-z])[A-Za-z'’-]*(.*)$/); return m ? m[1] + m[2] + m[3] : w; }).join(" ");
+
+  const failedRefs = new Set();
+  async function loadReviewText(r, order) {
+    const refs = [...new Set(order.flatMap((i) => shownRefs(r.items[i])))];
+    for (const ref of refs) {
+      if (readerDay !== r || $("reader").hidden) return; // she switched days or closed the reader
+      if (!verseOf(ref)) {
+        try { await loadVerse(ref); } catch { failedRefs.add(ref); }
+        if (!usingESV()) await new Promise((res) => setTimeout(res, 2100)); // the free fallback allows ~15 requests per 30 seconds
+        if (readerDay !== r) return;
+      }
+      order.forEach((i) => { if (gameRefs(r.items[i]).includes(ref)) renderItem(i); });
+      fillQuotes([...$("column").querySelectorAll(".quotes")], ref, quoteText);
+    }
+  }
+
+  $("column").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-act]");
+    const card = b && b.closest(".rv");
+    if (!card || b.disabled || !isReview(readerDay)) return;
+    const i = +card.dataset.i, it = readerDay.items[i], act = b.dataset.act;
+    const st = live[i];
+    if (act === "pick") {
+      const c = +b.dataset.c;
+      if (it.type === "blank") { const bl = blankFor(it); record(i, norm(bl.options[c]) === norm(bl.word), c); }
+      else record(i, c === (it.type === "tf" ? (it.answer ? 0 : 1) : it.answer), c);
+    } else if (act === "place" || act === "unplace") {
+      const k = +b.dataset.k;
+      st.wrong = false;
+      if (act === "place") st.placed.push(k); else st.placed = st.placed.filter((x) => x !== k);
+      const chunks = chunksFor(it);
+      if (st.placed.length === chunks.length) {
+        const ok = st.placed.map((x) => chunks[x]).join(" ") === chunks.join(" ");
+        if (ok || reviewState(readerDay).res[i] || st.tries) { record(i, ok && !st.tries, null); st.retry = false; st.placed = []; }
+        else { st.wrong = true; st.tries = 1; }
+      }
+    } else if (act === "retry") {
+      live[i] = { placed: [], retry: true, tries: 1 };
+    } else if (act === "seq") {
+      const k = +b.dataset.k, n = st.taps.indexOf(k);
+      if (n >= 0) st.taps = st.taps.slice(0, n); else st.taps.push(k);
+      if (st.taps.length === it.events.length) record(i, st.taps.every((x, j) => x === j), st.taps.slice());
+    } else if (act === "mleft") {
+      st.sel = +b.dataset.k; st.bad = null;
+    } else if (act === "mright") {
+      if (st.sel == null) return;
+      const k = +b.dataset.k;
+      if (k === st.sel) { st.got.push(k); st.sel = null; st.bad = null; }
+      else { st.miss++; st.bad = k; }
+      const n = it.type === "match" ? it.pairs.length : it.refs.length;
+      if (st.got.length === n) record(i, st.miss === 0, st.miss);
+    } else if (act === "peek") {
+      st.peek = true;
+    } else if (act === "mem") {
+      record(i, b.dataset.c === "1", null);
+    }
+    renderItem(i);
+  });
+
+  // ---------- lightning round ----------
+  let bolt = null;
+  function startLightning() {
+    const r = readerDay;
+    const pool = shuffled(r.items.map((it, i) => i).filter((i) => ["tf", "mc"].includes(r.items[i].type)), r.id + Date.now());
+    bolt = { r, pool, at: 0, score: 0, misses: [], ends: Date.now() + 60000 };
+    $("bolt").hidden = false;
+    boltQuestion();
+    bolt.tick = setInterval(() => {
+      const left = Math.max(0, bolt.ends - Date.now());
+      $("bolt-bar").style.width = (100 * left / 60000) + "%";
+      $("bolt-time").textContent = Math.ceil(left / 1000) + "s";
+      if (!left) boltEnd();
+    }, 200);
+  }
+  function boltQuestion() {
+    const it = bolt.r.items[bolt.pool[bolt.at]];
+    if (!it) { boltEnd(); return; }
+    const labels = it.type === "tf" ? ["True", "False"] : it.choices;
+    $("bolt-score").textContent = `⚡ ${bolt.score}`;
+    $("bolt-body").innerHTML = `<div class="text">${esc(it.q)}</div>${labels.map((c, ci) => `<button class="opt" data-c="${ci}">${esc(c)}</button>`).join("")}`;
+  }
+  $("bolt").addEventListener("click", (e) => {
+    if (e.target.closest("#bolt-close")) { boltEnd(true); return; }
+    const b = e.target.closest(".opt");
+    if (!b || !bolt || bolt.over || bolt.wait) return;
+    const it = bolt.r.items[bolt.pool[bolt.at]];
+    const ok = +b.dataset.c === (it.type === "tf" ? (it.answer ? 0 : 1) : it.answer);
+    b.classList.add(ok ? "right" : "wrong");
+    if (ok) bolt.score++; else bolt.misses.push(it);
+    bolt.wait = true;
+    setTimeout(() => { if (!bolt) return; bolt.wait = false; bolt.at++; boltQuestion(); }, ok ? 260 : 650);
+  });
+  function boltEnd(close) {
+    if (!bolt) return;
+    clearInterval(bolt.tick);
+    if (close) { $("bolt").hidden = true; bolt = null; return; }
+    if (bolt.over) return;
+    bolt.over = true;
+    const st = reviewState(bolt.r);
+    const best = st.best = Math.max(st.best || 0, bolt.score);
+    save();
+    $("bolt-time").textContent = "Time!";
+    $("bolt-body").innerHTML = `<div class="score">${bolt.score} right<small>${bolt.score >= best ? "A new best for this review!" : `Your best is ${best}.`}</small></div>
+      ${bolt.misses.length ? `<div class="eyebrow" style="margin-top:22px">Worth another look</div>${bolt.misses.map((it) => `<div class="why"><b class="miss">${esc(it.q)}</b><br>${esc(it.why)}</div>`).join("")}` : ""}
+      <button class="btn primary small" id="bolt-again" style="margin-top:22px">Go again</button>`;
+    $("bolt-again").onclick = () => { $("bolt").hidden = true; bolt = null; startLightning(); };
+  }
+
 
   // ---------- settings ----------
   function openSettings() {
@@ -1085,7 +1573,7 @@
   if (location.hash === "#unlocked") history.replaceState(null, "", location.pathname);
 
   // First visit: ask for a name for the greeting.
-  if (!state.name && !state.welcomed) {
+  if (!EMBED && !state.name && !state.welcomed) {
     $("welcome").hidden = false;
     $("welcome-save").onclick = () => {
       state.name = $("welcome-name").value.trim();
@@ -1097,7 +1585,15 @@
     $("welcome-name").addEventListener("keydown", (e) => { if (e.key === "Enter") $("welcome-save").click(); });
   }
 
-  renderHome();
+  if (EMBED) {
+    document.body.classList.add("embed");
+    const key = new URLSearchParams(location.hash.slice(1)).get("key");
+    if (key) state.esvKey = key;
+    history.replaceState(null, "", location.pathname + location.search);
+    state.pick = QS.get("review");
+    $("welcome").hidden = true;
+    openReader();
+  } else renderHome();
 })();
 </script>
 </body>
