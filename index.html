@@ -170,6 +170,11 @@
   .meditation .answer { margin-top: 28px; }
   .answer.prayer .body { font-style: italic; }
 
+  /* Jackie's copy: the study's answers in the font made from her own cursive. Turned on by opening the site with ?hand=jackie. */
+  @font-face { font-family: "Jackie"; src: url("fonts/Jackie.ttf") format("truetype"); font-display: swap; }
+  body.hand-jackie .answer .body { font-family: "Jackie", var(--read); font-size: calc(var(--fs) * .95); line-height: 1.6; color: #e6dcd6; }
+  body.hand-jackie .meditation .answer .body { font-family: var(--read); font-size: calc(var(--fs) * .7); line-height: 1.6; color: #d6cbc6; }
+
   .words { display: grid; gap: 10px; margin-top: 16px; }
   .word-option { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
   .word-option.chosen { border-color: var(--rose-deep); background: #2e2424; }
@@ -393,6 +398,11 @@
       <div class="help">Free for personal use. Sign up at <a href="https://api.esv.org/account/create-application/" target="_blank" rel="noopener">api.esv.org</a>, create an application, and paste the key here. It stays on this phone. Until then the app reads from the World English Bible.</div>
     </div>
 
+    <div class="field" id="hand-field" hidden>
+      <label><input type="checkbox" id="hand-jackie"> Answers in Jackie’s handwriting</label>
+      <div class="help">Shows the study’s answers in the font made from Jackie’s cursive, on this device only.</div>
+    </div>
+
     <div class="field">
       <label for="shortcut-name">Unlock shortcut name</label>
       <input type="text" id="shortcut-name" autocapitalize="words">
@@ -452,6 +462,13 @@
   try { state = Object.assign({}, defaults, JSON.parse(localStorage.getItem(KEY) || "{}")); }
   catch { state = { ...defaults }; }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+
+  // Jackie's copy: ?hand=jackie turns on her handwriting for the answers and remembers it on this device; ?hand=off turns it off.
+  const handQS = QS.get("hand");
+  if (handQS === "jackie") { state.hand = "jackie"; state.handOffered = true; save(); }
+  else if (handQS === "off") { state.hand = ""; save(); }
+  const applyHand = () => document.body.classList.toggle("hand-jackie", state.hand === "jackie");
+  applyHand();
 
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const today = () => iso(new Date());
@@ -1685,6 +1702,8 @@
     $("fs").value = state.fontSize;
     $("esv-key").value = state.esvKey;
     $("shortcut-name").value = state.shortcutName;
+    $("hand-field").hidden = !state.handOffered;
+    $("hand-jackie").checked = state.hand === "jackie";
     $("sc-name-1").textContent = state.shortcutName || "Bible Done";
     $("app-url").textContent = location.origin + location.pathname;
     $("key-status").textContent = "";
@@ -1697,6 +1716,7 @@
   $("name").onchange = (e) => { state.name = e.target.value.trim(); save(); };
   $("fs").oninput = (e) => { state.fontSize = +e.target.value; applyFontSize(); save(); };
   $("esv-key").onchange = (e) => { state.esvKey = e.target.value.trim(); memo.clear(); save(); };
+  $("hand-jackie").onchange = (e) => { state.hand = e.target.checked ? "jackie" : ""; save(); applyHand(); };
   $("shortcut-name").onchange = (e) => { state.shortcutName = e.target.value.trim() || "Bible Done"; $("sc-name-1").textContent = state.shortcutName; save(); };
   $("test-key").onclick = async () => {
     state.esvKey = $("esv-key").value.trim(); memo.clear(); save();
