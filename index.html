@@ -398,7 +398,7 @@
       <div class="help">Free for personal use. Sign up at <a href="https://api.esv.org/account/create-application/" target="_blank" rel="noopener">api.esv.org</a>, create an application, and paste the key here. It stays on this phone. Until then the app reads from the World English Bible.</div>
     </div>
 
-    <div class="field" id="hand-field" hidden>
+    <div class="field" id="hand-field">
       <label><input type="checkbox" id="hand-jackie"> Answers in Jackie’s handwriting</label>
       <div class="help">Shows the study’s answers in the font made from Jackie’s cursive, on this device only.</div>
     </div>
@@ -1702,7 +1702,6 @@
     $("fs").value = state.fontSize;
     $("esv-key").value = state.esvKey;
     $("shortcut-name").value = state.shortcutName;
-    $("hand-field").hidden = !state.handOffered;
     $("hand-jackie").checked = state.hand === "jackie";
     $("sc-name-1").textContent = state.shortcutName || "Bible Done";
     $("app-url").textContent = location.origin + location.pathname;
