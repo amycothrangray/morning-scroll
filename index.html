@@ -475,13 +475,15 @@
   // The book she's reading: Gail's study unless she switched to the devotional on Home.
   const book = () => BOOKS.find((b) => b.file === state.book) || BOOKS[0];
   const isMeditation = (d) => Array.isArray(d.body);
-  const rowLabel = (d) => (isMeditation(d) ? `${d.day} · ${d.title}` : `Lesson ${d.lesson} · ${d.day}`);
+  // Gail's lessons are numbered ("10B"); a seasonal set like "Thanksgiving Psalms" shows its own name.
+  const lessonName = (l) => (/^\d/.test(l) ? `Lesson ${l}` : l);
+  const rowLabel = (d) => (isMeditation(d) ? `${d.day} · ${d.title}` : `${lessonName(d.lesson)} · ${d.day}`);
   const dayById = (id) => book().days.find((d) => d.id === id);
   // Review banks: two per lesson (Days One–Three and Days Four–Six), kept beside the days, never mixed into them.
   const reviews = () => book().reviews || [];
   const isReview = (d) => !!(d && d.items);
   const entryById = (id) => dayById(id) || reviews().find((r) => r.id === id);
-  const entryLabel = (d) => (isReview(d) ? `Lesson ${d.lesson} · ${d.title}` : rowLabel(d));
+  const entryLabel = (d) => (isReview(d) ? `${lessonName(d.lesson)} · ${d.title}` : rowLabel(d));
   // Everything in one lesson, in reading order: its days with each review right after the days it covers.
   function lessonEntries(lesson) {
     const out = [];
@@ -583,12 +585,12 @@
 
   // ---------- Claude prompts ----------
   const qText = (q, i) => `Question ${i + 1}: ${q.text}${q.items ? "\n" + q.items.map((x) => "  - " + x).join("\n") : ""}`;
-  const dayTitle = (d) => `${book().title} Lesson ${d.lesson}, ${d.day}`;
+  const dayTitle = (d) => `${book().title} ${lessonName(d.lesson)}, ${d.day}`;
   function claudeURL(day, qIndex) {
     if (day && day.items) {
       const covered = day.days.map((id) => dayById(id)).filter(Boolean);
       const refs = [...new Set(covered.flatMap((d) => d.readings.map((r) => r.ref)))];
-      const body = `I'm reviewing ${book().title} Lesson ${day.lesson}, ${covered.map((d) => d.day).join(", ")}. The passages: ${refs.join("; ")}.\n\nQuiz me with five more questions on these chapters, one at a time, and wait for my answer before the next. Mix in a verse to finish from memory. Quote the ESV and cite verse numbers when you explain an answer.`;
+      const body = `I'm reviewing ${book().title} ${lessonName(day.lesson)}, ${covered.map((d) => d.day).join(", ")}. The passages: ${refs.join("; ")}.\n\nQuiz me with five more questions on these chapters, one at a time, and wait for my answer before the next. Mix in a verse to finish from memory. Quote the ESV and cite verse numbers when you explain an answer.`;
       return "https://claude.ai/new?q=" + encodeURIComponent(body);
     }
     if (isMeditation(day)) {
@@ -645,14 +647,14 @@
     } else {
       const resuming = !!timerSecs() && timerSecs() < GOAL;
       const hero = isReview(day)
-        ? `<div class="eyebrow">${esc(b.title)} · Lesson ${esc(day.lesson)}</div>
+        ? `<div class="eyebrow">${esc(/^\d/.test(day.lesson) ? `${b.title} · Lesson ${day.lesson}` : day.lesson)}</div>
         <h1 class="med">${esc(day.title)}</h1>
         <div class="refs">${day.items.length} questions and games</div>`
         : isMeditation(day)
         ? `<div class="eyebrow">${esc(b.title)} · ${esc(day.day)}</div>
         <h1 class="med">${esc(day.title)}</h1>
         <div class="refs">${esc(day.lesson)}${day.key ? ` · ${esc(day.key)}` : ""}</div>`
-        : `<div class="eyebrow">${esc(b.title)} · Lesson ${esc(day.lesson)}</div>
+        : `<div class="eyebrow">${esc(/^\d/.test(day.lesson) ? `${b.title} · Lesson ${day.lesson}` : day.lesson)}</div>
         <h1>${esc(day.day)}</h1>
         <div class="refs">${day.readings.map((r) => esc(r.ref)).join(" · ")}</div>`;
       t.innerHTML = `
@@ -772,7 +774,7 @@
     </section>`
       : `<section class="today-block f snap">
       <h2>Today’s Reading</h2>
-      <div class="ref-line">Lesson ${esc(d.lesson)} · ${esc(d.day)}<br>${refs}</div>
+      <div class="ref-line">${esc(lessonName(d.lesson))} · ${esc(d.day)}<br>${refs}</div>
       ${d.summary ? `<p class="summary">${esc(d.summary)}</p>` : ""}
     </section>`);
 
@@ -1211,7 +1213,7 @@
   $("close-reader").onclick = closeReader;
 
   // ---------- switching days without leaving the reader ----------
-  const barLabel = (d) => (isReview(d) ? `Lesson ${d.lesson} · Review ${d.part === 1 ? "1–3" : "4–6"}` : isMeditation(d) ? d.day : `Lesson ${d.lesson} · ${d.day}`);
+  const barLabel = (d) => (isReview(d) ? `${lessonName(d.lesson)} · Review ${d.part === 1 ? "1–3" : "4–6"}` : isMeditation(d) ? d.day : `${lessonName(d.lesson)} · ${d.day}`);
   let swLesson = null;
   function openSwitcher() {
     swLesson = readerDay.lesson;
@@ -1220,7 +1222,7 @@
   }
   function renderSwitcher() {
     const all = lessons(), at = all.indexOf(swLesson);
-    $("sw-title").textContent = book().kind === "devotional" ? swLesson : `Lesson ${swLesson}`;
+    $("sw-title").textContent = book().kind === "devotional" ? swLesson : lessonName(swLesson);
     $("sw-prev").disabled = at <= 0;
     $("sw-next").disabled = at >= all.length - 1;
     const left = Math.max(0, GOAL - timerSecs());
@@ -1290,7 +1292,7 @@
     const order = reviewOrder(r);
     const dayNames = r.days.map((id) => (dayById(id) || {}).day).filter(Boolean);
     const h = [`<section class="today-block f snap review-head">
-      <div class="eyebrow">Lesson ${esc(r.lesson)} · Review</div>
+      <div class="eyebrow">${esc(lessonName(r.lesson))} · Review</div>
       <h2>${esc(r.title)}</h2>
       <div class="ref-line">${dayNames.map(esc).join(" · ")}</div>
       ${r.summary ? `<p class="summary">${esc(r.summary)}</p>` : ""}
